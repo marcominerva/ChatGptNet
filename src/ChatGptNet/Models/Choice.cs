@@ -1,4 +1,6 @@
-﻿namespace ChatGptNet.Models;
+﻿using System.Text.Json.Serialization;
+
+namespace ChatGptNet.Models;
 
 public class Choice
 {
@@ -6,5 +8,6 @@ public class Choice
 
     public Message Message { get; set; } = new();
 
+    [JsonPropertyName("finish_reason")]
     public string FinishReason { get; set; } = string.Empty;
 }

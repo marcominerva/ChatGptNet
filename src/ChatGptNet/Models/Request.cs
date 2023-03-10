@@ -1,11 +1,8 @@
-﻿using System.Text.Json.Serialization;
-
-namespace ChatGptNet.Models;
+﻿namespace ChatGptNet.Models;
 
 public class Request
 {
-    public string ModelId { get; set; } = string.Empty;
+    public string Model { get; set; } = string.Empty;
 
-    [JsonPropertyName("messages")]
     public Message[] Messages { get; set; } = Array.Empty<Message>();
 }

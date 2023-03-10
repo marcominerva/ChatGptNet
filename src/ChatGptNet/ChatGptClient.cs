@@ -16,18 +16,20 @@ internal class ChatGptClient : IChatGptClient
     {
         var request = new Request
         {
-            ModelId = "gpt-3.5-turbo",
+            Model = "gpt-3.5-turbo",
             Messages = new[] { new Message
-            {
-                Role="user",
-                Content=message
-            }
+                {
+                    Role="user",
+                    Content=message
+                }
             }
         };
 
-        using var httpResponse = await httpClient.PostAsJsonAsync("chat/completitions", request, cancellationToken);
+        using var httpResponse = await httpClient.PostAsJsonAsync("chat/completions", request, cancellationToken);
 
-        var response = await httpResponse.Content.ReadFromJsonAsync<Response>();
+        var test = await httpResponse.Content.ReadAsStringAsync();
 
+        var response = await httpResponse.Content.ReadFromJsonAsync<Response>(cancellationToken: cancellationToken);
+        return response;
     }
 }
