@@ -15,6 +15,6 @@ static void ConfigureServices(HostBuilderContext context, IServiceCollection ser
 
     services.AddChatGpt(options =>
     {
-        options.ApiKey = "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";
+        options.ApiKey = "";
     });
 }

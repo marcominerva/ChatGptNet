@@ -17,4 +17,9 @@ public class ChatGptOptions
     /// Gets or sets the maximum number of messages to use for chat completion (default: 10).
     /// </summary>
     public int MessageLimit { get; set; } = 10;
+
+    /// <summary>
+    /// Gets or sets the expiration for cached conversation messages (default: 1 hour).
+    /// </summary>
+    public TimeSpan MessageExpiration { get; set; } = TimeSpan.FromHours(1);
 }

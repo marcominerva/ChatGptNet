@@ -18,6 +18,11 @@ public class ChatGptResponse
     public string Object { get; set; } = string.Empty;
 
     /// <summary>
+    /// Gets or sets the Conversation Id, that is used to group messages of the same conversation.
+    /// </summary>
+    public string ConversationId { get; set; } = string.Empty;
+
+    /// <summary>
     /// Gets or sets the UTC date and time at which the response has been generated.
     /// </summary>
     [JsonPropertyName("created")]
@@ -48,5 +53,5 @@ public class ChatGptResponse
     /// Gets the content of the first choice, if available.
     /// </summary>
     /// <returns>The content of the first choice, if available</returns>
-    public string? GetMessage() => Choices.FirstOrDefault()?.Message.Content?.Trim();
+    public string? GetMessage() => Choices.FirstOrDefault()?.Message.Content.Trim();
 }

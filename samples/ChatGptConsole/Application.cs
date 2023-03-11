@@ -13,7 +13,35 @@ internal class Application
 
     public async Task ExecuteAsync()
     {
-        await chatGptClient.AskAsync("È possibile andare da Milano a Roma in meno di 2 ore?");
-        await chatGptClient.AskAsync("Parlami di Taggia");
+        string? message = null;
+        var conversationId = Guid.NewGuid().ToString();
+
+        do
+        {
+            try
+            {
+                Console.Write("Ask me anything: ");
+                message = Console.ReadLine();
+
+                if (!string.IsNullOrWhiteSpace(message))
+                {
+                    Console.WriteLine("I'm thinking...");
+
+                    var response = await chatGptClient.AskAsync(conversationId, message);
+
+                    Console.WriteLine(response.GetMessage());
+                    Console.WriteLine();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+
+                Console.WriteLine(ex.Message);
+                Console.WriteLine();
+
+                Console.ResetColor();
+            }
+        } while (!string.IsNullOrWhiteSpace(message));
     }
 }
