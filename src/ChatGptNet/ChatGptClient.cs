@@ -13,6 +13,11 @@ internal class ChatGptClient : IChatGptClient
         this.httpClient = httpClient;
     }
 
+    public class ApiServerTime
+    {
+        public DateTime ServerTime { get; set; }
+    }
+
     public async Task<ChatGptResponse?> AskAsync(string message, string model, CancellationToken cancellationToken = default)
     {
         var request = new ChatGptRequest
@@ -32,8 +37,6 @@ internal class ChatGptClient : IChatGptClient
             var errorRoot = await httpResponse.Content.ReadFromJsonAsync<ChatGptApiErrorRoot>(cancellationToken: cancellationToken);
             throw new ChatGptApiException(errorRoot!.Error, httpResponse.StatusCode);
         }
-
-        var test = await httpResponse.Content.ReadAsStringAsync();
 
         var response = await httpResponse.Content.ReadFromJsonAsync<ChatGptResponse>(cancellationToken: cancellationToken);
         return response;

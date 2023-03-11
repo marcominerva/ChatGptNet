@@ -21,7 +21,8 @@ public class ChatGptResponse
     /// Gets or sets the UTC date and time at which the response has been generated.
     /// </summary>
     [JsonPropertyName("created")]
-    public ulong CreatedAt { get; set; }
+    [JsonConverter(typeof(UnixToDateTimeConverter))]
+    public DateTime CreatedAt { get; set; }
 
     /// <summary>
     /// Gets or sets information about token usage.
