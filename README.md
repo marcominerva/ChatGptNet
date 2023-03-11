@@ -34,7 +34,7 @@ ChatGPT is aimed to support conversational scenarios: user can talk to ChatGPT w
 
 **Usage**
 
-ChatGptNet can be used in any .NET application built with .NET 6.0 and later. For example, we can create a Minimal API in this way:
+The library can be used in any .NET application built with .NET 6.0 and later. For example, we can create a Minimal API in this way:
 
     app.MapPost("/api/ask", async (Request request, IChatGptClient chatGptClient) =>
     {
@@ -47,14 +47,14 @@ ChatGptNet can be used in any .NET application built with .NET 6.0 and later. Fo
 
     public record class Request(Guid ConversationId, string Message);
 
-If we just want to get the response message, we can call the *GetMessage* method:
+If we just want to get the response message, we can call the ***GetMessage*** method on the response object:
 
     var message = response.GetMessage();
 
 **Handling a conversation**
 
 The ***GetAsk*** method has an overload (the one shown in the example above) that requires a *ConversationId* parameter. If we pass an empty value, a random one is generated and returned.
-We can pass this value in subsequent invocations of ***GetAsk*** so that the library automatically retrieves previous messages of the current conversation (according to *MessageLimit* and *MessageExpiration* settings) and pass them to ChatGPT.
+We can pass this value in subsequent invocations of ***GetAsk*** so that the library automatically retrieves previous messages of the current conversation (according to *MessageLimit* and *MessageExpiration* settings) and send them to ChatGPT.
 
 **Contribute**
 

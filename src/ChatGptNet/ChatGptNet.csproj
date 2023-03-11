@@ -12,7 +12,7 @@
         <Description>A ChatGPT integration library for .NET</Description>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <PackageProjectUrl>https://github.com/marcominerva/ChatGptNet</PackageProjectUrl>
-        <PackageIcon>Toolbox.png</PackageIcon>
+        <PackageIcon>Chat.png</PackageIcon>
         <PackageTags>csharp openai net openia-api chatgpt</PackageTags>
         <RepositoryType>git</RepositoryType>
         <RepositoryUrl>https://github.com/marcominerva/ChatGptNet.git</RepositoryUrl>
@@ -33,7 +33,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <None Include="..\..\Toolbox.png">
+        <None Include="..\..\Chat.png">
             <Pack>True</Pack>
             <PackagePath></PackagePath>
         </None>
