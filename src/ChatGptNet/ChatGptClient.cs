@@ -18,8 +18,14 @@ internal class ChatGptClient : IChatGptClient
         this.options = options;
     }
 
-    public async Task<ChatGptResponse> AskAsync(string conversationId, string message, string model, CancellationToken cancellationToken = default)
+    public async Task<ChatGptResponse> AskAsync(Guid conversationId, string message, string model, CancellationToken cancellationToken = default)
     {
+        // Ensures that conversationId isn't empty.
+        if (conversationId == Guid.Empty)
+        {
+            conversationId = Guid.NewGuid();
+        }
+
         // Checks whether a list of the messages for the given conversationId already exists.
         if (!cache.TryGetValue<IList<ChatGptMessage>>(conversationId, out var messages))
         {

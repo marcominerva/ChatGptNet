@@ -21,7 +21,7 @@ public class ChatGptResponse
     /// <summary>
     /// Gets or sets the Conversation Id, that is used to group messages of the same conversation.
     /// </summary>
-    public string ConversationId { get; set; } = string.Empty;
+    public Guid ConversationId { get; set; }
 
     /// <summary>
     /// Gets or sets the UTC date and time at which the response has been generated.

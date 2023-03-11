@@ -19,7 +19,7 @@ public interface IChatGptClient
     /// <seealso cref="ChatGptRequest"/>
     /// <seealso cref="ChatGptResponse"/>
     Task<ChatGptResponse> AskAsync(string message, CancellationToken cancellationToken = default) =>
-        AskAsync(Guid.NewGuid().ToString(), message, cancellationToken);
+        AskAsync(Guid.NewGuid(), message, cancellationToken);
 
     /// <summary>
     /// Request a chat interaction.
@@ -31,7 +31,7 @@ public interface IChatGptClient
     /// <exception cref="ChatGptException">An error occurred while calling the API.</exception>
     /// <seealso cref="ChatGptRequest"/>
     /// <seealso cref="ChatGptResponse"/>
-    Task<ChatGptResponse> AskAsync(string conversationId, string message, CancellationToken cancellationToken = default)
+    Task<ChatGptResponse> AskAsync(Guid conversationId, string message, CancellationToken cancellationToken = default)
         => AskAsync(conversationId, message, ChatGptModels.Gpt35Turbo, cancellationToken);
 
     /// <summary>
@@ -45,5 +45,5 @@ public interface IChatGptClient
     /// <exception cref="ChatGptException">An error occurred while calling the API.</exception>
     /// <seealso cref="ChatGptRequest"/>
     /// <seealso cref="ChatGptResponse"/>
-    Task<ChatGptResponse> AskAsync(string conversationId, string message, string model, CancellationToken cancellationToken = default);
+    Task<ChatGptResponse> AskAsync(Guid conversationId, string message, string model, CancellationToken cancellationToken = default);
 }

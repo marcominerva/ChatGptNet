@@ -1,5 +1,6 @@
 ﻿using System.Buffers;
 using System.Buffers.Text;
+using System.Globalization;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -21,6 +22,14 @@ internal class UnixToDateTimeConverter : JsonConverter<DateTime>
                     return date;
                 }
             }
+            else if (reader.TokenType == JsonTokenType.String)
+            {
+                var value = reader.GetString();
+                if (DateTime.TryParseExact(value, "O", CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal, out var date))
+                {
+                    return date;
+                }
+            }
         }
         catch
         {
@@ -39,5 +48,11 @@ internal class UnixToDateTimeConverter : JsonConverter<DateTime>
     }
 
     public override void Write(Utf8JsonWriter writer, DateTime value, JsonSerializerOptions options)
-        => throw new NotImplementedException();
+    {
+        // The "O" standard format will always be 28 bytes.
+        Span<byte> utf8Date = new byte[28];
+
+        Utf8Formatter.TryFormat(value, utf8Date, out _, new StandardFormat('O'));
+        writer.WriteStringValue(utf8Date);
+    }
 }
