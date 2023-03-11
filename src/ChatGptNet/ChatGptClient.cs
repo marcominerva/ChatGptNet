@@ -1,4 +1,5 @@
 ﻿using System.Net.Http.Json;
+using ChatGptNet.Exceptions;
 using ChatGptNet.Models;
 
 namespace ChatGptNet;
@@ -12,24 +13,29 @@ internal class ChatGptClient : IChatGptClient
         this.httpClient = httpClient;
     }
 
-    public async Task<Response?> AskAsync(string message, CancellationToken cancellationToken = default)
+    public async Task<ChatGptResponse?> AskAsync(string message, string model, CancellationToken cancellationToken = default)
     {
-        var request = new Request
+        var request = new ChatGptRequest
         {
-            Model = "gpt-3.5-turbo",
-            Messages = new[] { new Message
+            Model = model,
+            Messages = new[] { new ChatGptMessage
                 {
-                    Role="user",
+                    Role=ChatGptRoles.User,
                     Content=message
                 }
             }
         };
 
         using var httpResponse = await httpClient.PostAsJsonAsync("chat/completions", request, cancellationToken);
+        if (!httpResponse.IsSuccessStatusCode)
+        {
+            var errorRoot = await httpResponse.Content.ReadFromJsonAsync<ChatGptApiErrorRoot>(cancellationToken: cancellationToken);
+            throw new ChatGptApiException(errorRoot!.Error, httpResponse.StatusCode);
+        }
 
         var test = await httpResponse.Content.ReadAsStringAsync();
 
-        var response = await httpResponse.Content.ReadFromJsonAsync<Response>(cancellationToken: cancellationToken);
+        var response = await httpResponse.Content.ReadFromJsonAsync<ChatGptResponse>(cancellationToken: cancellationToken);
         return response;
     }
 }

@@ -1,16 +1,42 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFrameworks>net6.0;net7.0</TargetFrameworks>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
+    <PropertyGroup>
+        <TargetFrameworks>net6.0;net7.0</TargetFrameworks>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <DocumentationFile>ChatGptNet.xml</DocumentationFile>
+        <Authors>Marco Minerva</Authors>
+        <Company>Marco Minerva</Company>
+        <Product>ChatGPT for .NET</Product>
+        <Title>ChatGPT for .NET</Title>
+        <Description>A ChatGPT integration library for .NET</Description>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <PackageProjectUrl>https://github.com/marcominerva/ChatGptNet</PackageProjectUrl>
+        <PackageIcon>Toolbox.png</PackageIcon>
+        <PackageTags>csharp openai net openia-api chatgpt</PackageTags>
+        <RepositoryType>git</RepositoryType>
+        <RepositoryUrl>https://github.com/marcominerva/ChatGptNet.git</RepositoryUrl>
+        <RepositoryBranch>master</RepositoryBranch>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+    </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="7.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Http" Version="7.0.0" />
-    <PackageReference Include="System.Net.Http.Json" Version="7.0.0" />
-    <PackageReference Include="System.Text.Json" Version="7.0.2" />
-  </ItemGroup>
+    <ItemGroup>
+        <None Remove="ChatGptNet.xml" />
+    </ItemGroup>
+    
+    <ItemGroup>
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="7.0.0" />
+        <PackageReference Include="Microsoft.Extensions.Http" Version="7.0.0" />
+        <PackageReference Include="System.Net.Http.Json" Version="7.0.0" />
+        <PackageReference Include="System.Text.Json" Version="7.0.2" />
+    </ItemGroup>
 
+    <ItemGroup>
+        <None Include="..\..\Toolbox.png">
+            <Pack>True</Pack>
+            <PackagePath></PackagePath>
+        </None>
+        <None Include="..\..\README.md" Pack="true" PackagePath="\" />
+    </ItemGroup>
+    
 </Project>
