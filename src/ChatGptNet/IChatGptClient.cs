@@ -15,7 +15,7 @@ public interface IChatGptClient
     /// <param name="cancellationToken">A <seealso cref="CancellationToken"/> that can be used by other objects or threads to receive notice of cancellation.</param>
     /// <returns>The chat completion response.</returns>
     /// <remarks>This method automatically starts a new conservation by generating a random new Conversation Id, that will be returned in the <see cref="ChatGptResponse"/>. Subsequent calls to this method must provide the same Conversation Id so that the previous messages will be automatically used to continue the conversation.</remarks>
-    /// <exception cref="ChatGptApiException">An error occurred while calling the API.</exception>
+    /// <exception cref="ChatGptException">An error occurred while calling the API.</exception>
     /// <seealso cref="ChatGptRequest"/>
     /// <seealso cref="ChatGptResponse"/>
     Task<ChatGptResponse> AskAsync(string message, CancellationToken cancellationToken = default) =>
@@ -28,7 +28,7 @@ public interface IChatGptClient
     /// <param name="message">The message.</param>
     /// <param name="cancellationToken">A <seealso cref="CancellationToken"/> that can be used by other objects or threads to receive notice of cancellation.</param>
     /// <returns>The chat completion response.</returns>
-    /// <exception cref="ChatGptApiException">An error occurred while calling the API.</exception>
+    /// <exception cref="ChatGptException">An error occurred while calling the API.</exception>
     /// <seealso cref="ChatGptRequest"/>
     /// <seealso cref="ChatGptResponse"/>
     Task<ChatGptResponse> AskAsync(string conversationId, string message, CancellationToken cancellationToken = default)
@@ -42,7 +42,7 @@ public interface IChatGptClient
     /// <param name="model">The chat completion model to use (default: <seealso cref="ChatGptModels.Gpt35Turbo"/>).</param>
     /// <param name="cancellationToken">A <seealso cref="CancellationToken"/> that can be used by other objects or threads to receive notice of cancellation.</param>
     /// <returns>The chat completion response.</returns>
-    /// <exception cref="ChatGptApiException">An error occurred while calling the API.</exception>
+    /// <exception cref="ChatGptException">An error occurred while calling the API.</exception>
     /// <seealso cref="ChatGptRequest"/>
     /// <seealso cref="ChatGptResponse"/>
     Task<ChatGptResponse> AskAsync(string conversationId, string message, string model, CancellationToken cancellationToken = default);

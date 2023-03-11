@@ -3,7 +3,7 @@ using System.Buffers.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace ChatGptNet.Models;
+namespace ChatGptNet.Models.Converters;
 
 internal class UnixToDateTimeConverter : JsonConverter<DateTime>
 {

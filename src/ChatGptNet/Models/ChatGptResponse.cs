@@ -1,4 +1,5 @@
 ﻿using System.Text.Json.Serialization;
+using ChatGptNet.Models.Converters;
 
 namespace ChatGptNet.Models;
 
@@ -27,7 +28,7 @@ public class ChatGptResponse
     /// </summary>
     [JsonPropertyName("created")]
     [JsonConverter(typeof(UnixToDateTimeConverter))]
-    public DateTime CreatedAt { get; set; }
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
     /// <summary>
     /// Gets or sets information about token usage.

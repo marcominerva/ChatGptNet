@@ -39,13 +39,12 @@ internal class ChatGptClient : IChatGptClient
         };
 
         using var httpResponse = await httpClient.PostAsJsonAsync("chat/completions", request, cancellationToken);
-        if (!httpResponse.IsSuccessStatusCode)
-        {
-            var errorRoot = await httpResponse.Content.ReadFromJsonAsync<ChatGptApiErrorRoot>(cancellationToken: cancellationToken);
-            throw new ChatGptApiException(errorRoot!.Error, httpResponse.StatusCode);
-        }
-
         var response = await httpResponse.Content.ReadFromJsonAsync<ChatGptResponse>(cancellationToken: cancellationToken);
+
+        if (!httpResponse.IsSuccessStatusCode && options.ThrowExceptionsOnError)
+        {
+            throw new ChatGptException(response!.Error!, httpResponse.StatusCode);
+        }
 
         // Adds the response message to the conversation cache.
         if (response!.Choices?.Any() ?? false)
