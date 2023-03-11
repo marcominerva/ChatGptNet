@@ -14,7 +14,7 @@ internal class Application
     public async Task ExecuteAsync()
     {
         string? message = null;
-        var conversationId = Guid.NewGuid().ToString();
+        var conversationId = Guid.NewGuid();
 
         do
         {
