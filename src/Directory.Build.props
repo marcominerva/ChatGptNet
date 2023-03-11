@@ -1,0 +1,15 @@
+<Project>
+
+    <PropertyGroup>
+        <ContinuousIntegrationBuild Condition="'$(GITHUB_ACTIONS)' == 'true'">true</ContinuousIntegrationBuild>
+        <DebugType>embedded</DebugType>
+        <PublishRepositoryUrl>true</PublishRepositoryUrl>
+        <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All"/>
+        <PackageReference Include="Nerdbank.GitVersioning" Version="3.5.119"  PrivateAssets="All" />
+    </ItemGroup>
+
+</Project>
