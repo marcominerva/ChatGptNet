@@ -13,11 +13,6 @@ internal class ChatGptClient : IChatGptClient
         this.httpClient = httpClient;
     }
 
-    public class ApiServerTime
-    {
-        public DateTime ServerTime { get; set; }
-    }
-
     public async Task<ChatGptResponse?> AskAsync(string message, string model, CancellationToken cancellationToken = default)
     {
         var request = new ChatGptRequest
