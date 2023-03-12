@@ -20,6 +20,7 @@ public class ChatGptException : HttpRequestException
     /// <param name="error">The detailed error information</param>
     /// <param name="statusCode">The HTTP status code</param>
     /// <seealso cref="ChatGptError"/>
+    /// <seealso cref="HttpRequestException"/>
     public ChatGptException(ChatGptError error, HttpStatusCode statusCode) : base(error.Message, null, statusCode)
     {
         Error = error;

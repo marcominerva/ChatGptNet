@@ -61,7 +61,7 @@ internal class ChatGptClient : IChatGptClient
             messages.Add(response.Choices[0].Message);
         }
 
-        // If the maximum number of messages has been reached, deleted the oldest ones.
+        // If the maximum number of messages has been reached, deletes the oldest ones.
         if (messages.Count > options.MessageLimit)
         {
             messages = messages.TakeLast(options.MessageLimit).ToList();
