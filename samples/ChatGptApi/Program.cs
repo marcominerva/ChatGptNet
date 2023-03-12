@@ -1,11 +1,17 @@
 using System.Diagnostics;
 using System.Net.Mime;
+using System.Text.Json.Serialization;
 using ChatGptNet;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.WebUtilities;
 using MinimalHelpers.OpenApi;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.ConfigureHttpJsonOptions(options =>
+{
+    options.SerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+});
 
 // Add ChatGPT service.
 builder.Services.AddChatGpt(options =>

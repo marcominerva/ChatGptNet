@@ -13,8 +13,9 @@ public class ChatGptChoice
     public int Index { get; set; }
 
     /// <summary>
-    /// Gets or sets the message corresponding with the current choice.
+    /// Gets or sets the message associated with this <see cref="ChatGptChoice"/>.
     /// </summary>
+    /// <seealso cref="ChatGptChoice"/>
     public ChatGptMessage Message { get; set; } = new();
 
     /// <summary>

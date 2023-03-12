@@ -20,13 +20,15 @@ internal class ChatGptClient : IChatGptClient
 
     public async Task<ChatGptResponse> AskAsync(Guid conversationId, string message, string model, CancellationToken cancellationToken = default)
     {
+        ArgumentNullException.ThrowIfNull(message);
+
         // Ensures that conversationId isn't empty.
         if (conversationId == Guid.Empty)
         {
             conversationId = Guid.NewGuid();
         }
 
-        // Checks whether a list of the messages for the given conversationId already exists.
+        // Checks whether a list of messages for the given conversationId already exists.
         if (!cache.TryGetValue<IList<ChatGptMessage>>(conversationId, out var messages))
         {
             messages = new List<ChatGptMessage>();
@@ -46,16 +48,17 @@ internal class ChatGptClient : IChatGptClient
 
         using var httpResponse = await httpClient.PostAsJsonAsync("chat/completions", request, cancellationToken);
         var response = await httpResponse.Content.ReadFromJsonAsync<ChatGptResponse>(cancellationToken: cancellationToken);
+        response!.ConversationId = conversationId;
 
-        if (!httpResponse.IsSuccessStatusCode && options.ThrowExceptionsOnError)
+        if (!httpResponse.IsSuccessStatusCode && options.ThrowExceptionOnError)
         {
-            throw new ChatGptException(response!.Error!, httpResponse.StatusCode);
+            throw new ChatGptException(response.Error!, httpResponse.StatusCode);
         }
 
         // Adds the response message to the conversation cache.
-        if (response!.Choices?.Any() ?? false)
+        if (response.Choices?.Any() ?? false)
         {
-            messages.Add(response!.Choices[0].Message);
+            messages.Add(response.Choices[0].Message);
         }
 
         // If the maximum number of messages has been reached, deleted the oldest ones.
@@ -66,7 +69,6 @@ internal class ChatGptClient : IChatGptClient
 
         cache.Set(conversationId, messages, options.MessageExpiration);
 
-        response.ConversationId = conversationId;
         return response;
     }
 }
