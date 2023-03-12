@@ -28,7 +28,7 @@ internal class ChatGptClient : IChatGptClient
             conversationId = Guid.NewGuid();
         }
 
-        // Checks whether a list of the messages for the given conversationId already exists.
+        // Checks whether a list of messages for the given conversationId already exists.
         if (!cache.TryGetValue<IList<ChatGptMessage>>(conversationId, out var messages))
         {
             messages = new List<ChatGptMessage>();

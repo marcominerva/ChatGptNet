@@ -47,14 +47,14 @@ The library can be used in any .NET application built with .NET 6.0 and later. F
 
     public record class Request(Guid ConversationId, string Message);
 
-If we just want to get the response message, we can call the ***GetMessage*** method on the response object:
+If we just want to retrieve the response message, we can call the ***GetMessage*** method:
 
     var message = response.GetMessage();
 
 **Handling a conversation**
 
-The ***GetAsk*** method has an overload (the one shown in the example above) that requires a *ConversationId* parameter. If we pass an empty value, a random one is generated and returned.
-We can pass this value in subsequent invocations of ***GetAsk*** so that the library automatically retrieves previous messages of the current conversation (according to *MessageLimit* and *MessageExpiration* settings) and send them to ChatGPT.
+The ***AskAsync*** method has an overload (the one shown in the example above) that requires a *ConversationId* parameter. If we pass an empty value, a random one is generated and returned.
+We can pass this value in subsequent invocations of ***AskAsync*** so that the library automatically retrieves previous messages of the current conversation (according to *MessageLimit* and *MessageExpiration* settings) and send them to ChatGPT.
 
 **Contribute**
 
