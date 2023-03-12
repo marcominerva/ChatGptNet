@@ -1,11 +1,17 @@
 using System.Diagnostics;
 using System.Net.Mime;
+using System.Text.Json.Serialization;
 using ChatGptNet;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.WebUtilities;
 using MinimalHelpers.OpenApi;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.ConfigureHttpJsonOptions(options =>
+{
+    options.SerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+});
 
 // Add ChatGPT service.
 builder.Services.AddChatGpt(options =>
@@ -90,11 +96,11 @@ app.UseSwaggerUI(options =>
 
 app.MapPost("/api/ask", async (Request request, IChatGptClient chatGptClient) =>
 {
-    var response = await chatGptClient.AskAsync(request.ConversationId, request.Message);
+    var response = await chatGptClient.AskAsync(request.ConversationId, request.Content);
     return TypedResults.Ok(response);
 })
 .WithOpenApi();
 
 app.Run();
 
-public record class Request(Guid ConversationId, string Message);
+public record class Request(Guid ConversationId, string Content);

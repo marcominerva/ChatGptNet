@@ -31,5 +31,5 @@ public class ChatGptOptions
     /// </summary>
     /// <see cref="ChatGptException"/>
     /// <seealso cref="ChatGptResponse"/>
-    public bool ThrowExceptionsOnError { get; set; } = true;
+    public bool ThrowExceptionOnError { get; set; } = true;
 }

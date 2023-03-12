@@ -11,18 +11,19 @@ public static class ChatGptServiceCollectionEstensions
     /// <summary>
     /// Registers <see cref="ChatGptClient"/> with the specified options.
     /// </summary>
-    /// <param name="services">The <see cref="IServiceCollection"/>.</param>
-    /// <param name="configuration">The configuration action that allows to set <see cref="ChatGptOptions"/>.</param>
+    /// <param name="services">The <see cref="IServiceCollection"/> to add services to.</param>
+    /// <param name="setupAction">The <see cref="Action{ChatGptOptions}"/> to configure the provided <see cref="ChatGptOptions"/>.</param>
     /// <returns>A reference to this instance after the operation has completed.</returns>
     /// <remarks>This methods automatically adds a <see cref="MemoryCache"/> that is used to save chat messages for completion.</remarks>
     /// <seealso cref="ChatGptOptions"/>
     /// <see cref="MemoryCacheServiceCollectionExtensions.AddMemoryCache(IServiceCollection)"/>
-    public static IServiceCollection AddChatGpt(this IServiceCollection services, Action<ChatGptOptions> configuration)
+    public static IServiceCollection AddChatGpt(this IServiceCollection services, Action<ChatGptOptions> setupAction)
     {
-        ArgumentNullException.ThrowIfNull(configuration);
+        ArgumentNullException.ThrowIfNull(services);
+        ArgumentNullException.ThrowIfNull(setupAction);
 
         var options = new ChatGptOptions();
-        configuration.Invoke(options);
+        setupAction.Invoke(options);
         services.AddSingleton(options);
 
         services.AddMemoryCache();

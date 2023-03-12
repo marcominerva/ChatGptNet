@@ -10,7 +10,7 @@ A ChatGPT integration library for .NET
 
 **Installation**
 
-The library is available on [NuGet](https://www.nuget.org/packages/ChatGpt). Just search for *ChatGptNet* in the **Package Manager GUI** or run the following command in the **.NET CLI**:
+The library is available on [NuGet](https://www.nuget.org/packages/ChatGptNet). Just search for *ChatGptNet* in the **Package Manager GUI** or run the following command in the **.NET CLI**:
 
     dotnet add package ChatGptNet
 
