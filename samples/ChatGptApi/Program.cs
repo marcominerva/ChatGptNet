@@ -96,11 +96,11 @@ app.UseSwaggerUI(options =>
 
 app.MapPost("/api/ask", async (Request request, IChatGptClient chatGptClient) =>
 {
-    var response = await chatGptClient.AskAsync(request.ConversationId, request.Content);
+    var response = await chatGptClient.AskAsync(request.ConversationId, request.Message);
     return TypedResults.Ok(response);
 })
 .WithOpenApi();
 
 app.Run();
 
-public record class Request(Guid ConversationId, string Content);
+public record class Request(Guid ConversationId, string Message);
