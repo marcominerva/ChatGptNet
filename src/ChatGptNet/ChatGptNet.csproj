@@ -13,7 +13,7 @@
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <PackageProjectUrl>https://github.com/marcominerva/ChatGptNet</PackageProjectUrl>
         <PackageIcon>Chat.png</PackageIcon>
-        <PackageTags>csharp openai net openia-api chatgpt</PackageTags>
+        <PackageTags>csharp net openai openai-api chatgpt</PackageTags>
         <RepositoryType>git</RepositoryType>
         <RepositoryUrl>https://github.com/marcominerva/ChatGptNet.git</RepositoryUrl>
         <RepositoryBranch>master</RepositoryBranch>
