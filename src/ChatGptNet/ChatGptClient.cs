@@ -72,11 +72,13 @@ internal class ChatGptClient : IChatGptClient
         return response;
     }
 
-    public void DeleteConversation(Guid conversationId)
+    public Task DeleteConversationAsync(Guid conversationId)
     {
         if (cache.TryGetValue(conversationId, out var _))
         {
             cache.Remove(conversationId);
         }
+
+        return Task.CompletedTask;
     }
 }

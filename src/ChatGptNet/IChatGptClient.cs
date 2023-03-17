@@ -55,6 +55,6 @@ public interface IChatGptClient
     /// Deletes a chat conversation
     /// </summary>
     /// <param name="conversationId">The unique identifier of the conversation, used to automatically retrieve previous messages in the chat history.</param>
-    /// <returns></returns>
-    void DeleteConversation(Guid conversationId);
+    /// <returns>The task corresponding to the asynchronous operation</returns>
+    Task DeleteConversationAsync(Guid conversationId);
 }
