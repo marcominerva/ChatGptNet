@@ -32,4 +32,9 @@ public class ChatGptOptions
     /// <see cref="ChatGptException"/>
     /// <seealso cref="ChatGptResponse"/>
     public bool ThrowExceptionOnError { get; set; } = true;
+
+    /// <summary>
+    /// Gets or sets a value that determines the organization this client belongs. Used for users who have access to multiple organizations. (default: <see langword="null"/>).
+    /// </summary>
+    public string? OpenAIOrganization { get; set; }
 }
