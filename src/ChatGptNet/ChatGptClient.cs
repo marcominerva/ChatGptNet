@@ -81,9 +81,10 @@ internal class ChatGptClient : IChatGptClient
 
             // If the maximum number of messages has been reached, deletes the oldest ones.
             // Note: system message does not count for message limit.
-            if (messages.Count(m => m.Role != ChatGptRoles.System) > options.MessageLimit)
+            var conversation = messages.Where(m => m.Role != ChatGptRoles.System);
+            if (conversation.Count() > options.MessageLimit)
             {
-                var conversation = messages.Where(m => m.Role != ChatGptRoles.System).TakeLast(options.MessageLimit);
+                conversation = conversation.TakeLast(options.MessageLimit);
 
                 // If the first message was of role system, adds it back in.
                 if (messages[0].Role == ChatGptRoles.System)
