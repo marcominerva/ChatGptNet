@@ -94,10 +94,24 @@ app.UseSwaggerUI(options =>
     options.SwaggerEndpoint("/swagger/v1/swagger.json", "ChatGPT API v1");
 });
 
-app.MapPost("/api/ask", async (Request request, IChatGptClient chatGptClient) =>
+app.MapPost("/api/chat/setup", async (Request request, IChatGptClient chatGptClient) =>
+{
+    var conversationId = await chatGptClient.SetupAsync(request.ConversationId, request.Message);
+    return TypedResults.Ok(new { conversationId });
+})
+.WithOpenApi();
+
+app.MapPost("/api/chat/ask", async (Request request, IChatGptClient chatGptClient) =>
 {
     var response = await chatGptClient.AskAsync(request.ConversationId, request.Message);
     return TypedResults.Ok(response);
+})
+.WithOpenApi();
+
+app.MapDelete("/api/chat/delete", async (Guid conversationId, IChatGptClient chatGptClient) =>
+{
+    await chatGptClient.DeleteConversationAsync(conversationId);
+    return TypedResults.NoContent();
 })
 .WithOpenApi();
 
