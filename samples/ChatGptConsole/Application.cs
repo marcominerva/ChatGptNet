@@ -14,13 +14,24 @@ internal class Application
     public async Task ExecuteAsync()
     {
         string? message = null;
-        var conversationId = await chatGptClient.SetupAsync("Give only wrong answers");
+        var conversationId = Guid.NewGuid();
+
+        Console.WriteLine("How should the assistant behave?");
+        Console.Write("For example: 'you are an helpful assistant', 'answer like Shakespare', 'give me only wrong answers'. (Press ENTER for no recommendation): ");
+        var systemMessage = Console.ReadLine();
+
+        if (!string.IsNullOrWhiteSpace(systemMessage))
+        {
+            await chatGptClient.SetupAsync(conversationId, systemMessage);
+        }
+
+        Console.WriteLine();
 
         do
         {
             try
             {
-                Console.Write("Ask me anything, I'll answer with a wrong answer: ");
+                Console.Write("Ask me anything: ");
                 message = Console.ReadLine();
 
                 if (!string.IsNullOrWhiteSpace(message))

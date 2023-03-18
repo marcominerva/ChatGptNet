@@ -9,32 +9,23 @@ namespace ChatGptNet;
 public interface IChatGptClient
 {
     /// <summary>
-    /// Setup a new conversation with a system message.
+    /// Setups a new conversation with a system message, that is used to influence assistant behavior.
     /// </summary>
-    /// <param name="message">The system message</param>
-    /// <returns>The new Conversation Id</returns>
-    /// <remarks>This method creates a new conversation, using the default <seealso cref="ChatGptModels.Gpt35Turbo"/> model, with a system message and a random Conversation Id, next you need to call <seealso cref="AskAsync(Guid, string, CancellationToken)"/> to continue the conversation.</remarks>
+    /// <param name="message">The system message.</param>
+    /// <returns>The new Conversation Id.</returns>
+    /// <remarks>This method creates a new conversation with a system message and a random Conversation Id. Then, call <seealso cref="AskAsync(Guid, string, CancellationToken)"/> with this Conversation Id to start the actual conversation.</remarks>
     /// <exception cref="ArgumentNullException"><paramref name="message"/> is <see langword="null"/>.</exception>
-    Task<Guid> SetupAsync(string message);
+    Task<Guid> SetupAsync(string message)
+        => SetupAsync(Guid.NewGuid(), message);
 
     /// <summary>
-    /// Setup a conversation with a system message.
+    /// Setups a conversation with a system message, that is used to influence assistant behavior.
     /// </summary>
     /// <param name="conversationId">The unique identifier of the conversation, used to automatically retrieve previous messages in the chat history.</param>
-    /// <param name="message">The system message</param>
-    /// <remarks>This method creates a new conversation, using the default <seealso cref="ChatGptModels.Gpt35Turbo"/> model, with a system message, next you need to call <seealso cref="AskAsync(Guid, string, CancellationToken)"/> to continue the conversation. Subsequent calls to this method with the same Conversation Id will clear the conversation hisory</remarks>
+    /// <param name="message">The system message.</param>
+    /// <remarks>This method creates a new conversation, with a system message and the given Conversation Id. If a conversation with this Id already exists, it will be automatically cleared. Then, call <seealso cref="AskAsync(Guid, string, CancellationToken)"/> with the same Conversation Id to start the actual conversation.</remarks>
     /// <exception cref="ArgumentNullException"><paramref name="message"/> is <see langword="null"/>.</exception>
-    Task SetupAsync(Guid conversationId, string message) => SetupAsync(conversationId, message, ChatGptModels.Gpt35Turbo);
-
-    /// <summary>
-    /// Setup a conversation with a system message.
-    /// </summary>
-    /// <param name="conversationId">The unique identifier of the conversation, used to automatically retrieve previous messages in the chat history.</param>
-    /// <param name="message">The system message</param>
-    /// <param name="model">The chat completion model to use (default: <seealso cref="ChatGptModels.Gpt35Turbo"/>).</param>
-    /// <remarks>This method creates a new conversation, with a system message, next you need to call <seealso cref="AskAsync(Guid, string, CancellationToken)"/> to continue the conversation. Subsequent calls to this method with the same Conversation Id will clear the conversation hisory</remarks>
-    /// <exception cref="ArgumentNullException"><paramref name="message"/> is <see langword="null"/>.</exception>
-    Task SetupAsync(Guid conversationId, string message, string model);
+    Task<Guid> SetupAsync(Guid conversationId, string message);
 
     /// <summary>
     /// Requests a new chat interaction.

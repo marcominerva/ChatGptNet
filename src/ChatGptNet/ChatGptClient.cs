@@ -1,4 +1,9 @@
-﻿namespace ChatGptNet;
+﻿using System.Net.Http.Json;
+using ChatGptNet.Exceptions;
+using ChatGptNet.Models;
+using Microsoft.Extensions.Caching.Memory;
+
+namespace ChatGptNet;
 
 internal class ChatGptClient : IChatGptClient
 {
@@ -13,19 +18,15 @@ internal class ChatGptClient : IChatGptClient
         this.options = options;
     }
 
-    public Task<Guid> SetupAsync(string message)
+    public Task<Guid> SetupAsync(Guid conversationId, string message)
     {
         ArgumentNullException.ThrowIfNull(message);
 
-        var conversationId = Guid.NewGuid();
-        SetupAsync(conversationId, message, ChatGptModels.Gpt35Turbo);
-
-        return Task.FromResult(conversationId);
-    }
-
-    public Task SetupAsync(Guid conversationId, string message, string model)
-    {
-        ArgumentNullException.ThrowIfNull(message);
+        // Ensures that conversationId isn't empty.
+        if (conversationId == Guid.Empty)
+        {
+            conversationId = Guid.NewGuid();
+        }
 
         var messages = new List<ChatGptMessage>
         {
@@ -38,7 +39,7 @@ internal class ChatGptClient : IChatGptClient
 
         cache.Set(conversationId, messages, options.MessageExpiration);
 
-        return Task.CompletedTask;
+        return Task.FromResult(conversationId);
     }
 
     public async Task<ChatGptResponse> AskAsync(Guid conversationId, string message, string model, CancellationToken cancellationToken = default)
@@ -79,15 +80,18 @@ internal class ChatGptClient : IChatGptClient
             messages.Add(response.Choices[0].Message);
 
             // If the maximum number of messages has been reached, deletes the oldest ones.
-            if (CountMessages(messages) > options.MessageLimit)
+            // Note: system message does not count for message limit.
+            if (messages.Count(m => m.Role != ChatGptRoles.System) > options.MessageLimit)
             {
-                var newMessages = messages.TakeLast(options.MessageLimit);
+                var conversation = messages.Where(m => m.Role != ChatGptRoles.System).TakeLast(options.MessageLimit);
 
-                // If the first message was of role system, add it back in
+                // If the first message was of role system, adds it back in.
                 if (messages[0].Role == ChatGptRoles.System)
-                    newMessages = newMessages.Prepend(messages[0]);
+                {
+                    conversation = conversation.Prepend(messages[0]);
+                }
 
-                messages = newMessages.ToList();
+                messages = conversation.ToList();
             }
 
             cache.Set(conversationId, messages, options.MessageExpiration);
@@ -105,12 +109,4 @@ internal class ChatGptClient : IChatGptClient
         cache.Remove(conversationId);
         return Task.CompletedTask;
     }
-
-    // Helper method used to count messages in list,
-    // if the first message is of role System it shouldn't be counted
-    private int CountMessages(IList<ChatGptMessage> list)
-    {
-        return list[0].Role == ChatGptRoles.System ? list.Count - 1 : list.Count;
-    }
-
 }
