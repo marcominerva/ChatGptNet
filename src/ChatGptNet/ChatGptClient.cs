@@ -50,24 +50,23 @@ internal class ChatGptClient : IChatGptClient
         var response = await httpResponse.Content.ReadFromJsonAsync<ChatGptResponse>(cancellationToken: cancellationToken);
         response!.ConversationId = conversationId;
 
-        if (!httpResponse.IsSuccessStatusCode && options.ThrowExceptionOnError)
+        if (response.IsSuccessful)
+        {
+            // Adds the response message to the conversation cache.
+            messages.Add(response.Choices[0].Message);
+
+            // If the maximum number of messages has been reached, deletes the oldest ones.
+            if (messages.Count > options.MessageLimit)
+            {
+                messages = messages.TakeLast(options.MessageLimit).ToList();
+            }
+
+            cache.Set(conversationId, messages, options.MessageExpiration);
+        }
+        else if (options.ThrowExceptionOnError)
         {
             throw new ChatGptException(response.Error!, httpResponse.StatusCode);
         }
-
-        // Adds the response message to the conversation cache.
-        if (response.Choices?.Any() ?? false)
-        {
-            messages.Add(response.Choices[0].Message);
-        }
-
-        // If the maximum number of messages has been reached, deletes the oldest ones.
-        if (messages.Count > options.MessageLimit)
-        {
-            messages = messages.TakeLast(options.MessageLimit).ToList();
-        }
-
-        cache.Set(conversationId, messages, options.MessageExpiration);
 
         return response;
     }
