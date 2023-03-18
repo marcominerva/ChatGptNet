@@ -106,10 +106,17 @@ internal class ChatGptClient : IChatGptClient
         return response;
     }
 
+    public Task DeleteConversationAsync(Guid conversationId)
+    {
+        cache.Remove(conversationId);
+        return Task.CompletedTask;
+    }
+
     // Helper method used to count messages in list,
     // if the first message is of role System it shouldn't be counted
     private int CountMessages(IList<ChatGptMessage> list)
     {
         return list[0].Role == ChatGptRoles.System ? list.Count - 1 : list.Count;
     }
+
 }

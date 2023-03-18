@@ -13,7 +13,7 @@
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <PackageProjectUrl>https://github.com/marcominerva/ChatGptNet</PackageProjectUrl>
         <PackageIcon>Chat.png</PackageIcon>
-        <PackageTags>csharp openai net openia-api chatgpt</PackageTags>
+        <PackageTags>csharp net openai openai-api chatgpt</PackageTags>
         <RepositoryType>git</RepositoryType>
         <RepositoryUrl>https://github.com/marcominerva/ChatGptNet.git</RepositoryUrl>
         <RepositoryBranch>master</RepositoryBranch>
@@ -28,7 +28,7 @@
         <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="7.0.0" />
         <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="7.0.0" />
         <PackageReference Include="Microsoft.Extensions.Http" Version="7.0.0" />
-        <PackageReference Include="System.Net.Http.Json" Version="7.0.0" />
+        <PackageReference Include="System.Net.Http.Json" Version="7.0.1" />
         <PackageReference Include="System.Text.Json" Version="7.0.2" />
     </ItemGroup>
 
