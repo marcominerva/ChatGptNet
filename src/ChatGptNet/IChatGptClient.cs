@@ -50,4 +50,11 @@ public interface IChatGptClient
     /// <seealso cref="ChatGptRequest"/>
     /// <seealso cref="ChatGptResponse"/>
     Task<ChatGptResponse> AskAsync(Guid conversationId, string message, string model, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Deletes a chat conversation
+    /// </summary>
+    /// <param name="conversationId">The unique identifier of the conversation, used to automatically retrieve previous messages in the chat history.</param>
+    /// <returns>The task corresponding to the asynchronous operation</returns>
+    Task DeleteConversationAsync(Guid conversationId);
 }
