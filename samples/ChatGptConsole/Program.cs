@@ -1,5 +1,6 @@
 ﻿using ChatGptConsole;
 using ChatGptNet;
+using ChatGptNet.Models;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
@@ -17,6 +18,7 @@ static void ConfigureServices(HostBuilderContext context, IServiceCollection ser
     services.AddChatGpt(options =>
     {
         options.ApiKey = "";
+        options.DefaultModel = ChatGptModels.Gpt35Turbo;  // Default: ChatGptModels.Gpt35Turbo
         options.MessageLimit = 16;  // Default: 10
         options.MessageExpiration = TimeSpan.FromMinutes(5);    // Default: 1 hour
     });
