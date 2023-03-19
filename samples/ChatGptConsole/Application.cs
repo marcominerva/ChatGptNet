@@ -17,7 +17,7 @@ internal class Application
         var conversationId = Guid.NewGuid();
 
         Console.WriteLine("How should the assistant behave?");
-        Console.Write("For example: 'you are an helpful assistant', 'answer like Shakespare', 'give me only wrong answers'. (Press ENTER for no recommendation): ");
+        Console.Write("For example: 'You are an helpful assistant', 'Answer like Shakespeare', 'Give me only wrong answers'. (Press ENTER for no recommendation): ");
         var systemMessage = Console.ReadLine();
 
         if (!string.IsNullOrWhiteSpace(systemMessage))
