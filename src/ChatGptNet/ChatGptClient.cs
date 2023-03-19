@@ -42,7 +42,7 @@ internal class ChatGptClient : IChatGptClient
         return Task.FromResult(conversationId);
     }
 
-    public async Task<ChatGptResponse> AskAsync(Guid conversationId, string message, string model, CancellationToken cancellationToken = default)
+    public async Task<ChatGptResponse> AskAsync(Guid conversationId, string message, string? model, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(message);
 
@@ -66,7 +66,7 @@ internal class ChatGptClient : IChatGptClient
 
         var request = new ChatGptRequest
         {
-            Model = model,
+            Model = model ?? options.DefaultModel,
             Messages = messages.ToArray()
         };
 

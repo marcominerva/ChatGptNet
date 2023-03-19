@@ -42,7 +42,7 @@ public interface IChatGptClient
         AskAsync(Guid.NewGuid(), message, cancellationToken);
 
     /// <summary>
-    /// Requests a chat interaction.
+    /// Requests a chat interaction with the default chat completion model specified into <seealso cref="ChatGptOptions.DefaultModel"/>.
     /// </summary>
     /// <param name="conversationId">The unique identifier of the conversation, used to automatically retrieve previous messages in the chat history.</param>
     /// <param name="message">The message.</param>
@@ -54,21 +54,21 @@ public interface IChatGptClient
     /// <seealso cref="ChatGptResponse"/>
     /// <seealso cref="ChatGptOptions"/>
     Task<ChatGptResponse> AskAsync(Guid conversationId, string message, CancellationToken cancellationToken = default)
-        => AskAsync(conversationId, message, ChatGptModels.Gpt35Turbo, cancellationToken);
+        => AskAsync(conversationId, message, null, cancellationToken);
 
     /// <summary>
     /// Requests a chat interaction.
     /// </summary>
     /// <param name="conversationId">The unique identifier of the conversation, used to automatically retrieve previous messages in the chat history.</param>
     /// <param name="message">The message.</param>
-    /// <param name="model">The chat completion model to use (default: <seealso cref="ChatGptModels.Gpt35Turbo"/>).</param>
+    /// <param name="model">The chat completion model to use (default: <seealso cref="ChatGptOptions.DefaultModel"/>).</param>
     /// <param name="cancellationToken">A <seealso cref="CancellationToken"/> that can be used by other objects or threads to receive notice of cancellation.</param>
     /// <returns>The chat completion response.</returns>
     /// <exception cref="ArgumentNullException"><paramref name="message"/> is <see langword="null"/>.</exception>
     /// <exception cref="ChatGptException">An error occurred while calling the API and the <seealso cref="ChatGptOptions.ThrowExceptionOnError"/> is <see langword="true"/>.</exception>
     /// <seealso cref="ChatGptRequest"/>
     /// <seealso cref="ChatGptResponse"/>
-    Task<ChatGptResponse> AskAsync(Guid conversationId, string message, string model, CancellationToken cancellationToken = default);
+    Task<ChatGptResponse> AskAsync(Guid conversationId, string message, string? model, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Deletes a chat conversation, clearing all the history.

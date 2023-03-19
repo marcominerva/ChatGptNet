@@ -32,4 +32,10 @@ public class ChatGptOptions
     /// <see cref="ChatGptException"/>
     /// <seealso cref="ChatGptResponse"/>
     public bool ThrowExceptionOnError { get; set; } = true;
+
+    /// <summary>
+    /// Gets or sets a default value for the ChatGptModel to use. (default: <see cref="ChatGptModels.Gpt35Turbo"/> model).
+    /// </summary>
+    /// <see cref="ChatGptModels"/>
+    public string DefaultModel { get; set; } = ChatGptModels.Gpt35Turbo;
 }
