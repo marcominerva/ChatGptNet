@@ -6,7 +6,7 @@ namespace ChatGptNet;
 /// <summary>
 /// Provides extension methods for adding ChatGPT support in NET applications.
 /// </summary>
-public static class ChatGptServiceCollectionEstensions
+public static class ChatGptServiceCollectionExtensions
 {
     /// <summary>
     /// Registers <see cref="ChatGptClient"/> with the specified options.
