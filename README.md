@@ -22,11 +22,16 @@ Register ChatGPT service at application startup:
     {
         options.ApiKey = "";
         options.Organization = null;    // Optional
+        options.DefaultModel = ChatGptModels.Gpt35Turbo;  // Default: ChatGptModels.Gpt35Turbo
         options.MessageLimit = 16;  // Default: 10
         options.MessageExpiration = TimeSpan.FromMinutes(5);    // Default: 1 hour
     });
 
 The API Key can be obtained in the [User settings](https://platform.openai.com/account/api-keys) page of your OpenAI account. For users who belong to multiple organizations, you can also specify which organization is used. Usage from these API requests will count against the specified organization's subscription quota.
+
+With **DefaultModel** property, you can specified the default model that will be used for all your calls. You can force another model by using one of the **AskAsync** overload method.
+
+The *ChatGptModels.Gpt4* model is currently in a limited beta and only accessible to those who have been granted access. You can find more information on the OpenAI website, more specifically in the [model section](https://platform.openai.com/docs/models/overview).
 
 ChatGPT is aimed to support conversational scenarios: user can talk to ChatGPT without specifying the full context for every interaction. However, conversation history isn't managed by OpenAI, so it's up to us to retain the current state. **ChatGptNet** handles this requirement using a [MemoryCache](https://learn.microsoft.com/en-us/dotnet/api/microsoft.extensions.caching.memory.memorycache) that stores messages for each conversation. The behavior can be set using the following properties:
 
