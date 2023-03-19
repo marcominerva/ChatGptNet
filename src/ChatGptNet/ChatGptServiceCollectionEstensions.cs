@@ -32,6 +32,11 @@ public static class ChatGptServiceCollectionEstensions
         {
             client.BaseAddress = new Uri("https://api.openai.com/v1/");
             client.DefaultRequestHeaders.Authorization = new("Bearer", options.ApiKey);
+
+            if (!string.IsNullOrWhiteSpace(options.Organization))
+            {
+                client.DefaultRequestHeaders.Add("OpenAI-Organization", options.Organization);
+            }
         });
 
         return services;

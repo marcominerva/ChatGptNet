@@ -21,18 +21,19 @@ Register ChatGPT service at application startup:
     builder.Services.AddChatGpt(options =>
     {
         options.ApiKey = "";
+        options.Organization = null;    // Optional
         options.DefaultModel = ChatGptModels.Gpt35Turbo;  // Default: ChatGptModels.Gpt35Turbo
         options.MessageLimit = 16;  // Default: 10
         options.MessageExpiration = TimeSpan.FromMinutes(5);    // Default: 1 hour
     });
 
-The API Key can be obtained in the [User settings](https://platform.openai.com/account/api-keys) page of your OpenAI account.
+The API Key can be obtained in the [User settings](https://platform.openai.com/account/api-keys) page of your OpenAI account. For users who belong to multiple organizations, you can also specify which organization is used. Usage from these API requests will count against the specified organization's subscription quota.
 
 With **DefaultModel** property, you can specified the default model that will be used for all your calls. You can force another model by using one of the **AskAsync** overload method.
 
 The *ChatGptModels.Gpt4* model is currently in a limited beta and only accessible to those who have been granted access. You can find more information on the OpenAI website, more specifically in the [model section](https://platform.openai.com/docs/models/overview).
 
-ChatGPT is aimed to support conversational scenarios: user can talk to ChatGPT without specifying the full context for every interaction. However, conversation history isn't managed by OpenAI, so it's up to us to retain the current state. **ChatGptNet** handles this requirement using a MemoryCache that stores messages for each conversation. The behavior can be set using the following properties:
+ChatGPT is aimed to support conversational scenarios: user can talk to ChatGPT without specifying the full context for every interaction. However, conversation history isn't managed by OpenAI, so it's up to us to retain the current state. **ChatGptNet** handles this requirement using a [MemoryCache](https://learn.microsoft.com/en-us/dotnet/api/microsoft.extensions.caching.memory.memorycache) that stores messages for each conversation. The behavior can be set using the following properties:
 
 * *MessageLimit*: specifies how many messages for each conversation must be saved. When this limit is reached, oldest messages are automatically removed.
 * *MessageExpiration*: specifies the time interval used to maintain messages in cache, regardless their count.
@@ -58,8 +59,31 @@ If we just want to retrieve the response message, we can call the **GetMessage**
 
 **Handling a conversation**
 
-The **AskAsync** method has an overload (the one shown in the example above) that requires a *ConversationId* parameter. If we pass an empty value, a random one is generated and returned.
+The **AskAsync** method has an overload (the one shown in the example above) that requires a *conversationId* parameter. If we pass an empty value, a random one is generated and returned.
 We can pass this value in subsequent invocations of **AskAsync** so that the library automatically retrieves previous messages of the current conversation (according to *MessageLimit* and *MessageExpiration* settings) and send them to ChatGPT.
+
+**Changing the assistant's behavior**
+
+ChatGPT supports messages with the *system* role to influence how the assistant should behave. For example, we can tell to ChatGPT something like that:
+
+- You are an helpful assistant
+- Answer like Shakespeare
+- Give me only wrong answers
+- Answer in rhyme
+
+**ChatGptNet** provides this feature using the **SetupAsync** method:
+
+    var conversationId await = chatGptClient.SetupAsync("Answer in rhyme");
+
+If we use the same *conversationId* when calling  **AskAsync**, then the *system* message will be automatically sent along with every request, so that the assistant will know how to behave.
+
+Note that the *system* message does not count for *MessageLimit*.
+
+**Deleting a conversation**
+
+Conversation history is automatically deleted when expiration time (specified by *MessageExpiration* property) is reached. However, if necessary it is possible to immediately clear the history:
+
+    await chatGptClient.DeleteConversationAsync(conversationId);
 
 **Contribute**
 

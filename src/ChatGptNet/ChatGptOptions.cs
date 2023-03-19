@@ -34,6 +34,12 @@ public class ChatGptOptions
     public bool ThrowExceptionOnError { get; set; } = true;
 
     /// <summary>
+    /// Gets or sets a value that determines the organization the user belongs to.
+    /// </summary>
+    /// <remarks>For users who belong to multiple organizations, you can pass a header to specify which organization is used for an API request. Usage from these API requests will count against the specified organization's subscription quota.</remarks>
+    public string? Organization { get; set; }
+
+    /// <summary>
     /// Gets or sets a default value for the ChatGptModel to use. (default: <see cref="ChatGptModels.Gpt35Turbo"/> model).
     /// </summary>
     /// <see cref="ChatGptModels"/>
