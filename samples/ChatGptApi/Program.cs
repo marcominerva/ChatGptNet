@@ -19,6 +19,7 @@ builder.Services.AddChatGpt(options =>
     options.ApiKey = "";
     options.MessageLimit = 16;  // Default: 10
     options.MessageExpiration = TimeSpan.FromMinutes(5);    // Default: 1 hour
+    options.OpenAIOrganization = null;
 });
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
