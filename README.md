@@ -72,7 +72,7 @@ ChatGPT supports messages with the *system* role to influence how the assistant 
 
 If we use the same *conversationId* when calling  **AskAsync**, then the *system* message will be automatically sent along with every request, so that the assistant will know how to behave.
 
-Note that the *system* message does not count for *MessageLimit*.
+Note that the *system* message does not count for messages limit number.
 
 **Deleting a conversation**
 
