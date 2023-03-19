@@ -27,14 +27,14 @@ Register ChatGPT service at application startup:
 
 The API Key can be obtained in the [User settings](https://platform.openai.com/account/api-keys) page of your OpenAI account.
 
-ChatGPT is aimed to support conversational scenarios: user can talk to ChatGPT without specifying the full context for every interaction. However, conversation history isn't managed by OpenAI, so it's up to us to retain the current state. This library handles this requirement using a MemoryCache that stores messages for each conversation. The behavior can be set using the following properties:
+ChatGPT is aimed to support conversational scenarios: user can talk to ChatGPT without specifying the full context for every interaction. However, conversation history isn't managed by OpenAI, so it's up to us to retain the current state. **ChatGptNet** handles this requirement using a MemoryCache that stores messages for each conversation. The behavior can be set using the following properties:
 
 * *MessageLimit*: specifies how many messages for each conversation must be saved. When this limit is reached, oldest messages are automatically removed.
 * *MessageExpiration*: specifies the time interval used to maintain messages in cache, regardless their count.
 
 **Usage**
 
-The library can be used in any .NET application built with .NET 6.0 and later. For example, we can create a Minimal API in this way:
+The library can be used in any .NET application built with .NET 6.0 or later. For example, we can create a Minimal API in this way:
 
     app.MapPost("/api/ask", async (Request request, IChatGptClient chatGptClient) =>
     {
@@ -47,14 +47,14 @@ The library can be used in any .NET application built with .NET 6.0 and later. F
 
     public record class Request(Guid ConversationId, string Message);
 
-If we just want to retrieve the response message, we can call the ***GetMessage*** method:
+If we just want to retrieve the response message, we can call the **GetMessage** method:
 
     var message = response.GetMessage();
 
 **Handling a conversation**
 
-The ***AskAsync*** method has an overload (the one shown in the example above) that requires a *ConversationId* parameter. If we pass an empty value, a random one is generated and returned.
-We can pass this value in subsequent invocations of ***AskAsync*** so that the library automatically retrieves previous messages of the current conversation (according to *MessageLimit* and *MessageExpiration* settings) and send them to ChatGPT.
+The **AskAsync** method has an overload (the one shown in the example above) that requires a *ConversationId* parameter. If we pass an empty value, a random one is generated and returned.
+We can pass this value in subsequent invocations of **AskAsync** so that the library automatically retrieves previous messages of the current conversation (according to *MessageLimit* and *MessageExpiration* settings) and send them to ChatGPT.
 
 **Contribute**
 
