@@ -2,7 +2,6 @@ using System.Diagnostics;
 using System.Net.Mime;
 using System.Text.Json.Serialization;
 using ChatGptNet;
-using ChatGptNet.Models;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.WebUtilities;
 using MinimalHelpers.OpenApi;
@@ -18,7 +17,6 @@ builder.Services.ConfigureHttpJsonOptions(options =>
 builder.Services.AddChatGpt(options =>
 {
     options.ApiKey = "";
-    options.DefaultModel = ChatGptModels.Gpt35Turbo;  // Default: ChatGptModels.Gpt35Turbo
     options.MessageLimit = 16;  // Default: 10
     options.MessageExpiration = TimeSpan.FromMinutes(5);    // Default: 1 hour
 });

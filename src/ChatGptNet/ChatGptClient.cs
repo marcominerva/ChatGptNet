@@ -53,7 +53,7 @@ internal class ChatGptClient : IChatGptClient
         }
 
         // Checks whether a list of messages for the given conversationId already exists.
-        var conversationHistory = cache.Get<IEnumerable<ChatGptMessage>>(conversationId);
+        var conversationHistory = cache.Get<IList<ChatGptMessage>>(conversationId);
         List<ChatGptMessage> messages = conversationHistory is not null ? new(conversationHistory) : new();
 
         messages.Add(new()
