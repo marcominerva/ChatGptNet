@@ -21,11 +21,12 @@ Register ChatGPT service at application startup:
     builder.Services.AddChatGpt(options =>
     {
         options.ApiKey = "";
+        options.Organization = null;
         options.MessageLimit = 16;  // Default: 10
         options.MessageExpiration = TimeSpan.FromMinutes(5);    // Default: 1 hour
     });
 
-The API Key can be obtained in the [User settings](https://platform.openai.com/account/api-keys) page of your OpenAI account.
+The API Key can be obtained in the [User settings](https://platform.openai.com/account/api-keys) page of your OpenAI account. For users who belong to multiple organizations, you can also specify which organization is used. Usage from these API requests will count against the specified organization's subscription quota.
 
 ChatGPT is aimed to support conversational scenarios: user can talk to ChatGPT without specifying the full context for every interaction. However, conversation history isn't managed by OpenAI, so it's up to us to retain the current state. **ChatGptNet** handles this requirement using a MemoryCache that stores messages for each conversation. The behavior can be set using the following properties:
 
