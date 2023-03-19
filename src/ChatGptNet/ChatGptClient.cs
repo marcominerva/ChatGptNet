@@ -42,7 +42,7 @@ internal class ChatGptClient : IChatGptClient
         return Task.FromResult(conversationId);
     }
 
-    public async Task<ChatGptResponse> AskAsync(Guid conversationId, string message, string model, CancellationToken cancellationToken = default)
+    public async Task<ChatGptResponse> AskAsync(Guid conversationId, string message, string? model, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(message);
 
@@ -53,12 +53,10 @@ internal class ChatGptClient : IChatGptClient
         }
 
         // Checks whether a list of messages for the given conversationId already exists.
-        if (!cache.TryGetValue<IList<ChatGptMessage>>(conversationId, out var messages))
-        {
-            messages = new List<ChatGptMessage>();
-        }
+        var conversationHistory = cache.Get<IList<ChatGptMessage>>(conversationId);
+        List<ChatGptMessage> messages = conversationHistory is not null ? new(conversationHistory) : new();
 
-        messages!.Add(new()
+        messages.Add(new()
         {
             Role = ChatGptRoles.User,
             Content = message
@@ -66,7 +64,7 @@ internal class ChatGptClient : IChatGptClient
 
         var request = new ChatGptRequest
         {
-            Model = model,
+            Model = model ?? options.DefaultModel,
             Messages = messages.ToArray()
         };
 
