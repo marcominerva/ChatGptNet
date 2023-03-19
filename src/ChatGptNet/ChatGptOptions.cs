@@ -38,4 +38,10 @@ public class ChatGptOptions
     /// </summary>
     /// <remarks>For users who belong to multiple organizations, you can pass a header to specify which organization is used for an API request. Usage from these API requests will count against the specified organization's subscription quota.</remarks>
     public string? Organization { get; set; }
+
+    /// <summary>
+    /// Gets or sets the default model for chat completion. (default: <see cref="ChatGptModels.Gpt35Turbo"/>).
+    /// </summary>
+    /// <see cref="ChatGptModels"/>
+    public string DefaultModel { get; set; } = ChatGptModels.Gpt35Turbo;
 }

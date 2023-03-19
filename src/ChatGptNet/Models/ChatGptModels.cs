@@ -3,10 +3,27 @@
 /// <summary>
 /// Contains all the currently supported chat completion models.
 /// </summary>
+/// <remarks>Refer to https://platform.openai.com/docs/models/overview for more information.</remarks>
 public static class ChatGptModels
 {
     /// <summary>
-    /// The model used by the official ChatGPT.
+    /// GPT-3.5 model can understand and generate natural language or code and it is optimized for chat.
     /// </summary>
+    /// <remarks>Refer to https://platform.openai.com/docs/models/gpt-3-5 for more information.</remarks>
     public const string Gpt35Turbo = "gpt-3.5-turbo";
+
+    /// <summary>
+    /// GPT-4 is a large multimodal model that can solve difficult problems with greater accuracy than any of our previous models, thanks to its broader general knowledge and advanced reasoning capabilities. is optimized for chat but works well for traditional completions tasks.
+    /// </summary>
+    /// <remarks>This model is currently in a limited beta and only accessible to those who have been granted access. Refer to https://platform.openai.com/docs/models/gpt-4 for more information.</remarks>
+    /// <seealso cref="Gpt4_32k"/>
+    public const string Gpt4 = "gpt-4";
+
+    /// <summary>
+    /// A model with the same capabilities as the base <see cref="Gpt4"/> model, but with 4x the context length.
+    /// </summary>
+    /// <remarks>This model is currently in a limited beta and only accessible to those who have been granted access. Refer to https://platform.openai.com/docs/models/gpt-4 for more information.</remarks>
+    /// <seealso cref="Gpt4"/>
+    public const string Gpt4_32k = "gpt-4-32k";
+
 }
