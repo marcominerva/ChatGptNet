@@ -40,7 +40,7 @@ public class ChatGptOptions
     public string? Organization { get; set; }
 
     /// <summary>
-    /// Gets or sets a default value for the ChatGptModel to use. (default: <see cref="ChatGptModels.Gpt35Turbo"/> model).
+    /// Gets or sets the default model for chat completion. (default: <see cref="ChatGptModels.Gpt35Turbo"/>).
     /// </summary>
     /// <see cref="ChatGptModels"/>
     public string DefaultModel { get; set; } = ChatGptModels.Gpt35Turbo;
