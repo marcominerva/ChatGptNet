@@ -23,15 +23,23 @@
     <ItemGroup>
         <None Remove="ChatGptNet.xml" />
     </ItemGroup>
-    
-    <ItemGroup>
+
+    <ItemGroup Condition="'$(TargetFramework)' == 'net6.0'">
+        <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="6.0.1" />
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="6.0.0" />
+        <PackageReference Include="Microsoft.Extensions.Http" Version="6.0.0" />
+        <PackageReference Include="System.Net.Http.Json" Version="6.0.1" />
+        <PackageReference Include="System.Text.Json" Version="6.0.7" />
+    </ItemGroup>
+
+    <ItemGroup Condition="'$(TargetFramework)' == 'net7.0'">
         <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="7.0.0" />
         <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="7.0.0" />
         <PackageReference Include="Microsoft.Extensions.Http" Version="7.0.0" />
         <PackageReference Include="System.Net.Http.Json" Version="7.0.1" />
         <PackageReference Include="System.Text.Json" Version="7.0.2" />
     </ItemGroup>
-
+    
     <ItemGroup>
         <None Include="..\..\Chat.png">
             <Pack>True</Pack>
