@@ -19,6 +19,5 @@ static void ConfigureServices(HostBuilderContext context, IServiceCollection ser
         options.ApiKey = "";
         options.MessageLimit = 16;  // Default: 10
         options.MessageExpiration = TimeSpan.FromMinutes(5);    // Default: 1 hour
-        options.OpenAIOrganization = null;
     });
 }
