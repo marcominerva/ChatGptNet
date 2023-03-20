@@ -39,7 +39,7 @@ ChatGPT is aimed to support conversational scenarios: user can talk to ChatGPT w
 * *MessageLimit*: specifies how many messages for each conversation must be saved. When this limit is reached, oldest messages are automatically removed.
 * *MessageExpiration*: specifies the time interval used to maintain messages in cache, regardless their count.
 
-The **AddChatGpt** method provides an overload that accepts an [IServiceProvider](https://learn.microsoft.com/en-us/dotnet/api/system.iserviceprovider) as argument. It can be used, for example, if we're in a Web API and we need to support scenarios in which every user has a different API key that can be retrieved accessing a database via Dependency Injection.
+The **AddChatGpt** method has an overload that accepts an [IServiceProvider](https://learn.microsoft.com/en-us/dotnet/api/system.iserviceprovider) as argument. It can be used, for example, if we're in a Web API and we need to support scenarios in which every user has a different API key that can be retrieved accessing a database via Dependency Injection.
 
 **Usage**
 
