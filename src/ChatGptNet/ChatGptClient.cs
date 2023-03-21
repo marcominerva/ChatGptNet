@@ -146,9 +146,11 @@ internal class ChatGptClient : IChatGptClient
         if (httpResponse.IsSuccessStatusCode)
         {
             var contentBuilder = new StringBuilder();
+
             using (var responseStream = await httpResponse.Content.ReadAsStreamAsync(cancellationToken))
             {
                 using var reader = new StreamReader(responseStream);
+
                 while (!reader.EndOfStream)
                 {
                     var line = await reader.ReadLineAsync() ?? string.Empty;
@@ -157,7 +159,7 @@ internal class ChatGptClient : IChatGptClient
                         var json = line["data: ".Length..];
                         var response = JsonSerializer.Deserialize<ChatGptResponse>(json, jsonSerializerOptions);
 
-                        var content = response!.Choices[0].Delta?.Content ?? string.Empty;
+                        var content = response!.Choices[0].Delta!.Content ?? string.Empty;
 
                         if (contentBuilder.Length == 0)
                         {
@@ -168,7 +170,7 @@ internal class ChatGptClient : IChatGptClient
 
                         contentBuilder.Append(content);
 
-                        // Yield the result only if text has been added to the content.
+                        // Yields the result only if text has been added to the content.
                         if (contentBuilder.Length > 0)
                         {
                             response.ConversationId = conversationId;

@@ -63,7 +63,45 @@ If we just want to retrieve the response message, we can call the **GetMessage**
 **Handling a conversation**
 
 The **AskAsync** method has an overload (the one shown in the example above) that requires a *conversationId* parameter. If we pass an empty value, a random one is generated and returned.
-We can pass this value in subsequent invocations of **AskAsync** so that the library automatically retrieves previous messages of the current conversation (according to *MessageLimit* and *MessageExpiration* settings) and send them to ChatGPT.
+We can pass this value in subsequent invocations of **AskAsync** so that the library automatically retrieves previous messages of the current conversation (according to *MessageLimit* and *MessageExpiration* settings) and send them to chat completion API.
+
+**Response streaming**
+
+Chat completion API supports response streaming. When using this feature,  partial message deltas will be sent, like in ChatGPT. Tokens will be sent as data-only server-sent events as they become available. **ChatGptNet** provides response streaming using the **AskStreamAsync** method:
+
+    // Requests a streaming response.
+    var responseStream = chatGptClient.AskStreamAsync(conversationId, message);
+
+    await foreach (var response in responseStream)
+    {
+        Console.Write(response.GetMessage());
+        await Task.Delay(80);
+    }
+
+![](/assets/ChatGptConsoleStreaming.gif)
+
+Response streaming works by returning an [IAsyncEnumerable](https://learn.microsoft.com/en-us/dotnet/api/system.collections.generic.iasyncenumerable-1), so it works even in a Web API project:
+
+    app.MapGet("/api/chat/stream", (Guid? conversationId, string message, IChatGptClient chatGptClient) =>
+    {
+        async IAsyncEnumerable<string> Stream()
+        {
+            // Requests a streaming response.
+            var responseStream = chatGptClient.AskStreamAsync(conversationId.GetValueOrDefault(), message);
+
+            // Uses the "AsMessages" extension method to retrieve the partial message deltas only.
+            await foreach (var response in responseStream.AsMessages())
+            {
+                yield return response;
+                await Task.Delay(50);
+            }
+        }
+
+        return Stream();
+    })
+    .WithOpenApi();
+
+![](/assets/ChatGptApiStreaming.gif)
 
 **Changing the assistant's behavior**
 

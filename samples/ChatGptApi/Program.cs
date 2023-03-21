@@ -14,7 +14,7 @@ builder.Services.ConfigureHttpJsonOptions(options =>
     options.SerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
 });
 
-// Add ChatGPT service.
+// Adds ChatGPT service.
 builder.Services.AddChatGpt(options =>
 {
     options.ApiKey = "";
@@ -22,9 +22,7 @@ builder.Services.AddChatGpt(options =>
     options.MessageExpiration = TimeSpan.FromMinutes(5);    // Default: 1 hour
 });
 
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-
 builder.Services.AddSwaggerGen(options =>
 {
     options.AddMissingSchemas();
@@ -40,7 +38,7 @@ builder.Services.AddProblemDetails(options =>
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// Configures the HTTP request pipeline.
 app.UseHttpsRedirection();
 
 if (!app.Environment.IsDevelopment())
@@ -56,7 +54,7 @@ if (!app.Environment.IsDevelopment())
 
             if (context.RequestServices.GetService<IProblemDetailsService>() is { } problemDetailsService)
             {
-                // Write as JSON problem details
+                // Writes as JSON problem details
                 await problemDetailsService.WriteAsync(new()
                 {
                     HttpContext = context,
@@ -88,7 +86,6 @@ if (!app.Environment.IsDevelopment())
 app.UseStatusCodePages();
 
 app.UseSwagger();
-
 app.UseSwaggerUI(options =>
 {
     options.RoutePrefix = string.Empty;
@@ -116,7 +113,7 @@ app.MapGet("/api/chat/stream", (Guid? conversationId, string message, IChatGptCl
         // Requests a streaming response.
         var responseStream = chatGptClient.AskStreamAsync(conversationId.GetValueOrDefault(), message);
 
-        // Use the "AsMessages" extension method to retrieve the partial message deltas only.
+        // Uses the "AsMessages" extension method to retrieve the partial message deltas only.
         await foreach (var response in responseStream.AsMessages())
         {
             yield return response;

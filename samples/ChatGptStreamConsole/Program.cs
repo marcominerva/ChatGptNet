@@ -13,7 +13,7 @@ static void ConfigureServices(HostBuilderContext context, IServiceCollection ser
 {
     services.AddSingleton<Application>();
 
-    // Add ChatGPT service.
+    // Adds ChatGPT service.
     services.AddChatGpt(options =>
     {
         options.ApiKey = "";
