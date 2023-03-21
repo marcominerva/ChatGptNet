@@ -3,6 +3,7 @@ using System.Net.Mime;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Nodes;
 using ChatGptNet.Exceptions;
 using ChatGptNet.Models;
 using Microsoft.Extensions.Caching.Memory;
@@ -22,6 +23,8 @@ internal class ChatGptClient : IChatGptClient
         this.httpClient = httpClient;
         this.cache = cache;
         this.options = options;
+
+        jsonSerializerOptions.DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull;
     }
 
     public Task<Guid> SetupAsync(Guid conversationId, string message)
@@ -48,7 +51,7 @@ internal class ChatGptClient : IChatGptClient
         return Task.FromResult(conversationId);
     }
 
-    public async Task<ChatGptResponse> AskAsync(Guid conversationId, string message, string? model, CancellationToken cancellationToken = default)
+    public async Task<ChatGptResponse> AskAsync(Guid conversationId, string message, string? model, ChatGptParameters? chatGptParameters = null, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(message);
 
@@ -71,7 +74,13 @@ internal class ChatGptClient : IChatGptClient
         var request = new ChatGptRequest
         {
             Model = model ?? options.DefaultModel,
-            Messages = messages.ToArray()
+            Messages = messages.ToArray(),
+            Temperature = chatGptParameters?.Temperature ?? options.Temperature,
+            TopP = chatGptParameters?.TopP ?? options.TopP,
+            N = chatGptParameters?.N ?? options.N,
+            MaxTokens = chatGptParameters?.MaxTokens ?? options.MaxTokens,
+            PresencePenalty = chatGptParameters?.PresencePenalty ?? options.PresencePenalty,
+            FrequencyPenalty = chatGptParameters?.FrequencyPenalty ?? options.FrequencyPenalty
         };
 
         using var httpResponse = await httpClient.PostAsJsonAsync("chat/completions", request, cancellationToken);
@@ -109,7 +118,7 @@ internal class ChatGptClient : IChatGptClient
         return response;
     }
 
-    public async IAsyncEnumerable<ChatGptResponse> AskStreamAsync(Guid conversationId, string message, string? model, [EnumeratorCancellation] CancellationToken cancellationToken = default)
+    public async IAsyncEnumerable<ChatGptResponse> AskStreamAsync(Guid conversationId, string message, string? model, ChatGptParameters? chatGptParameters = null, [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(message);
 
@@ -133,7 +142,14 @@ internal class ChatGptClient : IChatGptClient
         {
             Model = model ?? options.DefaultModel,
             Messages = messages.ToArray(),
-            Stream = true
+            Stream = true,
+            Temperature = chatGptParameters?.Temperature ?? options.Temperature,
+            TopP = chatGptParameters?.TopP ?? options.TopP,
+            N = chatGptParameters?.N ?? options.N,
+            MaxTokens = chatGptParameters?.MaxTokens ?? options.MaxTokens,
+            PresencePenalty = chatGptParameters?.PresencePenalty ?? options.PresencePenalty,
+            FrequencyPenalty = chatGptParameters?.FrequencyPenalty ?? options.FrequencyPenalty,
+            LogitBias = chatGptParameters?.LogitBias ?? options.LogitBias
         };
 
         using var requestMessage = new HttpRequestMessage(HttpMethod.Post, "chat/completions")
@@ -153,7 +169,7 @@ internal class ChatGptClient : IChatGptClient
 
                 while (!reader.EndOfStream)
                 {
-                    var line = await reader.ReadLineAsync() ?? string.Empty;
+                    var line = await reader.ReadLineAsync(cancellationToken) ?? string.Empty;
                     if (line.StartsWith("data: {"))
                     {
                         var json = line["data: ".Length..];

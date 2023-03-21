@@ -1,9 +1,11 @@
-﻿namespace ChatGptNet.Models;
+﻿using System.Text.Json.Serialization;
+
+namespace ChatGptNet.Models;
 
 /// <summary>
 /// Represents a request for a chat completions.
 /// </summary>
-public class ChatGptRequest
+public class ChatGptRequest : ChatGptParameters
 {
     /// <summary>
     /// Gets or sets the ID of the model to use. Currently, only <em>gpt-3.5-turbo</em> and <em>gpt-3.5-turbo-0301</em> are supported.
