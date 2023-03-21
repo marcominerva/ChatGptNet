@@ -169,7 +169,7 @@ internal class ChatGptClient : IChatGptClient
 
                 while (!reader.EndOfStream)
                 {
-                    var line = await reader.ReadLineAsync(cancellationToken) ?? string.Empty;
+                    var line = await reader.ReadLineAsync() ?? string.Empty;
                     if (line.StartsWith("data: {"))
                     {
                         var json = line["data: ".Length..];
