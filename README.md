@@ -80,7 +80,7 @@ Chat completion API supports response streaming. When using this feature,  parti
 
 ![](/assets/ChatGptConsoleStreaming.gif)
 
-Response streaming works by returning an [IAsyncEnumerable](https://learn.microsoft.com/en-us/dotnet/api/system.collections.generic.iasyncenumerable-1), so it works even in a Web API project:
+Response streaming works by returning an [IAsyncEnumerable](https://learn.microsoft.com/en-us/dotnet/api/system.collections.generic.iasyncenumerable-1), so it can be used even in a Web API project:
 
     app.MapGet("/api/chat/stream", (Guid? conversationId, string message, IChatGptClient chatGptClient) =>
     {
