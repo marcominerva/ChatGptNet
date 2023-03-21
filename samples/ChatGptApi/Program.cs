@@ -2,6 +2,7 @@ using System.Diagnostics;
 using System.Net.Mime;
 using System.Text.Json.Serialization;
 using ChatGptNet;
+using ChatGptNet.Extensions;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.WebUtilities;
 using MinimalHelpers.OpenApi;
@@ -105,6 +106,25 @@ app.MapPost("/api/chat/ask", async (Request request, IChatGptClient chatGptClien
 {
     var response = await chatGptClient.AskAsync(request.ConversationId, request.Message);
     return TypedResults.Ok(response);
+})
+.WithOpenApi();
+
+app.MapGet("/api/chat/stream", (Guid? conversationId, string message, IChatGptClient chatGptClient) =>
+{
+    async IAsyncEnumerable<string> Stream()
+    {
+        // Requests a streaming response.
+        var responseStream = chatGptClient.AskStreamAsync(conversationId.GetValueOrDefault(), message);
+
+        // Use the "AsMessages" extension method to retrieve the partial message deltas only.
+        await foreach (var response in responseStream.AsMessages())
+        {
+            yield return response;
+            await Task.Delay(50);
+        }
+    }
+
+    return Stream();
 })
 .WithOpenApi();
 

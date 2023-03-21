@@ -38,6 +38,7 @@ internal class Application
                 {
                     Console.WriteLine("I'm thinking...");
 
+                    // Requests a streaming response.
                     var responseStream = chatGptClient.AskStreamAsync(conversationId, message);
 
                     await foreach (var response in responseStream)

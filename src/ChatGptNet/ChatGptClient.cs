@@ -145,7 +145,7 @@ internal class ChatGptClient : IChatGptClient
 
         if (httpResponse.IsSuccessStatusCode)
         {
-            var content = new StringBuilder();
+            var contentBuilder = new StringBuilder();
             using (var responseStream = await httpResponse.Content.ReadAsStreamAsync(cancellationToken))
             {
                 using var reader = new StreamReader(responseStream);
@@ -155,24 +155,24 @@ internal class ChatGptClient : IChatGptClient
                     if (line.StartsWith("data: {"))
                     {
                         var json = line["data: ".Length..];
-                        var deltaResponse = JsonSerializer.Deserialize<ChatGptResponse>(json, jsonSerializerOptions);
+                        var response = JsonSerializer.Deserialize<ChatGptResponse>(json, jsonSerializerOptions);
 
-                        var text = deltaResponse!.Choices[0].Delta?.Content ?? string.Empty;
+                        var content = response!.Choices[0].Delta?.Content ?? string.Empty;
 
-                        if (content.Length == 0)
+                        if (contentBuilder.Length == 0)
                         {
                             // If this is the first response, trims all the initial special characters.
-                            text = content.Length == 0 ? text.TrimStart('\n') : text;
-                            deltaResponse.Choices[0].Delta!.Content = text;
+                            content = contentBuilder.Length == 0 ? content.TrimStart('\n') : content;
+                            response.Choices[0].Delta!.Content = content;
                         }
 
-                        content.Append(text);
+                        contentBuilder.Append(content);
 
                         // Yield the result only if text has been added to the content.
-                        if (content.Length > 0)
+                        if (contentBuilder.Length > 0)
                         {
-                            deltaResponse.ConversationId = conversationId;
-                            yield return deltaResponse;
+                            response.ConversationId = conversationId;
+                            yield return response;
                         }
                     }
                     else if (line.StartsWith("data: [DONE]"))
@@ -186,7 +186,7 @@ internal class ChatGptClient : IChatGptClient
             messages.Add(new ChatGptMessage
             {
                 Role = ChatGptRoles.Assistant,
-                Content = content.ToString()
+                Content = contentBuilder.ToString()
             });
 
             // If the maximum number of messages has been reached, deletes the oldest ones.
