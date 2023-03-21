@@ -54,5 +54,6 @@ public class ChatGptResponse
     /// Gets the content of the first choice, if available.
     /// </summary>
     /// <returns>The content of the first choice, if available</returns>
-    public string? GetMessage() => Choices.FirstOrDefault()?.Message.Content.Trim();
+    /// <remarks>When using streaming responses, the <see cref="GetMessage"/> property return a partial message delta.</remarks>
+    public string? GetMessage() => Choices.FirstOrDefault()?.Delta?.Content ?? Choices.FirstOrDefault()?.Message.Content.Trim();
 }
