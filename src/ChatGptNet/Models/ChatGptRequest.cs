@@ -15,4 +15,9 @@ public class ChatGptRequest
     /// </summary>
     /// <seealso cref="ChatGptMessage"/>
     public ChatGptMessage[] Messages { get; set; } = Array.Empty<ChatGptMessage>();
+
+    /// <summary>
+    /// Gets or sets a value that specify if response will be sent in streaming as partial message deltas.
+    /// </summary>
+    public bool Stream { get; set; }
 }

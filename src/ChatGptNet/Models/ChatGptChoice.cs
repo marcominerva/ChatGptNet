@@ -19,6 +19,12 @@ public class ChatGptChoice
     public ChatGptMessage Message { get; set; } = new();
 
     /// <summary>
+    /// When using streaming responses, gets or sets the partial message delta associated with this <see cref="ChatGptChoice"/>.
+    /// </summary>
+    /// <see cref="ChatGptRequest.Stream"/>
+    public ChatGptMessage? Delta { get; set; }
+
+    /// <summary>
     /// Gets or sets a value specifying why the choice has been returned. Possible values are: <em>stop</em> (API returned complete model output), <em>length</em> (incomplete model output due to max_tokens parameter or token limit), <em>content_filter</em> (omitted content due to a flag from content filters) or <em>null</em> (API response still in progress or incomplete).
     /// </summary>
     [JsonPropertyName("finish_reason")]
