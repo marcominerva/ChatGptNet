@@ -236,6 +236,7 @@ internal class ChatGptClient : IChatGptClient
             N = parameters?.N ?? options.DefaultParameters.N,
             MaxTokens = parameters?.MaxTokens ?? options.DefaultParameters.MaxTokens,
             PresencePenalty = parameters?.PresencePenalty ?? options.DefaultParameters.PresencePenalty,
-            FrequencyPenalty = parameters?.FrequencyPenalty ?? options.DefaultParameters.FrequencyPenalty
+            FrequencyPenalty = parameters?.FrequencyPenalty ?? options.DefaultParameters.FrequencyPenalty,
+            LogitBias = parameters?.LogitBias ?? options.DefaultParameters.LogitBias
         };
 }
