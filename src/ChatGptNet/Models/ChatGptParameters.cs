@@ -63,6 +63,16 @@ public class ChatGptParameters
     /// <summary>
     /// Gets or sets the logit_bias option for chat completion.
     /// </summary>
+    /// <example>
+    ///     <para>
+    ///         The following is an example showing how to set the property from a string
+    ///     </para>
+    ///     <code>parameters.LogitBias = JsonNode.Parse("{\"50256\": -100}");</code>
+    /// </example>
+    /// <seealso cref="JsonNode.Parse(string, JsonNodeOptions?, System.Text.Json.JsonDocumentOptions)"/>
+    /// <seealso cref="JsonNode.Parse(ref System.Text.Json.Utf8JsonReader, JsonNodeOptions?)"/>
+    /// <seealso cref="JsonNode.Parse(ReadOnlySpan{byte}, JsonNodeOptions?, System.Text.Json.JsonDocumentOptions)"/>
+    /// <seealso cref="JsonNode.Parse(Stream, JsonNodeOptions?, System.Text.Json.JsonDocumentOptions)"/>
     /// <remarks>
     /// Refer to https://platform.openai.com/docs/api-reference/chat/create#chat/create-logit_bias for more information
     /// </remarks>
