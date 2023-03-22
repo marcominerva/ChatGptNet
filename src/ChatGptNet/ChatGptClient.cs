@@ -15,7 +15,10 @@ internal class ChatGptClient : IChatGptClient
     private readonly IMemoryCache cache;
     private readonly ChatGptOptions options;
 
-    private static readonly JsonSerializerOptions jsonSerializerOptions = new(JsonSerializerDefaults.Web) { DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull };
+    private static readonly JsonSerializerOptions jsonSerializerOptions = new(JsonSerializerDefaults.Web)
+    {
+        DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull
+    };
 
     public ChatGptClient(HttpClient httpClient, IMemoryCache cache, ChatGptOptions options)
     {
@@ -58,7 +61,7 @@ internal class ChatGptClient : IChatGptClient
             conversationId = Guid.NewGuid();
         }
 
-        List<ChatGptMessage> messages = GetMessages(conversationId, message);
+        var messages = GetMessages(conversationId, message);
 
         var request = CreateRequest(messages, false, parameters, model);
 
@@ -107,7 +110,7 @@ internal class ChatGptClient : IChatGptClient
             conversationId = Guid.NewGuid();
         }
 
-        List<ChatGptMessage> messages = GetMessages(conversationId, message);
+        var messages = GetMessages(conversationId, message);
 
         var request = CreateRequest(messages, true, parameters, model);
 
@@ -222,9 +225,8 @@ internal class ChatGptClient : IChatGptClient
         return messages;
     }
 
-    private ChatGptRequest CreateRequest(List<ChatGptMessage> messages, bool stream, ChatGptParameters? parameters = null, string ? model = null)
-    {
-        return new ChatGptRequest
+    private ChatGptRequest CreateRequest(List<ChatGptMessage> messages, bool stream, ChatGptParameters? parameters = null, string? model = null)
+        => new()
         {
             Model = model ?? options.DefaultModel,
             Messages = messages.ToArray(),
@@ -236,5 +238,4 @@ internal class ChatGptClient : IChatGptClient
             PresencePenalty = parameters?.PresencePenalty ?? options.DefaultParameters.PresencePenalty,
             FrequencyPenalty = parameters?.FrequencyPenalty ?? options.DefaultParameters.FrequencyPenalty
         };
-    }
 }

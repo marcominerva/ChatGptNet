@@ -1,5 +1,4 @@
 ﻿using System.Text.Json.Nodes;
-using System.Text.Json.Serialization;
 
 namespace ChatGptNet.Models;
 
@@ -22,7 +21,6 @@ public class ChatGptParameters
     /// <remarks>
     /// Refer to https://platform.openai.com/docs/api-reference/chat/create#chat/create-top_p for more information
     /// </remarks>
-    [JsonPropertyName("top_p")]
     public double? TopP { get; set; }
 
     /// <summary>
@@ -39,7 +37,6 @@ public class ChatGptParameters
     /// <remarks>
     /// Refer to https://platform.openai.com/docs/api-reference/chat/create#chat/create-max_tokens for more information
     /// </remarks>
-    [JsonPropertyName("max_tokens")]
     public int? MaxTokens { get; set; }
 
     /// <summary>
@@ -48,7 +45,6 @@ public class ChatGptParameters
     /// <remarks>
     /// Refer to https://platform.openai.com/docs/api-reference/chat/create#chat/create-presence_penalty for more information
     /// </remarks>
-    [JsonPropertyName("presence_penalty")]
     public double? PresencePenalty { get; set; }
 
     /// <summary>
@@ -57,7 +53,6 @@ public class ChatGptParameters
     /// <remarks>
     /// Refer to https://platform.openai.com/docs/api-reference/chat/create#chat/create-frequency_penalty for more information
     /// </remarks>
-    [JsonPropertyName("frequency_penalty")]
     public double? FrequencyPenalty { get; set; }
 
     /// <summary>
@@ -76,6 +71,5 @@ public class ChatGptParameters
     /// <remarks>
     /// Refer to https://platform.openai.com/docs/api-reference/chat/create#chat/create-logit_bias for more information
     /// </remarks>
-    [JsonPropertyName("logit_bias")]
     public JsonNode? LogitBias { get; set; }
 }
