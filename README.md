@@ -45,7 +45,7 @@ The **AddChatGpt** method has an overload that accepts an [IServiceProvider](htt
 
 The library can be used in any .NET application built with .NET 6.0 or later. For example, we can create a Minimal API in this way:
 
-    app.MapPost("/api/ask", async (Request request, IChatGptClient chatGptClient) =>
+    app.MapPost("/api/chat/ask", async (Request request, IChatGptClient chatGptClient) =>
     {
         var response = await chatGptClient.AskAsync(request.ConversationId, request.Message);
         return TypedResults.Ok(response);
@@ -67,7 +67,7 @@ We can pass this value in subsequent invocations of **AskAsync** so that the lib
 
 **Response streaming**
 
-Chat completion API supports response streaming. When using this feature,  partial message deltas will be sent, like in ChatGPT. Tokens will be sent as data-only server-sent events as they become available. **ChatGptNet** provides response streaming using the **AskStreamAsync** method:
+Chat completion API supports response streaming. When using this feature, partial message deltas will be sent, like in ChatGPT. Tokens will be sent as data-only server-sent events as they become available. **ChatGptNet** provides response streaming using the **AskStreamAsync** method:
 
     // Requests a streaming response.
     var responseStream = chatGptClient.AskStreamAsync(conversationId, message);

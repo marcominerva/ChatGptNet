@@ -159,22 +159,25 @@ internal class ChatGptClient : IChatGptClient
                         var json = line["data: ".Length..];
                         var response = JsonSerializer.Deserialize<ChatGptResponse>(json, jsonSerializerOptions);
 
-                        var content = response!.Choices[0].Delta!.Content ?? string.Empty;
+                        var content = response!.Choices?[0].Delta?.Content;
 
-                        if (contentBuilder.Length == 0)
+                        if (!string.IsNullOrEmpty(content))
                         {
-                            // If this is the first response, trims all the initial special characters.
-                            content = contentBuilder.Length == 0 ? content.TrimStart('\n') : content;
-                            response.Choices[0].Delta!.Content = content;
-                        }
+                            if (contentBuilder.Length == 0)
+                            {
+                                // If this is the first response, trims all the initial special characters.
+                                content = content.TrimStart('\n');
+                                response.Choices![0].Delta!.Content = content;
+                            }
 
-                        contentBuilder.Append(content);
+                            // Yields the response only if there is an actual content.
+                            if (content != string.Empty)
+                            {
+                                contentBuilder.Append(content);
 
-                        // Yields the result only if text has been added to the content.
-                        if (contentBuilder.Length > 0)
-                        {
-                            response.ConversationId = conversationId;
-                            yield return response;
+                                response.ConversationId = conversationId;
+                                yield return response;
+                            }
                         }
                     }
                     else if (line.StartsWith("data: [DONE]"))
@@ -209,10 +212,17 @@ internal class ChatGptClient : IChatGptClient
 
             cache.Set(conversationId, messages, options.MessageExpiration);
         }
-        else if (options.ThrowExceptionOnError)
+        else
         {
             var response = await httpResponse.Content.ReadFromJsonAsync<ChatGptResponse>(cancellationToken: cancellationToken);
-            throw new ChatGptException(response!.Error!, httpResponse.StatusCode);
+
+            if (options.ThrowExceptionOnError)
+            {
+                throw new ChatGptException(response!.Error!, httpResponse.StatusCode);
+            }
+
+            response!.ConversationId = conversationId;
+            yield return response;
         }
     }
 
