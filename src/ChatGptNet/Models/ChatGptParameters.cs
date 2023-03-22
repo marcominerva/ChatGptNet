@@ -4,7 +4,7 @@ using System.Text.Json.Serialization;
 namespace ChatGptNet.Models;
 
 /// <summary>
-/// Represents a chat completion parameters.
+/// Represents chat completion parameters.
 /// </summary>
 public class ChatGptParameters
 {

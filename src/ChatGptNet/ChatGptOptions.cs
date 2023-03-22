@@ -1,5 +1,4 @@
-﻿using System.Text.Json.Nodes;
-using ChatGptNet.Exceptions;
+﻿using ChatGptNet.Exceptions;
 using ChatGptNet.Models;
 
 namespace ChatGptNet;
@@ -47,58 +46,8 @@ public class ChatGptOptions
     public string DefaultModel { get; set; } = ChatGptModels.Gpt35Turbo;
 
     /// <summary>
-    /// Gets or sets the temperature option for chat completion.
+    ///  Gets or sets the default parameters for chat completion.
     /// </summary>
-    /// <remarks>
-    /// Refer to https://platform.openai.com/docs/api-reference/chat/create#chat/create-temperature for more information
-    /// </remarks>
-    public double? Temperature { get; set; }
-
-    /// <summary>
-    /// Gets or sets the top_p option for chat completion.
-    /// </summary>
-    /// <remarks>
-    /// Refer to https://platform.openai.com/docs/api-reference/chat/create#chat/create-top_p for more information
-    /// </remarks>
-    public double? TopP { get; set; }
-
-    /// <summary>
-    /// Gets or sets the n option for chat completion.
-    /// </summary>
-    /// <remarks>
-    /// Refer to https://platform.openai.com/docs/api-reference/chat/create#chat/create-n for more information
-    /// </remarks>
-    public int? N { get; set; }
-
-    /// <summary>
-    /// Gets or sets the max_tokens option for chat completion.
-    /// </summary>
-    /// <remarks>
-    /// Refer to https://platform.openai.com/docs/api-reference/chat/create#chat/create-max_tokens for more information
-    /// </remarks>
-    public int? MaxTokens { get; set; }
-
-    /// <summary>
-    /// Gets or sets the presence_penalty option for chat completion.
-    /// </summary>
-    /// <remarks>
-    /// Refer to https://platform.openai.com/docs/api-reference/chat/create#chat/create-presence_penalty for more information
-    /// </remarks>
-    public double? PresencePenalty { get; set; }
-
-    /// <summary>
-    /// Gets or sets the frequency_penalty option for chat completion.
-    /// </summary>
-    /// <remarks>
-    /// Refer to https://platform.openai.com/docs/api-reference/chat/create#chat/create-frequency_penalty for more information
-    /// </remarks>
-    public double? FrequencyPenalty { get; set; }
-
-    /// <summary>
-    /// Gets or sets the logit_bias option for chat completion.
-    /// </summary>
-    /// <remarks>
-    /// Refer to https://platform.openai.com/docs/api-reference/chat/create#chat/create-logit_bias for more information
-    /// </remarks>
-    public JsonNode? LogitBias { get; set; }
+    /// <see cref="ChatGptParameters"/>
+    public ChatGptParameters DefaultParameters { get; set; } = new();
 }
