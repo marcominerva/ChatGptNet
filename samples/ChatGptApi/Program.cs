@@ -113,10 +113,10 @@ app.MapGet("/api/chat/stream", (Guid? conversationId, string message, IChatGptCl
         // Requests a streaming response.
         var responseStream = chatGptClient.AskStreamAsync(conversationId.GetValueOrDefault(), message);
 
-        // Uses the "AsMessages" extension method to retrieve the partial message deltas only.
-        await foreach (var response in responseStream.AsMessages())
+        // Uses the "AsDeltas" extension method to retrieve partial message deltas only.
+        await foreach (var delta in responseStream.AsDeltas())
         {
-            yield return response;
+            yield return delta;
             await Task.Delay(50);
         }
     }
