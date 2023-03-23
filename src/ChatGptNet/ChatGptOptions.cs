@@ -44,4 +44,10 @@ public class ChatGptOptions
     /// </summary>
     /// <see cref="ChatGptModels"/>
     public string DefaultModel { get; set; } = ChatGptModels.Gpt35Turbo;
+
+    /// <summary>
+    ///  Gets or sets the default parameters for chat completion.
+    /// </summary>
+    /// <see cref="ChatGptParameters"/>
+    public ChatGptParameters DefaultParameters { get; set; } = new();
 }
