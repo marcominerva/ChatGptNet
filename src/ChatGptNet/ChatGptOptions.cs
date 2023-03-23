@@ -12,7 +12,7 @@ public class ChatGptOptions
     /// Gets or sets the API Key to access the service.
     /// </summary>
     /// <remarks>
-    /// Refer to https://help.openai.com/en/articles/4936850-where-do-i-find-my-secret-api-key for more information.
+    /// See <see href="https://help.openai.com/en/articles/4936850-where-do-i-find-my-secret-api-key">Where do I find my Secret API Key?</see> for more information.
     /// </remarks>
     public string? ApiKey { get; set; }
 
@@ -49,5 +49,5 @@ public class ChatGptOptions
     ///  Gets or sets the default parameters for chat completion.
     /// </summary>
     /// <see cref="ChatGptParameters"/>
-    public ChatGptParameters DefaultParameters { get; set; } = new();
+    public ChatGptParameters DefaultParameters { get; } = new();
 }

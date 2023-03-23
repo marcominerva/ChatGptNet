@@ -1,11 +1,13 @@
-﻿using System.Text.Json.Nodes;
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 
 namespace ChatGptNet.Models;
 
 /// <summary>
 /// Represents a request for a chat completions.
 /// </summary>
+/// <remarks>
+/// See <see href="https://platform.openai.com/docs/api-reference/chat/create">Create chat completion</see> for more information.
+/// </remarks>
 public class ChatGptRequest
 {
     /// <summary>
@@ -25,63 +27,51 @@ public class ChatGptRequest
     public bool Stream { get; set; }
 
     /// <summary>
-    /// Gets or sets the temperature option for chat completion.
+    /// Gets or sets what sampling temperature to use, between 0 and 2. Higher values like 0.8 will make the output more random, while lower values like 0.2 will make it more focused and deterministic (default: 1).
     /// </summary>
     /// <remarks>
-    /// Refer to https://platform.openai.com/docs/api-reference/chat/create#chat/create-temperature for more information
+    /// It is generally recommend altering this value or <see cref="TopP"/> but not both.
     /// </remarks>
+    /// <seealso cref="TopP"/>
     public double? Temperature { get; set; }
 
     /// <summary>
-    /// Gets or sets the top_p option for chat completion.
+    /// Gets or sets an alternative to sampling with temperature, called nucleus sampling, where the model considers the results of the tokens with <see cref="TopP"/> probability mass. So 0.1 means only the tokens comprising the top 10% probability mass are considered (default: 1).
     /// </summary>
     /// <remarks>
-    /// Refer to https://platform.openai.com/docs/api-reference/chat/create#chat/create-top_p for more information
+    /// It is generally recommend altering this value or <see cref="Temperature"/> but not both.
     /// </remarks>
+    /// <seealso cref="Temperature"/>
     [JsonPropertyName("top_p")]
     public double? TopP { get; set; }
 
     /// <summary>
-    /// Gets or sets the n option for chat completion.
+    /// Gets or sets how many chat completion choices to generate for each input message (default: 1).
     /// </summary>
-    /// <remarks>
-    /// Refer to https://platform.openai.com/docs/api-reference/chat/create#chat/create-n for more information
-    /// </remarks>
-    public int? N { get; set; }
+    [JsonPropertyName("n")]
+    public int? Choices { get; set; }
 
     /// <summary>
-    /// Gets or sets the max_tokens option for chat completion.
+    /// Gets or sets the maximum number of tokens to generate in the chat completion. The total length of input tokens and generated tokens is limited by the model's context length.
     /// </summary>
-    /// <remarks>
-    /// Refer to https://platform.openai.com/docs/api-reference/chat/create#chat/create-max_tokens for more information
-    /// </remarks>
     [JsonPropertyName("max_tokens")]
     public int? MaxTokens { get; set; }
 
     /// <summary>
-    /// Gets or sets the presence_penalty option for chat completion.
+    /// Gets or sets the presence penalties for chat completion. Number between -2.0 and 2.0. Positive values penalize new tokens based on whether they appear in the text so far, increasing the model's likelihood to talk about new topics (default: 0).
     /// </summary>
     /// <remarks>
-    /// Refer to https://platform.openai.com/docs/api-reference/chat/create#chat/create-presence_penalty for more information
+    /// See <see href="https://platform.openai.com/docs/api-reference/parameter-details">Parameter details</see> for more information.
     /// </remarks>
     [JsonPropertyName("presence_penalty")]
     public double? PresencePenalty { get; set; }
 
     /// <summary>
-    /// Gets or sets the frequency_penalty option for chat completion.
+    /// Gets or sets the frequency penalties for chat completion. Number between -2.0 and 2.0. Positive values penalize new tokens based on their existing frequency in the text so far, decreasing the model's likelihood to repeat the same line verbatim (default: 0).
     /// </summary>
     /// <remarks>
-    /// Refer to https://platform.openai.com/docs/api-reference/chat/create#chat/create-frequency_penalty for more information
+    /// See <see href="https://platform.openai.com/docs/api-reference/parameter-details">Parameter details</see> for more information.
     /// </remarks>
     [JsonPropertyName("frequency_penalty")]
     public double? FrequencyPenalty { get; set; }
-
-    /// <summary>
-    /// Gets or sets the logit_bias option for chat completion.
-    /// </summary>
-    /// <remarks>
-    /// Refer to https://platform.openai.com/docs/api-reference/chat/create#chat/create-logit_bias for more information
-    /// </remarks>
-    [JsonPropertyName("logit_bias")]
-    public JsonNode? LogitBias { get; set; }
 }

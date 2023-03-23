@@ -6,7 +6,7 @@ namespace ChatGptNet.Models;
 /// Contains information about the API usage.
 /// </summary>
 /// <remarks>
-/// Refer to https://help.openai.com/en/articles/4936856-what-are-tokens-and-how-to-count-them for more information.
+/// See <see href="https://help.openai.com/en/articles/4936856-what-are-tokens-and-how-to-count-them">What are tokens and how to count them?</see> for more information.
 /// </remarks>
 public class ChatGptUsage
 {
