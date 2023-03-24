@@ -14,7 +14,6 @@ builder.Services.AddSingleton<WeatherForecastService>();
 builder.Services.AddChatGpt(options =>
 {
     options.ApiKey = "";
-    options.Organization = null;    // Optional
     options.DefaultModel = ChatGptModels.Gpt35Turbo;  // Default: ChatGptModels.Gpt35Turbo
     options.MessageLimit = 16;  // Default: 10
     options.MessageExpiration = TimeSpan.FromMinutes(5);    // Default: 1 hour
