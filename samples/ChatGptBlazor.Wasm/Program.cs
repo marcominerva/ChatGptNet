@@ -12,7 +12,7 @@ builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.
 
 builder.Services.AddChatGpt(options =>
 {
-    options.ApiKey = "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";
+    options.ApiKey = "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";
     options.Organization = null;    // Optional
     options.DefaultModel = ChatGptModels.Gpt35Turbo;  // Default: ChatGptModels.Gpt35Turbo
     options.MessageLimit = 16;  // Default: 10
