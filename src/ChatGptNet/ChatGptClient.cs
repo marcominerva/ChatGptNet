@@ -200,6 +200,7 @@ internal class ChatGptClient : IChatGptClient
             MaxTokens = parameters?.MaxTokens ?? options.DefaultParameters.MaxTokens,
             PresencePenalty = parameters?.PresencePenalty ?? options.DefaultParameters.PresencePenalty,
             FrequencyPenalty = parameters?.FrequencyPenalty ?? options.DefaultParameters.FrequencyPenalty,
+            User = options.User,
         };
 
     private void UpdateHistory(Guid conversationId, IList<ChatGptMessage> messages, ChatGptMessage message)

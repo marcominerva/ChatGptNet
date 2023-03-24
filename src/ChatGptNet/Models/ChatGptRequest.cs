@@ -74,4 +74,12 @@ public class ChatGptRequest
     /// </remarks>
     [JsonPropertyName("frequency_penalty")]
     public double? FrequencyPenalty { get; set; }
+
+    /// <summary>
+    /// Gets or sets unique identifier representing your end-user, which can help OpenAI to monitor and detect abuse.
+    /// </summary>
+    /// <remarks>
+    /// See <see href="https://platform.openai.com/docs/guides/safety-best-practices/end-user-ids">Safety best practices</see> for more information.
+    /// </remarks>
+    public string? User { get; set; }
 }
