@@ -1,0 +1,31 @@
+﻿@using ChatGptNet;
+@using ChatGptNet.Models;
+@using Markdig;
+@inject IChatGptClient chatGptClient
+
+@convertedMarkdown
+
+<InputText class="form-control" @bind-Value="@message" />
+
+<button class="btn btn-primary" @onclick="SendMessage">Send</button>
+
+@code {
+    string messages = string.Empty;
+    Guid conversationId;
+    string message = "act as a developer. write me an hello world in C#.";
+
+    private MarkupString convertedMarkdown;
+
+    private async Task SendMessage()
+    {
+        var response = await chatGptClient.AskAsync(conversationId, message);
+        conversationId = response.ConversationId;
+        messages += $"{response.GetMessage()} {Environment.NewLine} <hr /> {Environment.NewLine}";
+
+        var pipeline = new Markdig.MarkdownPipelineBuilder().UseAdvancedExtensions().Build();
+        var html = Markdig.Markdown.ToHtml(messages ?? "", pipeline);
+        convertedMarkdown = (MarkupString)html;
+
+        message = string.Empty;
+    }
+}
