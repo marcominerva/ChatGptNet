@@ -1,44 +1,88 @@
-﻿@using ChatGptNet;
-@using ChatGptNet.Models;
+﻿@using ChatGptNet.Models;
+@using ChatGptNet;
 @using Markdig;
+
 @inject IChatGptClient chatGptClient
+@inject IJSRuntime jsRuntime
 
-@convertedMarkdown
+<div class="h-100" style="position: relative;">
+    <div class="w-100 h-100" style="position: absolute;">
+        <div class="h-100 d-flex flex-column" style="max-height: 100%">
+            <div class="my-4" style="height:100%; max-height: 100%; overflow-y: auto;">
 
-<InputText class="form-control" @bind-Value="@message" />
+                @foreach (var message in messages)
+                {
+                    <div class="card text-white mb-3 @(message.Role is "agent" ? "bg-secondary" : "")"
+                         style="width: 70%; @(message.Role is "user" ? "margin-left:20%" : "margin-left:10%")">
+                        <div class="card-body">
+                            <div class="card-text" style="overflow-x: auto">
+                                @if (string.IsNullOrWhiteSpace(message.Content))
+                                {
+                                    <em>I'm thinking...</em>
+                                }
+                                else
+                                {
+                                    @((MarkupString)Markdown.ToHtml(message.Content, markdownPipeline))
+                                }
+                            </div>
+                        </div>
+                    </div>
+                }
 
-<button class="btn btn-primary" @onclick="SendMessage">Send</button>
+                <div @ref="anchor"></div>
+
+            </div>
+
+            <div class="input-group">
+                <input type="text" class="form-control" @bind="usermessage" placeholder="Ask me something" @bind:event="oninput" />
+                <button type="button" class="btn btn-primary" @onclick="AskAsync" disabled="@(!CanSendAMessage())">
+                    Send
+                </button>
+            </div>
+        </div>
+
+    </div>
+</div>
 
 @code {
-    string messages = string.Empty;
-    Guid conversationId;
-    string message = "act as a developer. write me an hello world in C#.";
+    private ElementReference anchor;
+    private static readonly MarkdownPipeline markdownPipeline = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build();
+    private List<ChatGptMessage> messages = new();
+    private string usermessage;
+    private bool isAsking;
 
-    private MarkupString convertedMarkdown;
-
-    private async Task SendMessage()
+    private bool CanSendAMessage()
     {
-        var responseStream = chatGptClient.AskStreamAsync(conversationId, message);
-        string? html;
+        return !string.IsNullOrWhiteSpace(usermessage) && !isAsking;
+    }
 
-        var pipeline = new Markdig.MarkdownPipelineBuilder().UseAdvancedExtensions().Build();
-
-        await foreach (var response in responseStream)
+    private async Task AskAsync()
+    {
+        if (!isAsking)
         {
-            conversationId = response.ConversationId;
+            isAsking = true;
 
-            messages += response.GetMessage();
-            html = Markdig.Markdown.ToHtml(messages ?? "", pipeline);
-            convertedMarkdown = (MarkupString)html;
+            messages.Add(new ChatGptMessage { Role = "user", Content = usermessage });
 
-            await Task.Delay(80);
+            var responseMessage = new ChatGptMessage { Role = "agent", Content = string.Empty };
+            
+            var responseStream = chatGptClient.AskStreamAsync(usermessage);
+            usermessage = string.Empty;
+
+            await Task.Delay(500);
+            messages.Add(responseMessage);
             StateHasChanged();
+            await jsRuntime.InvokeVoidAsync(@"scrollIntoView", anchor);
+
+            await foreach (var partialResponse in responseStream)
+            {
+                responseMessage.Content += partialResponse.GetMessage();
+                await Task.Delay(80);
+                StateHasChanged();
+                await jsRuntime.InvokeVoidAsync(@"scrollIntoView", anchor);
+            }
+
+            isAsking = false;
         }
-
-        messages += $"{Environment.NewLine} <hr /> {Environment.NewLine}";
-        html = Markdig.Markdown.ToHtml(messages ?? "", pipeline);
-        convertedMarkdown = (MarkupString)html;
-
-        message = string.Empty;
     }
 }
