@@ -104,4 +104,11 @@ public interface IChatGptClient
     /// <param name="conversationId">The unique identifier of the conversation.</param>
     /// <returns>The <see cref="Task"/> corresponding to the asynchronous operation.</returns>
     Task DeleteConversationAsync(Guid conversationId);
+
+    /// <summary>
+    /// Retrieve a chat conversation from the cache. If the conversation id doesn't exist, it will be return an empty list of <see cref="ChatGptMessage"/>
+    /// </summary>
+    /// <param name="conversationId"></param>
+    /// <returns>An <see cref="IEnumerable{ChatGptMessage}"/> of the conversation</returns>
+    Task<IEnumerable<ChatGptMessage>> GetConversationAsync(Guid conversationId);
 }

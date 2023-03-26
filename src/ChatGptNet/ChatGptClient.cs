@@ -62,7 +62,7 @@ internal class ChatGptClient : IChatGptClient
             conversationId = Guid.NewGuid();
         }
 
-        var messages = CreateMessageList(conversationId, message);
+        var messages = await CreateMessageListAsync(conversationId, message);
         var request = CreateRequest(messages, false, parameters, model);
 
         using var httpResponse = await httpClient.PostAsJsonAsync("chat/completions", request, jsonSerializerOptions, cancellationToken);
@@ -92,7 +92,7 @@ internal class ChatGptClient : IChatGptClient
             conversationId = Guid.NewGuid();
         }
 
-        var messages = CreateMessageList(conversationId, message);
+        var messages = await CreateMessageListAsync(conversationId, message);
         var request = CreateRequest(messages, true, parameters, model);
 
         using var requestMessage = new HttpRequestMessage(HttpMethod.Post, "chat/completions")
@@ -173,11 +173,10 @@ internal class ChatGptClient : IChatGptClient
         return Task.CompletedTask;
     }
 
-    private List<ChatGptMessage> CreateMessageList(Guid conversationId, string message)
+    private async Task<List<ChatGptMessage>> CreateMessageListAsync(Guid conversationId, string message)
     {
         // Checks whether a list of messages for the given conversationId already exists.
-        var conversationHistory = cache.Get<IList<ChatGptMessage>>(conversationId);
-        List<ChatGptMessage> messages = conversationHistory is not null ? new(conversationHistory) : new();
+        List<ChatGptMessage> messages = (await GetConversationAsync(conversationId)).ToList();
 
         messages.Add(new()
         {
@@ -224,5 +223,12 @@ internal class ChatGptClient : IChatGptClient
         }
 
         cache.Set(conversationId, messages, options.MessageExpiration);
+    }
+
+    public async Task<IEnumerable<ChatGptMessage>> GetConversationAsync(Guid conversationId)
+    {
+        var conversationHistory = cache.Get<IList<ChatGptMessage>>(conversationId);
+        List<ChatGptMessage> messagges = conversationHistory is not null ? new(conversationHistory) : new();
+        return await Task.FromResult(messagges);
     }
 }
