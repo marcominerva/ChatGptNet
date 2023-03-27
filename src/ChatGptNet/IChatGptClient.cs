@@ -99,6 +99,14 @@ public interface IChatGptClient
     IAsyncEnumerable<ChatGptResponse> AskStreamAsync(Guid conversationId, string message, ChatGptParameters? parameters = null, string? model = null, CancellationToken cancellationToken = default);
 
     /// <summary>
+    /// Retrieves a chat conversation from the cache.
+    /// </summary>
+    /// <param name="conversationId">The unique identifier of the conversation.</param>
+    /// <returns>The message list of the conversation, or <see cref="Enumerable.Empty{ChatGptMessage}"/> if the Conversation Id does not exist.</returns>
+    /// <seealso cref="ChatGptMessage"/>
+    Task<IEnumerable<ChatGptMessage>> GetConversationAsync(Guid conversationId);
+
+    /// <summary>
     /// Deletes a chat conversation, clearing all the history.
     /// </summary>
     /// <param name="conversationId">The unique identifier of the conversation.</param>

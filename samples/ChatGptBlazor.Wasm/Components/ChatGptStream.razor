@@ -1,0 +1,97 @@
+﻿@using ChatGptNet.Extensions;
+@using ChatGptNet.Models;
+@using ChatGptNet;
+@using Markdig;
+
+@inject IChatGptClient chatGptClient
+@inject IJSRuntime jsRuntime
+
+<div class="h-100" style="position: relative;">
+    <div class="w-100 h-100" style="position: absolute;">
+        <div class="h-100 d-flex flex-column" style="max-height: 100%">
+            <div class="my-4" style="height:100%; max-height: 100%; overflow-y: auto;">
+
+                @foreach (var message in messages)
+                {
+                    <div class="card text-white mb-3 @(message.Sender is ChatGptRoles.Assistant ? "bg-secondary" : string.Empty)"
+                         style="width: 70%; @(message.Sender is ChatGptRoles.User ? "margin-left:20%" : "margin-left:10%")">
+                        <div class="card-body">
+                            <div class="card-text" style="overflow-x: auto">
+                                @if (string.IsNullOrWhiteSpace(message.Content))
+                                {
+                                    <em>I'm thinking...</em>
+                                }
+                                else
+                                {
+                                    @((MarkupString)Markdown.ToHtml(message.Content, markdownPipeline))
+                                }
+                            </div>
+                        </div>
+                    </div>
+                }
+
+                <div @ref="anchor"></div>
+
+            </div>
+
+            <div class="input-group">
+                <input type="text" class="form-control" @bind="message" placeholder="Ask me anything" @bind:event="oninput" />
+                <button type="button" class="btn btn-primary" @onclick="AskAsync" disabled="@(!CanSendMessage())">
+                    Send
+                </button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+@code {
+
+    private class ChatEntry
+    {
+        public string Sender { get; set; } = string.Empty;
+        public string Content { get; set; } = string.Empty;
+    }
+
+    private Guid conversationId = Guid.NewGuid();
+    private ElementReference anchor;
+    private static readonly MarkdownPipeline markdownPipeline = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build();
+    private List<ChatEntry> messages = new();
+    private string? message;
+    private bool isAsking;
+
+    private bool CanSendMessage()
+    {
+        return !string.IsNullOrWhiteSpace(message) && !isAsking;
+    }
+
+    private async Task AskAsync()
+    {
+        if (!isAsking)
+        {
+            isAsking = true;
+
+            messages.Add(new ChatEntry { Sender = ChatGptRoles.User, Content = message! });
+
+            var responseMessage = new ChatEntry { Sender = ChatGptRoles.Assistant, Content = string.Empty };
+
+            var responseStream = chatGptClient.AskStreamAsync(conversationId, message!);
+            message = string.Empty;
+
+            await Task.Delay(500);
+            messages.Add(responseMessage);
+            StateHasChanged();
+            await jsRuntime.InvokeVoidAsync(@"scrollIntoView", anchor);
+
+            await foreach (var delta in responseStream.AsDeltas())
+            {
+                responseMessage.Content += delta;
+                await Task.Delay(80);
+                StateHasChanged();
+                await jsRuntime.InvokeVoidAsync(@"scrollIntoView", anchor);
+            }
+
+            isAsking = false;
+        }
+    }
+}

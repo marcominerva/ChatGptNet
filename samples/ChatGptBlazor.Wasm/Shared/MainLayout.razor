@@ -1,0 +1,16 @@
+﻿@inherits LayoutComponentBase
+
+<div class="d-flex h-100 flex-column" style="max-height: 100%">
+    <NavBar />
+    <div class="page" style="height: 100%; max-height: 100%;">
+        <div class="container h-100">
+            @Body
+        </div>
+    </div>
+    <footer>
+        <hr />
+        <div class="p-2">
+            ChatGptNet Blazor Wasm Sample - MIT License
+        </div>
+    </footer>
+</div>
