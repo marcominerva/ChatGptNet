@@ -13,8 +13,8 @@
 
                 @foreach (var message in messages)
                 {
-                    <div class="card text-white mb-3 @(message.Sender is ChatEntrySender.Assistant ? "bg-secondary" : "")"
-                         style="width: 70%; @(message.Sender is ChatEntrySender.User ? "margin-left:20%" : "margin-left:10%")">
+                    <div class="card text-white mb-3 @(message.Sender is ChatGptRoles.Assistant ? "bg-secondary" : string.Empty)"
+                         style="width: 70%; @(message.Sender is ChatGptRoles.User ? "margin-left:20%" : "margin-left:10%")">
                         <div class="card-body">
                             <div class="card-text" style="overflow-x: auto">
                                 @if (string.IsNullOrWhiteSpace(message.Content))
@@ -35,7 +35,7 @@
             </div>
 
             <div class="input-group">
-                <input type="text" class="form-control" @bind="message" placeholder="Ask me something" @bind:event="oninput" />
+                <input type="text" class="form-control" @bind="message" placeholder="Ask me anything" @bind:event="oninput" />
                 <button type="button" class="btn btn-primary" @onclick="AskAsync" disabled="@(!CanSendMessage())">
                     Send
                 </button>
@@ -47,15 +47,9 @@
 
 @code {
 
-    private enum ChatEntrySender
-    {
-        User,
-        Assistant
-    }
-
     private class ChatEntry
     {
-        public ChatEntrySender Sender { get; set; }
+        public string Sender { get; set; } = string.Empty;
         public string Content { get; set; } = string.Empty;
     }
 
@@ -77,9 +71,9 @@
         {
             isAsking = true;
 
-            messages.Add(new ChatEntry { Sender = ChatEntrySender.User, Content = message! });
+            messages.Add(new ChatEntry { Sender = ChatGptRoles.User, Content = message! });
 
-            var responseMessage = new ChatEntry { Sender = ChatEntrySender.Assistant, Content = string.Empty };
+            var responseMessage = new ChatEntry { Sender = ChatGptRoles.Assistant, Content = string.Empty };
 
             var responseStream = chatGptClient.AskStreamAsync(conversationId, message!);
             message = string.Empty;

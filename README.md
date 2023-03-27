@@ -166,3 +166,6 @@ Conversation history is automatically deleted when expiration time (specified by
 **Contribute**
 
 The project is constantly evolving. Contributions are welcome. Feel free to file issues and pull requests on the repo and we'll address them as we can. 
+
+> **Warning**
+Remember to work on the **develop** branch, don't use the **master** branch directly. Create Pull Requests targeting **develop**.
