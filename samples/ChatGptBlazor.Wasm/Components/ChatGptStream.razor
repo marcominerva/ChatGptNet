@@ -1,0 +1,88 @@
+﻿@using ChatGptNet.Models;
+@using ChatGptNet;
+@using Markdig;
+
+@inject IChatGptClient chatGptClient
+@inject IJSRuntime jsRuntime
+
+<div class="h-100" style="position: relative;">
+    <div class="w-100 h-100" style="position: absolute;">
+        <div class="h-100 d-flex flex-column" style="max-height: 100%">
+            <div class="my-4" style="height:100%; max-height: 100%; overflow-y: auto;">
+
+                @foreach (var message in messages)
+                {
+                    <div class="card text-white mb-3 @(message.Role is "agent" ? "bg-secondary" : "")"
+                         style="width: 70%; @(message.Role is "user" ? "margin-left:20%" : "margin-left:10%")">
+                        <div class="card-body">
+                            <div class="card-text" style="overflow-x: auto">
+                                @if (string.IsNullOrWhiteSpace(message.Content))
+                                {
+                                    <em>I'm thinking...</em>
+                                }
+                                else
+                                {
+                                    @((MarkupString)Markdown.ToHtml(message.Content, markdownPipeline))
+                                }
+                            </div>
+                        </div>
+                    </div>
+                }
+
+                <div @ref="anchor"></div>
+
+            </div>
+
+            <div class="input-group">
+                <input type="text" class="form-control" @bind="usermessage" placeholder="Ask me something" @bind:event="oninput" />
+                <button type="button" class="btn btn-primary" @onclick="AskAsync" disabled="@(!CanSendAMessage())">
+                    Send
+                </button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+@code {
+    private ElementReference anchor;
+    private static readonly MarkdownPipeline markdownPipeline = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build();
+    private List<ChatGptMessage> messages = new();
+    private string usermessage;
+    private bool isAsking;
+
+    private bool CanSendAMessage()
+    {
+        return !string.IsNullOrWhiteSpace(usermessage) && !isAsking;
+    }
+
+    private async Task AskAsync()
+    {
+        if (!isAsking)
+        {
+            isAsking = true;
+
+            messages.Add(new ChatGptMessage { Role = "user", Content = usermessage });
+
+            var responseMessage = new ChatGptMessage { Role = "agent", Content = string.Empty };
+            
+            var responseStream = chatGptClient.AskStreamAsync(usermessage);
+            usermessage = string.Empty;
+
+            await Task.Delay(500);
+            messages.Add(responseMessage);
+            StateHasChanged();
+            await jsRuntime.InvokeVoidAsync(@"scrollIntoView", anchor);
+
+            await foreach (var partialResponse in responseStream)
+            {
+                responseMessage.Content += partialResponse.GetMessage();
+                await Task.Delay(80);
+                StateHasChanged();
+                await jsRuntime.InvokeVoidAsync(@"scrollIntoView", anchor);
+            }
+
+            isAsking = false;
+        }
+    }
+}
