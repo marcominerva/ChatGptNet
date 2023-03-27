@@ -12,7 +12,7 @@ builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.
 
 builder.Services.AddChatGpt(options =>
 {
-    options.ApiKey = "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";
+    options.ApiKey = "";
     options.DefaultModel = ChatGptModels.Gpt35Turbo;  // Default: ChatGptModels.Gpt35Turbo
     options.MessageLimit = 16;  // Default: 10
     options.MessageExpiration = TimeSpan.FromMinutes(5);    // Default: 1 hour
