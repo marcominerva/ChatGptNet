@@ -14,13 +14,16 @@ builder.Services.ConfigureHttpJsonOptions(options =>
     options.SerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
 });
 
-// Adds ChatGPT service.
-builder.Services.AddChatGpt(options =>
-{
-    options.ApiKey = "";
-    options.MessageLimit = 16;  // Default: 10
-    options.MessageExpiration = TimeSpan.FromMinutes(5);    // Default: 1 hour
-});
+// Adds ChatGPT service with hard-coded settings.
+//builder.Services.AddChatGpt(options =>
+//{
+//    options.ApiKey = "";
+//    options.MessageLimit = 16;  // Default: 10
+//    options.MessageExpiration = TimeSpan.FromMinutes(5);    // Default: 1 hour
+//});
+
+// Adds ChatGPT service using settings from IConfiguration.
+builder.Services.AddChatGpt(builder.Configuration);
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
