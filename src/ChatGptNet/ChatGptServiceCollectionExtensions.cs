@@ -32,6 +32,30 @@ public static class ChatGptServiceCollectionExtensions
     }
 
     /// <summary>
+    /// Registers a <see cref="ChatGptClientFactory"/> instance reading configuration from the specified <see cref="IConfiguration"/> source.
+    /// </summary>
+    /// <param name="services">The <see cref="IServiceCollection"/> to add services to.</param>
+    /// <param name="configuration">The <see cref="IConfiguration"/> being bound.</param>
+    /// <param name="sectionName">The name of the configuration section that holds ChatGPT settings (default: ChatGPT).</param>
+    /// <returns>A reference to this instance after the operation has completed.</returns>
+    public static IServiceCollection AddChatGptClientFactory(this IServiceCollection services, IConfiguration configuration, string sectionName = "ChatGPT")
+    {
+        ArgumentNullException.ThrowIfNull(services);
+        ArgumentNullException.ThrowIfNull(configuration);
+
+        var options = new ChatGptOptions();
+        configuration.GetSection(sectionName).Bind(options);
+        services.AddSingleton(options);
+
+        services.AddMemoryCache();
+        services.AddSingleton<IChatGptClientFactory, ChatGptClientFactory>(
+            s => new ChatGptClientFactory(s.GetRequiredService<IMemoryCache>(), options)
+        );
+
+        return services;
+    }
+
+    /// <summary>
     /// Registers a <see cref="ChatGptClient"/> instance with the specified options.
     /// </summary>
     /// <param name="services">The <see cref="IServiceCollection"/> to add services to.</param>

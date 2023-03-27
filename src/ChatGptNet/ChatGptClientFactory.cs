@@ -20,9 +20,10 @@ internal class ChatGptClientFactory : IChatGptClientFactory
         var options = defaultOptions with { };
         setupAction(options);
 
-        var httpClient = new HttpClient();
-
-        ChatGptServiceCollectionExtensions.ConfigureHttpClient(httpClient, options);
+        var httpClient = new HttpClient()
+        {
+            BaseAddress = new Uri("https://api.openai.com/v1/"),
+        };
 
         return new ChatGptClient(httpClient, memoryCache, options);
     }
