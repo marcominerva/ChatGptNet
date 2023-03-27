@@ -7,10 +7,10 @@ on:
   push:
     branches-ignore: [ master ]
     # Remove the line above to run when pushing to master  
-    paths: [ 'src/**' ]
+    paths: [ 'src/**', 'samples/**' ]
   pull_request:   
     branches: [ master, develop ]
-    paths: [ 'src/**' ]    
+    paths: [ 'src/**', 'samples/**' ]    
   workflow_dispatch:
   
 ###############

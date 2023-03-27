@@ -3,10 +3,10 @@ name: CodeQL
 on:
   push:
     branches-ignore: [ master ]
-    paths: [ 'src/**' ]
+    paths: [ 'src/**', 'samples/**' ]
   pull_request:
     branches: [ master, develop]
-    paths: [ 'src/**' ]
+    paths: [ 'src/**', 'samples/**' ]
   workflow_dispatch:
   schedule:
     - cron: '0 0 1,15 * *'
