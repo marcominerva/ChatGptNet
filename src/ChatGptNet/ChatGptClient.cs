@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using System.Net.Http.Json;
+﻿using System.Net.Http.Json;
 using System.Net.Mime;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -70,7 +69,7 @@ internal class ChatGptClient : IChatGptClient
             conversationId = Guid.NewGuid();
         }
 
-        var messages = await CreateMessageListAsync(conversationId, message);
+        var messages = CreateMessageList(conversationId, message);
         var request = CreateRequest(messages, false, parameters, model);
 
         using var httpResponse = await httpClient.PostAsJsonAsync("chat/completions", request, jsonSerializerOptions, cancellationToken);
@@ -100,7 +99,7 @@ internal class ChatGptClient : IChatGptClient
             conversationId = Guid.NewGuid();
         }
 
-        var messages = await CreateMessageListAsync(conversationId, message);
+        var messages = CreateMessageList(conversationId, message);
         var request = CreateRequest(messages, true, parameters, model);
 
         using var requestMessage = new HttpRequestMessage(HttpMethod.Post, "chat/completions")
@@ -175,16 +174,23 @@ internal class ChatGptClient : IChatGptClient
         }
     }
 
+    public Task<IEnumerable<ChatGptMessage>> GetConversationAsync(Guid conversationId)
+    {
+        var messages = cache.Get<IEnumerable<ChatGptMessage>>(conversationId) ?? Enumerable.Empty<ChatGptMessage>();
+        return Task.FromResult(messages);
+    }
+
     public Task DeleteConversationAsync(Guid conversationId)
     {
         cache.Remove(conversationId);
         return Task.CompletedTask;
     }
 
-    private async Task<List<ChatGptMessage>> CreateMessageListAsync(Guid conversationId, string message)
+    private IList<ChatGptMessage> CreateMessageList(Guid conversationId, string message)
     {
         // Checks whether a list of messages for the given conversationId already exists.
-        List<ChatGptMessage> messages = (await GetConversationAsync(conversationId)).ToList();
+        var conversationHistory = cache.Get<IList<ChatGptMessage>>(conversationId);
+        List<ChatGptMessage> messages = conversationHistory is not null ? new(conversationHistory) : new();
 
         messages.Add(new()
         {
@@ -195,7 +201,7 @@ internal class ChatGptClient : IChatGptClient
         return messages;
     }
 
-    private ChatGptRequest CreateRequest(List<ChatGptMessage> messages, bool stream, ChatGptParameters? parameters = null, string? model = null)
+    private ChatGptRequest CreateRequest(IList<ChatGptMessage> messages, bool stream, ChatGptParameters? parameters = null, string? model = null)
         => new()
         {
             Model = model ?? options.DefaultModel,
@@ -231,11 +237,5 @@ internal class ChatGptClient : IChatGptClient
         }
 
         cache.Set(conversationId, messages, options.MessageExpiration);
-    }
-
-    public Task<IEnumerable<ChatGptMessage>> GetConversationAsync(Guid conversationId)
-    {
-        var messages = cache.Get<IEnumerable<ChatGptMessage>>(conversationId) ?? Enumerable.Empty<ChatGptMessage>();
-        return Task.FromResult(messages);
     }
 }
