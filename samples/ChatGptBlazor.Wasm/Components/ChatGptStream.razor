@@ -13,8 +13,8 @@
 
                 @foreach (var message in messages)
                 {
-                    <div class="card text-white mb-3 @(message.Role is "agent" ? "bg-secondary" : "")"
-                         style="width: 70%; @(message.Role is "user" ? "margin-left:20%" : "margin-left:10%")">
+                    <div class="card text-white mb-3 @(message.Sender is ChatEntrySender.Assistant ? "bg-secondary" : "")"
+                         style="width: 70%; @(message.Sender is ChatEntrySender.User ? "margin-left:20%" : "margin-left:10%")">
                         <div class="card-body">
                             <div class="card-text" style="overflow-x: auto">
                                 @if (string.IsNullOrWhiteSpace(message.Content))
@@ -46,9 +46,23 @@
 </div>
 
 @code {
+
+    private enum ChatEntrySender
+    {
+        User,
+        Assistant
+    }
+
+    private class ChatEntry
+    {
+        public ChatEntrySender Sender { get; set; }
+        public string Content { get; set; } = string.Empty;
+    }
+
+    private Guid conversationId = Guid.NewGuid();
     private ElementReference anchor;
     private static readonly MarkdownPipeline markdownPipeline = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build();
-    private List<ChatGptMessage> messages = new();
+    private List<ChatEntry> messages = new();
     private string? message;
     private bool isAsking;
 
@@ -63,11 +77,11 @@
         {
             isAsking = true;
 
-            messages.Add(new ChatGptMessage { Role = "user", Content = message! });
+            messages.Add(new ChatEntry { Sender = ChatEntrySender.User, Content = message! });
 
-            var responseMessage = new ChatGptMessage { Role = "agent", Content = string.Empty };
+            var responseMessage = new ChatEntry { Sender = ChatEntrySender.Assistant, Content = string.Empty };
 
-            var responseStream = chatGptClient.AskStreamAsync(message!);
+            var responseStream = chatGptClient.AskStreamAsync(conversationId, message!);
             message = string.Empty;
 
             await Task.Delay(500);
