@@ -39,7 +39,32 @@ ChatGPT is aimed to support conversational scenarios: user can talk to ChatGPT w
 * *MessageLimit*: specifies how many messages for each conversation must be saved. When this limit is reached, oldest messages are automatically removed.
 * *MessageExpiration*: specifies the time interval used to maintain messages in cache, regardless their count.
 
-The **AddChatGpt** method has an overload that accepts an [IServiceProvider](https://learn.microsoft.com/en-us/dotnet/api/system.iserviceprovider) as argument. It can be used, for example, if we're in a Web API and we need to support scenarios in which every user has a different API key that can be retrieved accessing a database via Dependency Injection:
+The configuration can be automatically read from [IConfiguration](https://learn.microsoft.com/en-us/dotnet/api/microsoft.extensions.configuration.iconfiguration), using for example a _ChatGPT_ section in the _appsettings.json_ file:
+
+    "ChatGPT": {
+        "ApiKey": "",
+        "MessageLimit": 20,
+        "MessageExpiration": "00:30:00",
+        "DefaultModel": "gpt-3.5-turbo",
+        "ThrowExceptionOnError": true,
+        "User": "UserName"
+        "Organization": "My-Organization",
+        "DefaultParameters": {
+            "Temperature": 0.8,
+            "TopP": 1,
+            "Choices": 1,
+            "MaxTokens": 500,
+            "PresencePenalty": 0,
+            "FrequencyPenalty": 0
+        }
+    }
+
+And then use the corresponding overload of che **AddChatGpt** method:
+
+    // Adds ChatGPT service using settings from IConfiguration.
+    services.AddChatGpt(context.Configuration);
+
+The **AddChatGpt** method has also an overload that accepts an [IServiceProvider](https://learn.microsoft.com/en-us/dotnet/api/system.iserviceprovider) as argument. It can be used, for example, if we're in a Web API and we need to support scenarios in which every user has a different API key that can be retrieved accessing a database via Dependency Injection:
 
     builder.Services.AddChatGpt((services, options) =>
     {
