@@ -26,12 +26,7 @@ public static class ChatGptServiceCollectionExtensions
         setupAction.Invoke(options);
         services.AddSingleton(options);
 
-        services.AddMemoryCache();
-
-        services.AddHttpClient<IChatGptClient, ChatGptClient>(client =>
-        {
-            ConfigureHttpClient(client, options);
-        });
+        AddChatGptCore(services);
 
         return services;
     }
@@ -54,33 +49,24 @@ public static class ChatGptServiceCollectionExtensions
         ArgumentNullException.ThrowIfNull(setupAction);
 
         var options = new ChatGptOptions();
-        services.AddTransient(provider =>
+        services.AddScoped(provider =>
         {
             setupAction.Invoke(provider, options);
             return options;
         });
 
-        services.AddMemoryCache();
-
-        services.AddHttpClient<IChatGptClient, ChatGptClient>((provider, client) =>
-        {
-            using var scope = provider.CreateScope();
-            var options = scope.ServiceProvider.GetRequiredService<ChatGptOptions>();
-
-            ConfigureHttpClient(client, options);
-        });
+        AddChatGptCore(services);
 
         return services;
     }
 
-    private static void ConfigureHttpClient(HttpClient client, ChatGptOptions options)
+    private static void AddChatGptCore(IServiceCollection services)
     {
-        client.BaseAddress = new Uri("https://api.openai.com/v1/");
-        client.DefaultRequestHeaders.Authorization = new("Bearer", options.ApiKey);
+        services.AddMemoryCache();
 
-        if (!string.IsNullOrWhiteSpace(options.Organization))
+        services.AddHttpClient<IChatGptClient, ChatGptClient>(client =>
         {
-            client.DefaultRequestHeaders.Add("OpenAI-Organization", options.Organization);
-        }
+            client.BaseAddress = new Uri("https://api.openai.com/v1/");
+        });
     }
 }

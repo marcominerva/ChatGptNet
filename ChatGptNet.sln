@@ -17,7 +17,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChatGptConsole", "samples\C
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChatGptApi", "samples\ChatGptApi\ChatGptApi.csproj", "{435F71F0-D250-4726-A5C1-EFF5CD3A05F9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChatGptStreamConsole", "samples\ChatGptStreamConsole\ChatGptStreamConsole.csproj", "{E8254DE1-D0EC-4858-81BB-656089F287CD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChatGptStreamConsole", "samples\ChatGptStreamConsole\ChatGptStreamConsole.csproj", "{E8254DE1-D0EC-4858-81BB-656089F287CD}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChatGptBlazor.Wasm", "samples\ChatGptBlazor.Wasm\ChatGptBlazor.Wasm.csproj", "{7C629CAB-98E5-48AF-A884-7662A3D063F7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -41,6 +43,10 @@ Global
 		{E8254DE1-D0EC-4858-81BB-656089F287CD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E8254DE1-D0EC-4858-81BB-656089F287CD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E8254DE1-D0EC-4858-81BB-656089F287CD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7C629CAB-98E5-48AF-A884-7662A3D063F7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7C629CAB-98E5-48AF-A884-7662A3D063F7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7C629CAB-98E5-48AF-A884-7662A3D063F7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7C629CAB-98E5-48AF-A884-7662A3D063F7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -49,6 +55,7 @@ Global
 		{77843D2C-16C4-4020-A69F-4253CB0FABC1} = {74E21338-5D64-4CA4-87E9-0621F93FE6A5}
 		{435F71F0-D250-4726-A5C1-EFF5CD3A05F9} = {74E21338-5D64-4CA4-87E9-0621F93FE6A5}
 		{E8254DE1-D0EC-4858-81BB-656089F287CD} = {74E21338-5D64-4CA4-87E9-0621F93FE6A5}
+		{7C629CAB-98E5-48AF-A884-7662A3D063F7} = {74E21338-5D64-4CA4-87E9-0621F93FE6A5}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C0C7E910-6AB2-450F-8C88-810B320AA514}
