@@ -132,6 +132,13 @@ app.MapDelete("/api/chat/delete", async (Guid conversationId, IChatGptClient cha
 })
 .WithOpenApi();
 
+app.MapGet("/api/chat/retrieve", async (Guid conversationId, IChatGptClient chatGptClient) =>
+{
+    var messagges = await chatGptClient.GetConversationAsync(conversationId);
+    return TypedResults.Ok(messagges);
+})
+.WithOpenApi();
+
 app.Run();
 
 public record class Request(Guid ConversationId, string Message);
