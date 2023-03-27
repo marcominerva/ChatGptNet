@@ -17,7 +17,7 @@ public static class ChatGptServiceCollectionExtensions
     /// <returns>A reference to this instance after the operation has completed.</returns>
     /// <remarks>This method automatically adds a <see cref="MemoryCache"/> that is used to save chat messages for completion.</remarks>
     /// <seealso cref="ChatGptOptions"/>
-    /// <see cref="MemoryCacheServiceCollectionExtensions.AddMemoryCache(IServiceCollection)"/>
+    /// <seealso cref="MemoryCacheServiceCollectionExtensions.AddMemoryCache(IServiceCollection)"/>
     public static IServiceCollection AddChatGpt(this IServiceCollection services, Action<ChatGptOptions> setupAction)
     {
         ArgumentNullException.ThrowIfNull(services);
@@ -41,7 +41,8 @@ public static class ChatGptServiceCollectionExtensions
     /// <returns>A reference to this instance after the operation has completed.</returns>
     /// <remarks>This method automatically adds a <see cref="MemoryCache"/> that is used to save chat messages for completion.</remarks>
     /// <seealso cref="ChatGptOptions"/>
-    /// <see cref="MemoryCacheServiceCollectionExtensions.AddMemoryCache(IServiceCollection)"/>
+    /// <seealso cref="IConfiguration"/>
+    /// <seealso cref="MemoryCacheServiceCollectionExtensions.AddMemoryCache(IServiceCollection)"/>
     public static IServiceCollection AddChatGpt(this IServiceCollection services, IConfiguration configuration, string sectionName = "ChatGPT")
     {
         ArgumentNullException.ThrowIfNull(services);
@@ -67,7 +68,7 @@ public static class ChatGptServiceCollectionExtensions
     /// </remarks>
     /// <seealso cref="ChatGptOptions"/>
     /// <seealso cref="IServiceProvider"/>
-    /// <see cref="MemoryCacheServiceCollectionExtensions.AddMemoryCache(IServiceCollection)"/>
+    /// <seealso cref="MemoryCacheServiceCollectionExtensions.AddMemoryCache(IServiceCollection)"/>
     public static IServiceCollection AddChatGpt(this IServiceCollection services, Action<IServiceProvider, ChatGptOptions> setupAction)
     {
         ArgumentNullException.ThrowIfNull(services);
