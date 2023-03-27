@@ -24,6 +24,13 @@ internal class ChatGptClient : IChatGptClient
     public ChatGptClient(HttpClient httpClient, IMemoryCache cache, ChatGptOptions options)
     {
         this.httpClient = httpClient;
+        this.httpClient.DefaultRequestHeaders.Authorization = new("Bearer", options.ApiKey);
+
+        if (!string.IsNullOrWhiteSpace(options.Organization))
+        {
+            this.httpClient.DefaultRequestHeaders.Add("OpenAI-Organization", options.Organization);
+        }
+
         this.cache = cache;
         this.options = options;
     }
