@@ -1,4 +1,5 @@
-﻿using System.Net.Http.Json;
+﻿using System.Linq;
+using System.Net.Http.Json;
 using System.Net.Mime;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -232,10 +233,9 @@ internal class ChatGptClient : IChatGptClient
         cache.Set(conversationId, messages, options.MessageExpiration);
     }
 
-    public async Task<IEnumerable<ChatGptMessage>> GetConversationAsync(Guid conversationId)
+    public Task<IEnumerable<ChatGptMessage>> GetConversationAsync(Guid conversationId)
     {
-        var conversationHistory = cache.Get<IList<ChatGptMessage>>(conversationId);
-        List<ChatGptMessage> messagges = conversationHistory is not null ? new(conversationHistory) : new();
-        return await Task.FromResult(messagges);
+        var messages = cache.Get<IEnumerable<ChatGptMessage>>(conversationId) ?? Enumerable.Empty<ChatGptMessage>();
+        return Task.FromResult(messages);
     }
 }
