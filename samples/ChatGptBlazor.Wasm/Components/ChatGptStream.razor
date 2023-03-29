@@ -64,12 +64,13 @@
 
     private bool CanSendMessage()
         => !string.IsNullOrWhiteSpace(message) && !isAsking;
-    
 
     private async Task OnTypingMessageAsync(KeyboardEventArgs keyboardEventArgs)
     {
         if (keyboardEventArgs.Code is "Enter")
+        {
             await AskAsync();
+        }
     }
 
     private async Task AskAsync()
