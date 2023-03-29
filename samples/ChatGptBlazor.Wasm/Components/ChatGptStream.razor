@@ -47,6 +47,10 @@
 
 @code {
 
+    private ElementReference anchor;
+
+    private static readonly MarkdownPipeline markdownPipeline = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build();
+
     private class ChatEntry
     {
         public string Sender { get; set; } = string.Empty;
@@ -54,16 +58,13 @@
     }
 
     private Guid conversationId = Guid.NewGuid();
-    private ElementReference anchor;
-    private static readonly MarkdownPipeline markdownPipeline = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build();
     private List<ChatEntry> messages = new();
     private string? message;
     private bool isAsking;
 
     private bool CanSendMessage()
-    {
-        return !string.IsNullOrWhiteSpace(message) && !isAsking;
-    }
+        => !string.IsNullOrWhiteSpace(message) && !isAsking;
+    
 
     private async Task AskAsync()
     {
@@ -77,9 +78,9 @@
 
             var responseStream = chatGptClient.AskStreamAsync(conversationId, message!);
             message = string.Empty;
-
             await Task.Delay(500);
             messages.Add(responseMessage);
+
             StateHasChanged();
             await jsRuntime.InvokeVoidAsync(@"scrollIntoView", anchor);
 
@@ -87,6 +88,7 @@
             {
                 responseMessage.Content += delta;
                 await Task.Delay(80);
+
                 StateHasChanged();
                 await jsRuntime.InvokeVoidAsync(@"scrollIntoView", anchor);
             }
