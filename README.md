@@ -143,6 +143,8 @@ The library is 100% compatible also with Blazor WebAssembly applications:
 
 ![](https://raw.githubusercontent.com/marcominerva/ChatGptNet/master/assets/ChatGptBlazor.WasmStreaming.gif)
 
+Check the [Samples folder](https://github.com/marcominerva/ChatGptNet/tree/master/samples) for more information about the different implementations.
+
 **Changing the assistant's behavior**
 
 ChatGPT supports messages with the *system* role to influence how the assistant should behave. For example, we can tell to ChatGPT something like that:
