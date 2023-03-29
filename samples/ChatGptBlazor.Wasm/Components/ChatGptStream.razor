@@ -80,11 +80,12 @@
             isAsking = true;
 
             messages.Add(new ChatEntry { Sender = ChatGptRoles.User, Content = message! });
-
             var responseMessage = new ChatEntry { Sender = ChatGptRoles.Assistant, Content = string.Empty };
 
             var responseStream = chatGptClient.AskStreamAsync(conversationId, message!);
+
             message = string.Empty;
+
             await Task.Delay(500);
             messages.Add(responseMessage);
 
@@ -94,9 +95,10 @@
             await foreach (var delta in responseStream.AsDeltas())
             {
                 responseMessage.Content += delta;
-                await Task.Delay(80);
 
+                await Task.Delay(80);
                 StateHasChanged();
+
                 await jsRuntime.InvokeVoidAsync(@"scrollIntoView", anchor);
             }
 
