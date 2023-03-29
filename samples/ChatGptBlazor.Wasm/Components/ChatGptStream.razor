@@ -35,7 +35,7 @@
             </div>
 
             <div class="input-group">
-                <input type="text" class="form-control" @bind="message" placeholder="Ask me anything" @bind:event="oninput" />
+                <input type="text" class="form-control" @bind="message" placeholder="Ask me anything" @bind:event="oninput" @onkeypress="OnTypingMessageAsync" />
                 <button type="button" class="btn btn-primary" @onclick="AskAsync" disabled="@(!CanSendMessage())">
                     Send
                 </button>
@@ -65,6 +65,12 @@
     private bool CanSendMessage()
         => !string.IsNullOrWhiteSpace(message) && !isAsking;
     
+
+    private async Task OnTypingMessageAsync(KeyboardEventArgs keyboardEventArgs)
+    {
+        if (keyboardEventArgs.Code is "Enter")
+            await AskAsync();
+    }
 
     private async Task AskAsync()
     {
