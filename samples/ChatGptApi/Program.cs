@@ -14,13 +14,16 @@ builder.Services.ConfigureHttpJsonOptions(options =>
     options.SerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
 });
 
-// Adds ChatGPT service.
-builder.Services.AddChatGpt(options =>
-{
-    options.ApiKey = "";
-    options.MessageLimit = 16;  // Default: 10
-    options.MessageExpiration = TimeSpan.FromMinutes(5);    // Default: 1 hour
-});
+// Adds ChatGPT service with hard-coded settings.
+//builder.Services.AddChatGpt(options =>
+//{
+//    options.ApiKey = "";
+//    options.MessageLimit = 16;  // Default: 10
+//    options.MessageExpiration = TimeSpan.FromMinutes(5);    // Default: 1 hour
+//});
+
+// Adds ChatGPT service using settings from IConfiguration.
+builder.Services.AddChatGpt(builder.Configuration);
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
@@ -99,7 +102,7 @@ app.MapPost("/api/chat/setup", async (Request request, IChatGptClient chatGptCli
 })
 .WithOpenApi();
 
-app.MapPost("/api/chat/ask", async (Request request, IChatGptClient chatGptClient) =>
+app.MapPost("/api/chat", async (Request request, IChatGptClient chatGptClient) =>
 {
     var response = await chatGptClient.AskAsync(request.ConversationId, request.Message);
     return TypedResults.Ok(response);
@@ -125,10 +128,17 @@ app.MapGet("/api/chat/stream", (Guid? conversationId, string message, IChatGptCl
 })
 .WithOpenApi();
 
-app.MapDelete("/api/chat/delete", async (Guid conversationId, IChatGptClient chatGptClient) =>
+app.MapDelete("/api/chat/{conversationId:guid}", async (Guid conversationId, IChatGptClient chatGptClient) =>
 {
     await chatGptClient.DeleteConversationAsync(conversationId);
     return TypedResults.NoContent();
+})
+.WithOpenApi();
+
+app.MapGet("/api/chat/{conversationId:guid}", async (Guid conversationId, IChatGptClient chatGptClient) =>
+{
+    var messagges = await chatGptClient.GetConversationAsync(conversationId);
+    return TypedResults.Ok(messagges);
 })
 .WithOpenApi();
 

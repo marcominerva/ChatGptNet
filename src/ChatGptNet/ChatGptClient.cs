@@ -24,6 +24,13 @@ internal class ChatGptClient : IChatGptClient
     public ChatGptClient(HttpClient httpClient, IMemoryCache cache, ChatGptOptions options)
     {
         this.httpClient = httpClient;
+        this.httpClient.DefaultRequestHeaders.Authorization = new("Bearer", options.ApiKey);
+
+        if (!string.IsNullOrWhiteSpace(options.Organization))
+        {
+            this.httpClient.DefaultRequestHeaders.Add("OpenAI-Organization", options.Organization);
+        }
+
         this.cache = cache;
         this.options = options;
     }
@@ -167,13 +174,19 @@ internal class ChatGptClient : IChatGptClient
         }
     }
 
+    public Task<IEnumerable<ChatGptMessage>> GetConversationAsync(Guid conversationId)
+    {
+        var messages = cache.Get<IEnumerable<ChatGptMessage>>(conversationId) ?? Enumerable.Empty<ChatGptMessage>();
+        return Task.FromResult(messages);
+    }
+
     public Task DeleteConversationAsync(Guid conversationId)
     {
         cache.Remove(conversationId);
         return Task.CompletedTask;
     }
 
-    private List<ChatGptMessage> CreateMessageList(Guid conversationId, string message)
+    private IList<ChatGptMessage> CreateMessageList(Guid conversationId, string message)
     {
         // Checks whether a list of messages for the given conversationId already exists.
         var conversationHistory = cache.Get<IList<ChatGptMessage>>(conversationId);
@@ -188,7 +201,7 @@ internal class ChatGptClient : IChatGptClient
         return messages;
     }
 
-    private ChatGptRequest CreateRequest(List<ChatGptMessage> messages, bool stream, ChatGptParameters? parameters = null, string? model = null)
+    private ChatGptRequest CreateRequest(IList<ChatGptMessage> messages, bool stream, ChatGptParameters? parameters = null, string? model = null)
         => new()
         {
             Model = model ?? options.DefaultModel,
@@ -200,6 +213,7 @@ internal class ChatGptClient : IChatGptClient
             MaxTokens = parameters?.MaxTokens ?? options.DefaultParameters.MaxTokens,
             PresencePenalty = parameters?.PresencePenalty ?? options.DefaultParameters.PresencePenalty,
             FrequencyPenalty = parameters?.FrequencyPenalty ?? options.DefaultParameters.FrequencyPenalty,
+            User = options.User,
         };
 
     private void UpdateHistory(Guid conversationId, IList<ChatGptMessage> messages, ChatGptMessage message)
