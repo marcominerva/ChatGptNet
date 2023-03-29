@@ -139,6 +139,10 @@ Response streaming works by returning an [IAsyncEnumerable](https://learn.micros
 
 ![](https://raw.githubusercontent.com/marcominerva/ChatGptNet/master/assets/ChatGptApiStreaming.gif)
 
+The library is 100% compatible also with Blazor WebAssembly applications:
+
+![](https://raw.githubusercontent.com/marcominerva/ChatGptNet/master/assets/ChatGptBlazor.WasmStreaming.gif)
+
 **Changing the assistant's behavior**
 
 ChatGPT supports messages with the *system* role to influence how the assistant should behave. For example, we can tell to ChatGPT something like that:
