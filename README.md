@@ -39,6 +39,8 @@ ChatGPT is aimed to support conversational scenarios: user can talk to ChatGPT w
 * *MessageLimit*: specifies how many messages for each conversation must be saved. When this limit is reached, oldest messages are automatically removed.
 * *MessageExpiration*: specifies the time interval used to maintain messages in cache, regardless their count.
 
+We can also set ChatGPT parameters for chat completion at startup. Check the [official documentation](https://platform.openai.com/docs/api-reference/chat/create) for the list of available parameters and their meaning.
+
 The configuration can be automatically read from [IConfiguration](https://learn.microsoft.com/en-us/dotnet/api/microsoft.extensions.configuration.iconfiguration), using for example a _ChatGPT_ section in the _appsettings.json_ file:
 
     "ChatGPT": {
@@ -147,7 +149,7 @@ Check the [Samples folder](https://github.com/marcominerva/ChatGptNet/tree/maste
 
 **Changing the assistant's behavior**
 
-ChatGPT supports messages with the *system* role to influence how the assistant should behave. For example, we can tell to ChatGPT something like that:
+ChatGPT supports messages with the _system_ role to influence how the assistant should behave. For example, we can tell to ChatGPT something like that:
 
 - You are an helpful assistant
 - Answer like Shakespeare
@@ -167,7 +169,9 @@ The *system* message does not count for messages limit number.
 
 Conversation history is automatically deleted when expiration time (specified by *MessageExpiration* property) is reached. However, if necessary it is possible to immediately clear the history:
 
-    await chatGptClient.DeleteConversationAsync(conversationId);
+    await chatGptClient.DeleteConversationAsync(conversationId, preserveSetup: false);
+
+The _preserveSetup_ argument allows to decide whether mantain also the _system_ message that has been set with the **SetupAsync** method (default: _false_).
 
 **Contribute**
 

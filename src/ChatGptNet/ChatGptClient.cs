@@ -180,9 +180,20 @@ internal class ChatGptClient : IChatGptClient
         return Task.FromResult(messages);
     }
 
-    public Task DeleteConversationAsync(Guid conversationId)
+    public Task DeleteConversationAsync(Guid conversationId, bool preserveSetup = false)
     {
-        cache.Remove(conversationId);
+        if (!preserveSetup)
+        {
+            // We don't want to preserve setup message, so just deletes all the cache history.
+            cache.Remove(conversationId);
+        }
+        else if (cache.TryGetValue<List<ChatGptMessage>>(conversationId, out var messages))
+        {
+            // Removes all the messages, except system ones.
+            messages!.RemoveAll(m => m.Role != ChatGptRoles.System);
+            cache.Set(conversationId, messages, options.MessageExpiration);
+        }
+
         return Task.CompletedTask;
     }
 

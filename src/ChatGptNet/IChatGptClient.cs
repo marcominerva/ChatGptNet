@@ -110,6 +110,8 @@ public interface IChatGptClient
     /// Deletes a chat conversation, clearing all the history.
     /// </summary>
     /// <param name="conversationId">The unique identifier of the conversation.</param>
+    /// <param name="preserveSetup"><see langword="true"/> to maintain the system message that has been specified with the <see cref="SetupAsync(Guid, string)"/> method.</param>
     /// <returns>The <see cref="Task"/> corresponding to the asynchronous operation.</returns>
-    Task DeleteConversationAsync(Guid conversationId);
+    /// <seealso cref="SetupAsync(Guid, string)"/>
+    Task DeleteConversationAsync(Guid conversationId, bool preserveSetup = false);
 }
