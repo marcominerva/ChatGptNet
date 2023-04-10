@@ -74,9 +74,9 @@ public static class ChatGptServiceCollectionExtensions
         ArgumentNullException.ThrowIfNull(services);
         ArgumentNullException.ThrowIfNull(setupAction);
 
-        var options = new ChatGptOptions();
         services.AddScoped(provider =>
         {
+            var options = new ChatGptOptions();
             setupAction.Invoke(provider, options);
             return options;
         });
