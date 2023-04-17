@@ -197,6 +197,36 @@ internal class ChatGptClient : IChatGptClient
         return Task.CompletedTask;
     }
 
+    public Task<Guid> LoadConversationAsync(Guid conversationId, IEnumerable<ChatGptMessage> messages,
+        bool replaceHistory = true)
+    {
+        // Ensures that messages aren't null.
+        ArgumentNullException.ThrowIfNull(messages);
+
+        // Ensures that conversationId isn't empty.
+        if (conversationId == Guid.Empty)
+        {
+            conversationId = Guid.NewGuid();
+        }
+
+        if (replaceHistory)
+        {
+            LoadToCache(conversationId, messages);
+        }
+        else
+        {
+            var conversationHistory = cache.Get<IList<ChatGptMessage>>(conversationId);
+
+            List<ChatGptMessage> history = conversationHistory is not null ? new(conversationHistory) : new();
+
+            history.AddRange(messages);
+
+            LoadToCache(conversationId, history);
+        }
+
+        return Task.FromResult(conversationId);
+    }
+
     private IList<ChatGptMessage> CreateMessageList(Guid conversationId, string message)
     {
         // Checks whether a list of messages for the given conversationId already exists.
@@ -231,17 +261,25 @@ internal class ChatGptClient : IChatGptClient
     {
         messages.Add(message);
 
+        LoadToCache(conversationId, messages);
+    }
+
+    private void LoadToCache(Guid conversationId, IEnumerable<ChatGptMessage> messages)
+    {
         // If the maximum number of messages has been reached, deletes the oldest ones.
         // Note: system message does not count for message limit.
         var conversation = messages.Where(m => m.Role != ChatGptRoles.System);
+
         if (conversation.Count() > options.MessageLimit)
         {
             conversation = conversation.TakeLast(options.MessageLimit);
 
             // If the first message was of role system, adds it back in.
-            if (messages[0].Role == ChatGptRoles.System)
+            var gptMessage = messages.First();
+
+            if (gptMessage.Role == ChatGptRoles.System)
             {
-                conversation = conversation.Prepend(messages[0]);
+                conversation = conversation.Prepend(gptMessage);
             }
 
             messages = conversation.ToList();
