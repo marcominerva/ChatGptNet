@@ -197,10 +197,8 @@ internal class ChatGptClient : IChatGptClient
         return Task.CompletedTask;
     }
 
-    public Task<Guid> LoadConversationAsync(Guid conversationId, IEnumerable<ChatGptMessage> messages,
-        bool replaceHistory = true)
+    public Task<Guid> LoadConversationAsync(Guid conversationId, IEnumerable<ChatGptMessage> messages, bool replaceHistory = true)
     {
-        // Ensures that messages aren't null.
         ArgumentNullException.ThrowIfNull(messages);
 
         // Ensures that conversationId isn't empty.
@@ -211,17 +209,18 @@ internal class ChatGptClient : IChatGptClient
 
         if (replaceHistory)
         {
-            LoadToCache(conversationId, messages);
+            // If messages must replace history, just use the current list, discarding all the previously cached content.
+            // If messages.Count() > ChatGptOptions.MessageLimit, the UpdateCache take care of taking only the last messages.
+            UpdateCache(conversationId, messages);
         }
         else
         {
-            var conversationHistory = cache.Get<IList<ChatGptMessage>>(conversationId);
+            // Retrieves the current history and adds new messages.
+            var conversationHistory = cache.Get<List<ChatGptMessage>>(conversationId) ?? new List<ChatGptMessage>();
+            conversationHistory.AddRange(messages);
 
-            List<ChatGptMessage> history = conversationHistory is not null ? new(conversationHistory) : new();
-
-            history.AddRange(messages);
-
-            LoadToCache(conversationId, history);
+            // If messages total length > ChatGptOptions.MessageLimit, the UpdateCache take care of taking only the last messages.
+            UpdateCache(conversationId, conversationHistory);
         }
 
         return Task.FromResult(conversationId);
@@ -260,11 +259,10 @@ internal class ChatGptClient : IChatGptClient
     private void UpdateHistory(Guid conversationId, IList<ChatGptMessage> messages, ChatGptMessage message)
     {
         messages.Add(message);
-
-        LoadToCache(conversationId, messages);
+        UpdateCache(conversationId, messages);
     }
 
-    private void LoadToCache(Guid conversationId, IEnumerable<ChatGptMessage> messages)
+    private void UpdateCache(Guid conversationId, IEnumerable<ChatGptMessage> messages)
     {
         // If the maximum number of messages has been reached, deletes the oldest ones.
         // Note: system message does not count for message limit.
@@ -275,11 +273,10 @@ internal class ChatGptClient : IChatGptClient
             conversation = conversation.TakeLast(options.MessageLimit);
 
             // If the first message was of role system, adds it back in.
-            var gptMessage = messages.First();
-
-            if (gptMessage.Role == ChatGptRoles.System)
+            var firstMessage = messages.First();
+            if (firstMessage.Role == ChatGptRoles.System)
             {
-                conversation = conversation.Prepend(gptMessage);
+                conversation = conversation.Prepend(firstMessage);
             }
 
             messages = conversation.ToList();

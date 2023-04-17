@@ -12,7 +12,7 @@ public interface IChatGptClient
     /// Setups a new conversation with a system message, that is used to influence assistant behavior.
     /// </summary>
     /// <param name="message">The system message.</param>
-    /// <returns>The new Conversation Id.</returns>
+    /// <returns>The unique identifier of the new conversation.</returns>
     /// <remarks>This method creates a new conversation with a system message and a random Conversation Id. Then, call <see cref="AskAsync(Guid, string, ChatGptParameters, string, CancellationToken)"/> with this Id to start the actual conversation.</remarks>
     /// <exception cref="ArgumentNullException"><paramref name="message"/> is <see langword="null"/>.</exception>
     /// <seealso cref="AskAsync(Guid, string, ChatGptParameters, string, CancellationToken)"/>
@@ -107,6 +107,33 @@ public interface IChatGptClient
     Task<IEnumerable<ChatGptMessage>> GetConversationAsync(Guid conversationId);
 
     /// <summary>
+    /// Loads messages into a new conversation.
+    /// </summary>
+    /// <param name="messages">Messages to load into a new conversation.</param>
+    /// <returns>The unique identifier of the new conversation.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="messages"/> is <see langword="null"/>.</exception>
+    /// <remarks>
+    /// <para>This method creates a new conversation with a random Conversation Id. Then, call <see cref="AskAsync(Guid, string, ChatGptParameters, string, CancellationToken)"/> with this Id to start the actual conversation.</para>
+    /// <para>The total number of messages never exceeds the message limit defined in <see cref="ChatGptOptions.MessageLimit"/>. If <paramref name="messages"/> contains more, only the latest ones are loaded.</para>
+    /// </remarks>
+    /// <seealso cref="ChatGptOptions.MessageLimit"/>
+    /// <seealso cref="AskStreamAsync(Guid, string, ChatGptParameters?, string?, CancellationToken)"/>
+    Task<Guid> LoadConversationAsync(IEnumerable<ChatGptMessage> messages)
+        => LoadConversationAsync(Guid.NewGuid(), messages);
+
+    /// <summary>
+    /// Loads messages into conversation history.
+    /// </summary>
+    /// <param name="conversationId">The unique identifier of the conversation.</param>
+    /// <param name="messages">The messages to load into conversation history.</param>
+    /// <param name="replaceHistory"><see langword="true"/> to replace all the existing messages; <see langword="false"/> to mantain them.</param>
+    /// <returns>The unique identifier of the conversation.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="messages"/> is <see langword="null"/>.</exception>
+    /// <remarks>The total number of messages never exceeds the message limit defined in <see cref="ChatGptOptions.MessageLimit"/>. If <paramref name="messages"/> contains more, only the latest ones are loaded.</remarks>
+    /// <seealso cref="ChatGptOptions.MessageLimit"/>
+    Task<Guid> LoadConversationAsync(Guid conversationId, IEnumerable<ChatGptMessage> messages, bool replaceHistory = true);
+
+    /// <summary>
     /// Deletes a chat conversation, clearing all the history.
     /// </summary>
     /// <param name="conversationId">The unique identifier of the conversation.</param>
@@ -114,23 +141,4 @@ public interface IChatGptClient
     /// <returns>The <see cref="Task"/> corresponding to the asynchronous operation.</returns>
     /// <seealso cref="SetupAsync(Guid, string)"/>
     Task DeleteConversationAsync(Guid conversationId, bool preserveSetup = false);
-
-    /// <summary>
-    /// Loads messages into a new conversation.
-    /// </summary>
-    /// <param name="messages">Messages to load into a new conversation</param>
-    /// <returns>The unique identifier of the new conversation</returns>
-    /// <exception cref="ArgumentNullException"><paramref name="messages"/> is <see langword="null"/>.</exception>
-    Task<Guid> LoadConversationAsync(IEnumerable<ChatGptMessage> messages)
-        => LoadConversationAsync(Guid.NewGuid(), messages);
-
-    /// <summary>
-    /// Loads messages into conversation history.
-    /// </summary>
-    /// <param name="conversationId"> The unique identifier of the conversation.</param>
-    /// <param name="messages">The messages to load into conversation history.</param>
-    /// <param name="replaceHistory">The flag to clear the preserved conversation history.</param>
-    /// <returns>The unique identifier of the conversation</returns>
-    /// <exception cref="ArgumentNullException"><paramref name="messages"/> is <see langword="null"/>.</exception>
-    Task<Guid> LoadConversationAsync(Guid conversationId, IEnumerable<ChatGptMessage> messages, bool replaceHistory = true);
 }
