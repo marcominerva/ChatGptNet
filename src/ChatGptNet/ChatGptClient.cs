@@ -197,6 +197,35 @@ internal class ChatGptClient : IChatGptClient
         return Task.CompletedTask;
     }
 
+    public Task<Guid> LoadConversationAsync(Guid conversationId, IEnumerable<ChatGptMessage> messages, bool replaceHistory = true)
+    {
+        ArgumentNullException.ThrowIfNull(messages);
+
+        // Ensures that conversationId isn't empty.
+        if (conversationId == Guid.Empty)
+        {
+            conversationId = Guid.NewGuid();
+        }
+
+        if (replaceHistory)
+        {
+            // If messages must replace history, just use the current list, discarding all the previously cached content.
+            // If messages.Count() > ChatGptOptions.MessageLimit, the UpdateCache take care of taking only the last messages.
+            UpdateCache(conversationId, messages);
+        }
+        else
+        {
+            // Retrieves the current history and adds new messages.
+            var conversationHistory = cache.Get<List<ChatGptMessage>>(conversationId) ?? new List<ChatGptMessage>();
+            conversationHistory.AddRange(messages);
+
+            // If messages total length > ChatGptOptions.MessageLimit, the UpdateCache take care of taking only the last messages.
+            UpdateCache(conversationId, conversationHistory);
+        }
+
+        return Task.FromResult(conversationId);
+    }
+
     private IList<ChatGptMessage> CreateMessageList(Guid conversationId, string message)
     {
         // Checks whether a list of messages for the given conversationId already exists.
@@ -230,18 +259,24 @@ internal class ChatGptClient : IChatGptClient
     private void UpdateHistory(Guid conversationId, IList<ChatGptMessage> messages, ChatGptMessage message)
     {
         messages.Add(message);
+        UpdateCache(conversationId, messages);
+    }
 
+    private void UpdateCache(Guid conversationId, IEnumerable<ChatGptMessage> messages)
+    {
         // If the maximum number of messages has been reached, deletes the oldest ones.
         // Note: system message does not count for message limit.
         var conversation = messages.Where(m => m.Role != ChatGptRoles.System);
+
         if (conversation.Count() > options.MessageLimit)
         {
             conversation = conversation.TakeLast(options.MessageLimit);
 
             // If the first message was of role system, adds it back in.
-            if (messages[0].Role == ChatGptRoles.System)
+            var firstMessage = messages.First();
+            if (firstMessage.Role == ChatGptRoles.System)
             {
-                conversation = conversation.Prepend(messages[0]);
+                conversation = conversation.Prepend(firstMessage);
             }
 
             messages = conversation.ToList();
