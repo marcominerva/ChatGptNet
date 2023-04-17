@@ -113,14 +113,13 @@ internal class ChatGptClient : IChatGptClient
         {
             var contentBuilder = new StringBuilder();
 
-            await using (var responseStream = await httpResponse.Content.ReadAsStreamAsync(cancellationToken))
+            using (var responseStream = await httpResponse.Content.ReadAsStreamAsync(cancellationToken))
             {
                 using var reader = new StreamReader(responseStream);
 
                 while (!reader.EndOfStream)
                 {
-                    var line = await reader.ReadLineAsync(cancellationToken) ?? string.Empty;
-
+                    var line = await reader.ReadLineAsync() ?? string.Empty;
                     if (line.StartsWith("data: {"))
                     {
                         var json = line["data: ".Length..];
@@ -128,29 +127,24 @@ internal class ChatGptClient : IChatGptClient
 
                         var content = response!.Choices?[0].Delta?.Content;
 
-                        if (string.IsNullOrEmpty(content))
+                        if (!string.IsNullOrEmpty(content))
                         {
-                            continue;
+                            if (contentBuilder.Length == 0)
+                            {
+                                // If this is the first response, trims all the initial special characters.
+                                content = content.TrimStart('\n');
+                                response.Choices![0].Delta!.Content = content;
+                            }
+
+                            // Yields the response only if there is an actual content.
+                            if (content != string.Empty)
+                            {
+                                contentBuilder.Append(content);
+
+                                response.ConversationId = conversationId;
+                                yield return response;
+                            }
                         }
-
-                        if (contentBuilder.Length == 0)
-                        {
-                            // If this is the first response, trims all the initial special characters.
-                            content = content.TrimStart('\n');
-                            response.Choices![0].Delta!.Content = content;
-                        }
-
-                        // Yields the response only if there is an actual content.
-                        if (content == string.Empty)
-                        {
-                            continue;
-                        }
-
-                        contentBuilder.Append(content);
-
-                        response.ConversationId = conversationId;
-
-                        yield return response;
                     }
                     else if (line.StartsWith("data: [DONE]"))
                     {
@@ -203,23 +197,18 @@ internal class ChatGptClient : IChatGptClient
         return Task.CompletedTask;
     }
 
-    public Task<Guid> LoadConversationAsync(IEnumerable<ChatGptMessage> messages)
-    {
-        return LoadConversationAsync(new Guid(), messages);
-    }
-
     public Task<Guid> LoadConversationAsync(Guid conversationId, IEnumerable<ChatGptMessage> messages,
         bool replaceHistory = true)
     {
         // Ensures that messages aren't null.
         ArgumentNullException.ThrowIfNull(messages);
-        
+
         // Ensures that conversationId isn't empty.
         if (conversationId == Guid.Empty)
         {
             conversationId = Guid.NewGuid();
         }
-        
+
         if (replaceHistory)
         {
             LoadToCache(conversationId, messages);
@@ -228,7 +217,7 @@ internal class ChatGptClient : IChatGptClient
         {
             var conversationHistory = cache.Get<IList<ChatGptMessage>>(conversationId);
 
-            List<ChatGptMessage> history = conversationHistory is not null ? new (conversationHistory) : new ();
+            List<ChatGptMessage> history = conversationHistory is not null ? new(conversationHistory) : new();
 
             history.AddRange(messages);
 

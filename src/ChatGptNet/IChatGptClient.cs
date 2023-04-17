@@ -120,7 +120,9 @@ public interface IChatGptClient
     /// </summary>
     /// <param name="messages">Messages to load into a new conversation</param>
     /// <returns>The unique identifier of the new conversation</returns>
-    Task<Guid> LoadConversationAsync(IEnumerable<ChatGptMessage> messages);
+    /// <exception cref="ArgumentNullException"><paramref name="messages"/> is <see langword="null"/>.</exception>
+    Task<Guid> LoadConversationAsync(IEnumerable<ChatGptMessage> messages)
+        => LoadConversationAsync(Guid.NewGuid(), messages);
 
     /// <summary>
     /// Loads messages into conversation history.
@@ -129,5 +131,6 @@ public interface IChatGptClient
     /// <param name="messages">The messages to load into conversation history.</param>
     /// <param name="replaceHistory">The flag to clear the preserved conversation history.</param>
     /// <returns>The unique identifier of the conversation</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="messages"/> is <see langword="null"/>.</exception>
     Task<Guid> LoadConversationAsync(Guid conversationId, IEnumerable<ChatGptMessage> messages, bool replaceHistory = true);
 }
