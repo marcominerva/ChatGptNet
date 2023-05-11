@@ -8,13 +8,7 @@ namespace ChatGptNet;
 /// </summary>
 public class ChatGptOptions
 {
-    /// <summary>
-    /// Gets or sets the API Key to access the service.
-    /// </summary>
-    /// <remarks>
-    /// See <see href="https://help.openai.com/en/articles/4936850-where-do-i-find-my-secret-api-key">Where do I find my Secret API Key?</see> for more information.
-    /// </remarks>
-    public string? ApiKey { get; set; }
+    public ChatGptServiceConfiguration ServiceConfiguration { get; set; } = default!;
 
     /// <summary>
     /// Gets or sets the maximum number of messages to use for chat completion (default: 10).
@@ -32,12 +26,6 @@ public class ChatGptOptions
     /// <see cref="ChatGptException"/>
     /// <seealso cref="ChatGptResponse"/>
     public bool ThrowExceptionOnError { get; set; } = true;
-
-    /// <summary>
-    /// Gets or sets a value that determines the organization the user belongs to.
-    /// </summary>
-    /// <remarks>For users who belong to multiple organizations, you can pass a header to specify which organization is used for an API request. Usage from these API requests will count against the specified organization's subscription quota.</remarks>
-    public string? Organization { get; set; }
 
     /// <summary>
     /// Gets or sets the default model for chat completion. (default: <see cref="ChatGptModels.Gpt35Turbo"/>).

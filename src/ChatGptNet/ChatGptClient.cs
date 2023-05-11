@@ -24,11 +24,10 @@ internal class ChatGptClient : IChatGptClient
     public ChatGptClient(HttpClient httpClient, IMemoryCache cache, ChatGptOptions options)
     {
         this.httpClient = httpClient;
-        this.httpClient.DefaultRequestHeaders.Authorization = new("Bearer", options.ApiKey);
 
-        if (!string.IsNullOrWhiteSpace(options.Organization))
+        foreach (var header in options.ServiceConfiguration!.GetRequestHeaders())
         {
-            this.httpClient.DefaultRequestHeaders.Add("OpenAI-Organization", options.Organization);
+            this.httpClient.DefaultRequestHeaders.TryAddWithoutValidation(header.Key, header.Value);
         }
 
         this.cache = cache;
@@ -72,7 +71,11 @@ internal class ChatGptClient : IChatGptClient
         var messages = CreateMessageList(conversationId, message);
         var request = CreateRequest(messages, false, parameters, model);
 
-        using var httpResponse = await httpClient.PostAsJsonAsync("chat/completions", request, jsonSerializerOptions, cancellationToken);
+        var requestUri = options.ServiceConfiguration.GetServiceEndpoint(model ?? options.DefaultModel);
+        using var httpResponse = await httpClient.PostAsJsonAsync(requestUri, request, jsonSerializerOptions, cancellationToken);
+
+        var content = await httpResponse.Content.ReadAsStringAsync();
+
         var response = await httpResponse.Content.ReadFromJsonAsync<ChatGptResponse>(jsonSerializerOptions, cancellationToken: cancellationToken);
         response!.ConversationId = conversationId;
 
@@ -102,7 +105,8 @@ internal class ChatGptClient : IChatGptClient
         var messages = CreateMessageList(conversationId, message);
         var request = CreateRequest(messages, true, parameters, model);
 
-        using var requestMessage = new HttpRequestMessage(HttpMethod.Post, "chat/completions")
+        var requestUri = options.ServiceConfiguration.GetServiceEndpoint(model ?? options.DefaultModel);
+        using var requestMessage = new HttpRequestMessage(HttpMethod.Post, requestUri)
         {
             Content = new StringContent(JsonSerializer.Serialize(request, jsonSerializerOptions), Encoding.UTF8, MediaTypeNames.Application.Json)
         };

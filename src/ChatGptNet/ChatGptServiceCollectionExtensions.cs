@@ -25,6 +25,9 @@ public static class ChatGptServiceCollectionExtensions
 
         var options = new ChatGptOptions();
         setupAction.Invoke(options);
+
+        ArgumentNullException.ThrowIfNull(options.ServiceConfiguration);
+
         services.AddSingleton(options);
 
         AddChatGptCore(services);
@@ -49,7 +52,10 @@ public static class ChatGptServiceCollectionExtensions
         ArgumentNullException.ThrowIfNull(configuration);
 
         var options = new ChatGptOptions();
-        configuration.GetSection(sectionName).Bind(options);
+        var configurationSection = configuration.GetSection(sectionName);
+        configurationSection.Bind(options);
+        options.ServiceConfiguration = ChatGptServiceConfiguration.Create(configurationSection);
+
         services.AddSingleton(options);
 
         AddChatGptCore(services);
@@ -78,6 +84,9 @@ public static class ChatGptServiceCollectionExtensions
         {
             var options = new ChatGptOptions();
             setupAction.Invoke(provider, options);
+
+            ArgumentNullException.ThrowIfNull(options.ServiceConfiguration);
+
             return options;
         });
 
@@ -89,10 +98,6 @@ public static class ChatGptServiceCollectionExtensions
     private static void AddChatGptCore(IServiceCollection services)
     {
         services.AddMemoryCache();
-
-        services.AddHttpClient<IChatGptClient, ChatGptClient>(client =>
-        {
-            client.BaseAddress = new Uri("https://api.openai.com/v1/");
-        });
+        services.AddHttpClient<IChatGptClient, ChatGptClient>();
     }
 }
