@@ -21,7 +21,7 @@ public class ChatGptException : HttpRequestException
     /// <param name="statusCode">The HTTP status code</param>
     /// <seealso cref="ChatGptError"/>
     /// <seealso cref="HttpRequestException"/>
-    public ChatGptException(ChatGptError error, HttpStatusCode statusCode) : base(error.Message, null, statusCode)
+    public ChatGptException(ChatGptError error, HttpStatusCode statusCode) : base(!string.IsNullOrWhiteSpace(error.Message) ? error.Message : error.Code, null, statusCode)
     {
         Error = error;
     }

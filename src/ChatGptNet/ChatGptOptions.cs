@@ -1,13 +1,20 @@
 ﻿using ChatGptNet.Exceptions;
 using ChatGptNet.Models;
+using ChatGptNet.ServiceConfigurations;
 
 namespace ChatGptNet;
 
 /// <summary>
-/// Options class that provides settings for configuring ChatGPT
+/// Options class that provides settings for configuring ChatGPT.
 /// </summary>
 public class ChatGptOptions
 {
+    /// <summary>
+    /// Gets or sets the configuration settings for accessing the service.
+    /// </summary>
+    /// <seealso cref="ChatGptServiceConfiguration"/>
+    /// <seealso cref="OpenAIChatGptServiceConfiguration"/>
+    /// <seealso cref="AzureChatGptServiceConfiguration"/>
     public ChatGptServiceConfiguration ServiceConfiguration { get; set; } = default!;
 
     /// <summary>

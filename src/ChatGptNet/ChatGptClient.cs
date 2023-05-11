@@ -25,7 +25,7 @@ internal class ChatGptClient : IChatGptClient
     {
         this.httpClient = httpClient;
 
-        foreach (var header in options.ServiceConfiguration!.GetRequestHeaders())
+        foreach (var header in options.ServiceConfiguration.GetRequestHeaders())
         {
             this.httpClient.DefaultRequestHeaders.TryAddWithoutValidation(header.Key, header.Value);
         }

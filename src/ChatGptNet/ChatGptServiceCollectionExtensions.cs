@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Caching.Memory;
+﻿using ChatGptNet.ServiceConfigurations;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -54,6 +55,8 @@ public static class ChatGptServiceCollectionExtensions
         var options = new ChatGptOptions();
         var configurationSection = configuration.GetSection(sectionName);
         configurationSection.Bind(options);
+
+        // Creates the service configuration (OpenAI or Azure) according to the configuration settings.
         options.ServiceConfiguration = ChatGptServiceConfiguration.Create(configurationSection);
 
         services.AddSingleton(options);
@@ -69,7 +72,7 @@ public static class ChatGptServiceCollectionExtensions
     /// <param name="services">The <see cref="IServiceCollection"/> to add services to.</param>
     /// <param name="setupAction">The <see cref="Action{IServiceProvider, ChatGptOptions}"/> to configure the provided <see cref="ChatGptOptions"/>.</param>
     /// <returns>A reference to this instance after the operation has completed.</returns>
-    /// <remarks>Use this this method if it is necessary to dynamically set options like <see cref="ChatGptOptions.ApiKey"/> (for example, using other services via dependency injection).
+    /// <remarks>Use this this method if it is necessary to dynamically set options (for example, using other services via dependency injection).
     /// This method automatically adds a <see cref="MemoryCache"/> that is used to save chat messages for completion.
     /// </remarks>
     /// <seealso cref="ChatGptOptions"/>
