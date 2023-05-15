@@ -44,13 +44,16 @@ We can also set ChatGPT parameters for chat completion at startup. Check the [of
 The configuration can be automatically read from [IConfiguration](https://learn.microsoft.com/en-us/dotnet/api/microsoft.extensions.configuration.iconfiguration), using for example a _ChatGPT_ section in the _appsettings.json_ file:
 
     "ChatGPT": {
-        "ApiKey": "",
+        "Provider": "OpenAI",           // Optional. Allowed values: OpenAI (default) or Azure
+        "ApiKey": "",                   // Required
+        //"Organization": "My-Org"      // Optional. Used only by OpenAI
+        //"ResourceName": "my-res-name" // Required when using Azure Open AI Service
+
+        "DefaultModel": "gpt-3.5-turbo",
         "MessageLimit": 20,
         "MessageExpiration": "00:30:00",
-        "DefaultModel": "gpt-3.5-turbo",
-        "ThrowExceptionOnError": true,
-        "User": "UserName"
-        "Organization": "My-Organization",
+        "ThrowExceptionOnError": true
+        "User": "UserName",
         "DefaultParameters": {
             "Temperature": 0.8,
             "TopP": 1,
