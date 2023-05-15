@@ -6,7 +6,7 @@
 /// <remarks>
 /// See <see href="https://platform.openai.com/docs/models/overview">Models overview</see> for more information.
 /// </remarks>
-public static class ChatGptModels
+public static class OpenAIChatGptModels
 {
     /// <summary>
     /// GPT-3.5 model can understand and generate natural language or code and it is optimized for chat.
@@ -33,5 +33,4 @@ public static class ChatGptModels
     /// </remarks>
     /// <seealso cref="Gpt4"/>
     public const string Gpt4_32k = "gpt-4-32k";
-
 }

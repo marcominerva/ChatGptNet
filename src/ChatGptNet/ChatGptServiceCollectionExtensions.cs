@@ -1,4 +1,5 @@
-﻿using ChatGptNet.ServiceConfigurations;
+﻿using ChatGptNet.Models;
+using ChatGptNet.ServiceConfigurations;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -29,6 +30,7 @@ public static class ChatGptServiceCollectionExtensions
 
         ArgumentNullException.ThrowIfNull(options.ServiceConfiguration);
 
+        SetMissingDefaults(options);
         services.AddSingleton(options);
 
         AddChatGptCore(services);
@@ -59,6 +61,7 @@ public static class ChatGptServiceCollectionExtensions
         // Creates the service configuration (OpenAI or Azure) according to the configuration settings.
         options.ServiceConfiguration = ChatGptServiceConfiguration.Create(configurationSection);
 
+        SetMissingDefaults(options);
         services.AddSingleton(options);
 
         AddChatGptCore(services);
@@ -90,6 +93,8 @@ public static class ChatGptServiceCollectionExtensions
 
             ArgumentNullException.ThrowIfNull(options.ServiceConfiguration);
 
+            SetMissingDefaults(options);
+
             return options;
         });
 
@@ -102,5 +107,14 @@ public static class ChatGptServiceCollectionExtensions
     {
         services.AddMemoryCache();
         services.AddHttpClient<IChatGptClient, ChatGptClient>();
+    }
+
+    private static void SetMissingDefaults(ChatGptOptions options)
+    {
+        // If the provider is OpenAI and no default model has been specified, uses gpt-3.5-turbo by default.
+        if (options.ServiceConfiguration is OpenAIChatGptServiceConfiguration && string.IsNullOrWhiteSpace(options.DefaultModel))
+        {
+            options.DefaultModel = OpenAIChatGptModels.Gpt35Turbo;
+        }
     }
 }

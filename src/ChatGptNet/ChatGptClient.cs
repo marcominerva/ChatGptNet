@@ -74,8 +74,6 @@ internal class ChatGptClient : IChatGptClient
         var requestUri = options.ServiceConfiguration.GetServiceEndpoint(model ?? options.DefaultModel);
         using var httpResponse = await httpClient.PostAsJsonAsync(requestUri, request, jsonSerializerOptions, cancellationToken);
 
-        var content = await httpResponse.Content.ReadAsStringAsync();
-
         var response = await httpResponse.Content.ReadFromJsonAsync<ChatGptResponse>(jsonSerializerOptions, cancellationToken: cancellationToken);
         response!.ConversationId = conversationId;
 

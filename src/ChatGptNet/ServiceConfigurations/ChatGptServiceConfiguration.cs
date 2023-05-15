@@ -27,11 +27,10 @@ public abstract class ChatGptServiceConfiguration
 
     internal static ChatGptServiceConfiguration Create(IConfiguration configuration)
     {
-        ChatGptServiceConfiguration serviceConfiguration = configuration.GetValue<ChatGptServiceType>("Service") switch
+        ChatGptServiceConfiguration serviceConfiguration = configuration.GetValue<string>("Provider")?.ToLowerInvariant() switch
         {
-            ChatGptServiceType.OpenAI => new OpenAIChatGptServiceConfiguration(configuration),
-            ChatGptServiceType.Azure => new AzureChatGptServiceConfiguration(configuration),
-            _ => throw new ArgumentException("Service")
+            "azure" => new AzureChatGptServiceConfiguration(configuration),
+            _ => new OpenAIChatGptServiceConfiguration(configuration),  // OpenAI is the default.
         };
 
         serviceConfiguration.ApiKey = configuration.GetValue<string>("ApiKey");

@@ -23,7 +23,10 @@ public class AzureChatGptServiceConfiguration : ChatGptServiceConfiguration
 
     internal AzureChatGptServiceConfiguration(IConfiguration configuration)
     {
+        ArgumentNullException.ThrowIfNull(configuration);
+
         ResourceName = configuration.GetValue<string>("ResourceName");
+        ArgumentNullException.ThrowIfNull(nameof(ResourceName));
     }
 
     /// <inheritdoc />

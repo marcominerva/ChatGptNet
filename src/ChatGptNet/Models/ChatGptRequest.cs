@@ -6,14 +6,14 @@ namespace ChatGptNet.Models;
 /// Represents a request for a chat completions.
 /// </summary>
 /// <remarks>
-/// See <see href="https://platform.openai.com/docs/api-reference/chat/create">Create chat completion</see> for more information.
+/// See <see href="https://platform.openai.com/docs/api-reference/chat/create">Create chat completion (OpenAI)</see> or <see href="https://learn.microsoft.com/azure/cognitive-services/openai/reference#chat-completions">Chat Completions (Azure)</see> for more information.
 /// </remarks>
 public class ChatGptRequest
 {
     /// <summary>
-    /// Gets or sets the ID of the model to use. Currently, only <em>gpt-3.5-turbo</em> and <em>gpt-3.5-turbo-0301</em> are supported.
+    /// Gets or sets the ID of the model to use.
     /// </summary>
-    public string Model { get; set; } = string.Empty;
+    public string? Model { get; set; }
 
     /// <summary>
     /// Gets or sets the messages to generate chat completions for.

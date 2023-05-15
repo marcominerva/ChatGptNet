@@ -30,15 +30,16 @@ public class ChatGptOptions
     /// <summary>
     /// Gets or sets a value that determines whether to throw a <see cref="ChatGptException"/> when an error occurred (default: <see langword="true"/>). If this property is set to <see langword="false"></see>, API errors are returned in the <see cref="ChatGptResponse"/> object.
     /// </summary>
-    /// <see cref="ChatGptException"/>
+    /// <seealso cref="ChatGptException"/>
     /// <seealso cref="ChatGptResponse"/>
     public bool ThrowExceptionOnError { get; set; } = true;
 
     /// <summary>
-    /// Gets or sets the default model for chat completion. (default: <see cref="ChatGptModels.Gpt35Turbo"/>).
+    /// Gets or sets the default model for chat completion. (default: <see cref="OpenAIChatGptModels.Gpt35Turbo"/> when the provider is <see cref="OpenAIChatGptServiceConfiguration"> OpenAI</see>).
     /// </summary>
-    /// <see cref="ChatGptModels"/>
-    public string DefaultModel { get; set; } = ChatGptModels.Gpt35Turbo;
+    /// <seealso cref="OpenAIChatGptModels"/>
+    /// <seealso cref="OpenAIChatGptServiceConfiguration"/>
+    public string? DefaultModel { get; set; }
 
     /// <summary>
     ///  Gets or sets the default parameters for chat completion.
