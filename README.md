@@ -102,7 +102,7 @@ And then use the corresponding overload of che **AddChatGpt** method:
     // Adds ChatGPT service using settings from IConfiguration.
     services.AddChatGpt(context.Configuration);
 
-## Configure ChatGptNet dinamically
+## Configuring ChatGptNet dinamically
 
 The **AddChatGpt** method has also an overload that accepts an [IServiceProvider](https://learn.microsoft.com/dotnet/api/system.iserviceprovider) as argument. It can be used, for example, if we're in a Web API and we need to support scenarios in which every user has a different API Key that can be retrieved accessing a database via Dependency Injection:
 
