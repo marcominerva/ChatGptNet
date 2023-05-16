@@ -15,26 +15,17 @@ builder.Services.ConfigureHttpJsonOptions(options =>
 });
 
 // Adds ChatGPT service with hard-coded settings.
-//builder.Services.AddChatGpt(options =>
+//services.AddChatGpt(options =>
 //{
 //    options.MessageLimit = 16;  // Default: 10
 //    options.MessageExpiration = TimeSpan.FromMinutes(5);    // Default: 1 hour
+//    options.DefaultModel = "my-model";
 
 //    // OpenAI.
-//    //options.DefaultModel = OpenAIChatGptModels.Gpt35Turbo;
-//    //options.ServiceConfiguration = new OpenAIChatGptServiceConfiguration
-//    //{
-//    //    ApiKey = "",
-//    //    Organization = ""
-//    //};
+//    //options.UseOpenAI(apiKey: "", organization: "");
 
 //    // Azure OpenAI Service.
-//    //options.DefaultModel = "gpt-4-32k";
-//    //options.ServiceConfiguration = new AzureChatGptServiceConfiguration
-//    //{
-//    //    ResourceName = "baseopenaiservice",
-//    //    ApiKey = "55e86520fee046d3ba09af8d44af7d18"
-//    //};
+//    //options.UseAzure(resourceName: "", apiKey: "", authenticationType: AzureAuthenticationType.ApiKey);
 //});
 
 // Adds ChatGPT service using settings from IConfiguration.
