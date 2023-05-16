@@ -5,7 +5,7 @@ namespace ChatGptNet.ServiceConfigurations;
 /// <summary>
 /// Contains configuration settings for OpenAI services.
 /// </summary>
-public class OpenAIChatGptServiceConfiguration : ChatGptServiceConfiguration
+internal class OpenAIChatGptServiceConfiguration : ChatGptServiceConfiguration
 {
     /// <summary>
     /// Gets or sets a value that determines the organization the user belongs to.
@@ -20,7 +20,7 @@ public class OpenAIChatGptServiceConfiguration : ChatGptServiceConfiguration
     {
     }
 
-    internal OpenAIChatGptServiceConfiguration(IConfiguration configuration)
+    public OpenAIChatGptServiceConfiguration(IConfiguration configuration)
     {
         Organization = configuration.GetValue<string>("Organization");
     }

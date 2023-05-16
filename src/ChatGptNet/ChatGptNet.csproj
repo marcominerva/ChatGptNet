@@ -9,11 +9,11 @@
         <Company>Marco Minerva</Company>
         <Product>ChatGPT for .NET</Product>
         <Title>ChatGPT for .NET</Title>
-        <Description>A ChatGPT integration library for .NET</Description>
+        <Description>A ChatGPT integration library for .NET, supporting both OpenAI and Azure OpenAI Service.</Description>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <PackageProjectUrl>https://github.com/marcominerva/ChatGptNet</PackageProjectUrl>
         <PackageIcon>Chat.png</PackageIcon>
-        <PackageTags>csharp net openai openai-api chatgpt</PackageTags>
+        <PackageTags>csharp dotnet net openai openai-api azure-openai azure-openai-api chatgpt</PackageTags>
         <RepositoryType>git</RepositoryType>
         <RepositoryUrl>https://github.com/marcominerva/ChatGptNet.git</RepositoryUrl>
         <RepositoryBranch>master</RepositoryBranch>

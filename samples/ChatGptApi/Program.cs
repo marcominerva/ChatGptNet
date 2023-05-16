@@ -24,7 +24,8 @@ builder.Services.ConfigureHttpJsonOptions(options =>
 //    //options.DefaultModel = OpenAIChatGptModels.Gpt35Turbo;
 //    //options.ServiceConfiguration = new OpenAIChatGptServiceConfiguration
 //    //{
-//    //    ApiKey = "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"
+//    //    ApiKey = "",
+//    //    Organization = ""
 //    //};
 
 //    // Azure OpenAI Service.

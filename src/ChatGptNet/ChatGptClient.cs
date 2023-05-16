@@ -75,6 +75,7 @@ internal class ChatGptClient : IChatGptClient
         using var httpResponse = await httpClient.PostAsJsonAsync(requestUri, request, jsonSerializerOptions, cancellationToken);
 
         var response = await httpResponse.Content.ReadFromJsonAsync<ChatGptResponse>(jsonSerializerOptions, cancellationToken: cancellationToken);
+        EnsureErrorIsSet(response!, httpResponse);
         response!.ConversationId = conversationId;
 
         if (response.IsSuccessful)
@@ -84,7 +85,7 @@ internal class ChatGptClient : IChatGptClient
         }
         else if (options.ThrowExceptionOnError)
         {
-            throw new ChatGptException(response.Error!, httpResponse.StatusCode);
+            throw new ChatGptException(response.Error, httpResponse.StatusCode);
         }
 
         return response;
@@ -165,13 +166,14 @@ internal class ChatGptClient : IChatGptClient
         else
         {
             var response = await httpResponse.Content.ReadFromJsonAsync<ChatGptResponse>(cancellationToken: cancellationToken);
+            EnsureErrorIsSet(response!, httpResponse);
+            response!.ConversationId = conversationId;
 
             if (options.ThrowExceptionOnError)
             {
-                throw new ChatGptException(response!.Error!, httpResponse.StatusCode);
+                throw new ChatGptException(response!.Error, httpResponse.StatusCode);
             }
 
-            response!.ConversationId = conversationId;
             yield return response;
         }
     }
@@ -251,7 +253,6 @@ internal class ChatGptClient : IChatGptClient
             Stream = stream,
             Temperature = parameters?.Temperature ?? options.DefaultParameters.Temperature,
             TopP = parameters?.TopP ?? options.DefaultParameters.TopP,
-            Choices = parameters?.Choices ?? options.DefaultParameters.Choices,
             MaxTokens = parameters?.MaxTokens ?? options.DefaultParameters.MaxTokens,
             PresencePenalty = parameters?.PresencePenalty ?? options.DefaultParameters.PresencePenalty,
             FrequencyPenalty = parameters?.FrequencyPenalty ?? options.DefaultParameters.FrequencyPenalty,
@@ -285,5 +286,17 @@ internal class ChatGptClient : IChatGptClient
         }
 
         cache.Set(conversationId, messages, options.MessageExpiration);
+    }
+
+    private static void EnsureErrorIsSet(ChatGptResponse response, HttpResponseMessage httpResponse)
+    {
+        if (!httpResponse.IsSuccessStatusCode && response.Error is null)
+        {
+            response.Error = new ChatGptError
+            {
+                Message = httpResponse.ReasonPhrase ?? httpResponse.StatusCode.ToString(),
+                Code = ((int)httpResponse.StatusCode).ToString()
+            };
+        }
     }
 }

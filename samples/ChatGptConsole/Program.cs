@@ -18,21 +18,13 @@ static void ConfigureServices(HostBuilderContext context, IServiceCollection ser
     //{
     //    options.MessageLimit = 16;  // Default: 10
     //    options.MessageExpiration = TimeSpan.FromMinutes(5);    // Default: 1 hour
+    //    options.DefaultModel = "my-model";
 
     //    // OpenAI.
-    //    //options.DefaultModel = OpenAIChatGptModels.Gpt35Turbo;
-    //    //options.ServiceConfiguration = new OpenAIChatGptServiceConfiguration
-    //    //{
-    //    //    ApiKey = ""
-    //    //};
+    //    //options.UseOpenAI(apiKey: "", organization: "");
 
     //    // Azure OpenAI Service.
-    //    //options.DefaultModel = "my-model";
-    //    //options.ServiceConfiguration = new AzureChatGptServiceConfiguration
-    //    //{
-    //    //    ResourceName = "",
-    //    //    ApiKey = ""
-    //    //};
+    //    //options.UseAzure(resourceName: "", apiKey: "", authenticationType: AzureAuthenticationType.ApiKey);
     //});
 
     // Adds ChatGPT service using settings from IConfiguration.

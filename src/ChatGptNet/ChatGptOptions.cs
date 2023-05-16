@@ -15,7 +15,7 @@ public class ChatGptOptions
     /// <seealso cref="ChatGptServiceConfiguration"/>
     /// <seealso cref="OpenAIChatGptServiceConfiguration"/>
     /// <seealso cref="AzureChatGptServiceConfiguration"/>
-    public ChatGptServiceConfiguration ServiceConfiguration { get; set; } = default!;
+    internal ChatGptServiceConfiguration ServiceConfiguration { get; set; } = default!;
 
     /// <summary>
     /// Gets or sets the maximum number of messages to use for chat completion (default: 10).

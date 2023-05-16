@@ -6,7 +6,7 @@
 [![Nuget](https://img.shields.io/nuget/dt/ChatGptNet)](https://www.nuget.org/packages/ChatGptNet)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/marcominerva/ChatGptNet/blob/master/LICENSE)
 
-A ChatGPT integration library for .NET
+A ChatGPT integration library for .NET, supporting both OpenAI and Azure OpenAI Service.
 
 **Installation**
 
@@ -18,16 +18,40 @@ The library is available on [NuGet](https://www.nuget.org/packages/ChatGptNet). 
 
 Register ChatGPT service at application startup:
 
-    builder.Services.AddChatGpt(options =>
+    services.AddChatGpt(options =>
     {
-        options.ApiKey = "";
-        options.Organization = null;    // Optional
-        options.DefaultModel = ChatGptModels.Gpt35Turbo;  // Default: ChatGptModels.Gpt35Turbo
         options.MessageLimit = 16;  // Default: 10
         options.MessageExpiration = TimeSpan.FromMinutes(5);    // Default: 1 hour
+
+        // OpenAI.
+        //options.DefaultModel = OpenAIChatGptModels.Gpt35Turbo;
+        //options.ServiceConfiguration = new OpenAIChatGptServiceConfiguration
+        //{
+        //    ApiKey = "",
+        //    Organization = ""
+        //};
+
+        // Azure OpenAI Service.
+        //options.DefaultModel = "my-model";
+        //options.ServiceConfiguration = new AzureChatGptServiceConfiguration
+        //{
+        //    ResourceName = "",
+        //    ApiKey = ""
+        //};
     });
 
-The API Key can be obtained in the [User settings](https://platform.openai.com/account/api-keys) page of your OpenAI account. For users who belong to multiple organizations, you can also specify which organization is used. Usage from these API requests will count against the specified organization's subscription quota.
+
+**ChatGptNet** supports both OpenAI and Azure OpenAI Service, so it is necessary to set the correct configuration settings based on the chosen provider:
+
+##### OpenAI (OpenAIChatGptServiceConfiguration)
+
+- _ApiKey_: it is available in the [User settings](https://platform.openai.com/account/api-keys) page of the OpenAI account (required).
+- _Organization_: for users who belong to multiple organizations, we can also specify which organization is used. Usage from these API requests will count against the specified organization's subscription quota (optional).
+
+##### Azure OpenAI Service (AzureChatGptServiceConfiguration)
+
+- _ResourceName_: (required).
+- _ApiKey_: (required).
 
 With the *DefaultModel* property, you can specify the default model that will be used for chat completion, unless you pass an explicit value in the **AskAsync** method.
 
@@ -44,10 +68,10 @@ We can also set ChatGPT parameters for chat completion at startup. Check the [of
 The configuration can be automatically read from [IConfiguration](https://learn.microsoft.com/en-us/dotnet/api/microsoft.extensions.configuration.iconfiguration), using for example a _ChatGPT_ section in the _appsettings.json_ file:
 
     "ChatGPT": {
-        "Provider": "OpenAI",           // Optional. Allowed values: OpenAI (default) or Azure
-        "ApiKey": "",                   // Required
-        //"Organization": "My-Org"      // Optional. Used only by OpenAI
-        //"ResourceName": "my-res-name" // Required when using Azure Open AI Service
+        "Provider": "OpenAI",          // Optional. Allowed values: OpenAI (default) or Azure
+        "ApiKey": "",                  // Required
+        //"Organization": "My-Org",    // Optional. Used only by OpenAI
+        "ResourceName": "my-res-name", // Required when using Azure Open AI Service
 
         "DefaultModel": "gpt-3.5-turbo",
         "MessageLimit": 20,

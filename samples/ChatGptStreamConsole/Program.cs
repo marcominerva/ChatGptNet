@@ -23,7 +23,8 @@ static void ConfigureServices(HostBuilderContext context, IServiceCollection ser
     //    //options.DefaultModel = OpenAIChatGptModels.Gpt35Turbo;
     //    //options.ServiceConfiguration = new OpenAIChatGptServiceConfiguration
     //    //{
-    //    //    ApiKey = ""
+    //    //    ApiKey = "",
+    //    //    Organization = ""
     //    //};
 
     //    // Azure OpenAI Service.

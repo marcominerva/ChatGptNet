@@ -3,9 +3,9 @@
 namespace ChatGptNet.ServiceConfigurations;
 
 /// <summary>
-/// Provides configuration properties for Chat GPT service.
+/// Provides configuration properties for ChatGPT service.
 /// </summary>
-public abstract class ChatGptServiceConfiguration
+internal abstract class ChatGptServiceConfiguration
 {
     /// <summary>
     /// Gets or sets the API Key to access the service.

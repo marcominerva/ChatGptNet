@@ -1,11 +1,14 @@
-﻿namespace ChatGptNet.Models;
+﻿using ChatGptNet.ServiceConfigurations;
+
+namespace ChatGptNet.Models;
 
 /// <summary>
-/// Contains all the currently supported chat completion models.
+/// Contains all the chat completion models that are currently supported by OpenAI.
 /// </summary>
 /// <remarks>
 /// See <see href="https://platform.openai.com/docs/models/overview">Models overview</see> for more information.
 /// </remarks>
+/// <seealso cref="OpenAIChatGptServiceConfiguration"/>
 public static class OpenAIChatGptModels
 {
     /// <summary>
