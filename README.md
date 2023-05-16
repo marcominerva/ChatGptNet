@@ -18,7 +18,7 @@ The library is available on [NuGet](https://www.nuget.org/packages/ChatGptNet). 
 
 Register ChatGPT service at application startup:
 
-    services.AddChatGpt(options =>
+    builder.Services.AddChatGpt(options =>
     {
         // OpenAI.
         //options.UseOpenAI(apiKey: "", organization: "");
