@@ -1,10 +1,8 @@
 using System.Diagnostics;
-using System.Net.Mime;
 using System.Text.Json.Serialization;
 using ChatGptNet;
 using ChatGptNet.Extensions;
 using Microsoft.AspNetCore.Diagnostics;
-using Microsoft.AspNetCore.WebUtilities;
 using MinimalHelpers.OpenApi;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -15,17 +13,17 @@ builder.Services.ConfigureHttpJsonOptions(options =>
 });
 
 // Adds ChatGPT service with hard-coded settings.
-//services.AddChatGpt(options =>
+//builder.Services.AddChatGpt(options =>
 //{
-//    options.MessageLimit = 16;  // Default: 10
-//    options.MessageExpiration = TimeSpan.FromMinutes(5);    // Default: 1 hour
-//    options.DefaultModel = "my-model";
-
 //    // OpenAI.
 //    //options.UseOpenAI(apiKey: "", organization: "");
 
 //    // Azure OpenAI Service.
-//    //options.UseAzure(resourceName: "", apiKey: "", authenticationType: AzureAuthenticationType.ApiKey);
+//    options.UseAzure(resourceName: "", apiKey: "", authenticationType: AzureAuthenticationType.ApiKey);
+
+//    options.DefaultModel = "my-model";
+//    options.MessageLimit = 16;  // Default: 10
+//    options.MessageExpiration = TimeSpan.FromMinutes(5);    // Default: 1 hour
 //});
 
 // Adds ChatGPT service using settings from IConfiguration.
@@ -58,36 +56,22 @@ if (!app.Environment.IsDevelopment())
         AllowStatusCode404Response = true,
         ExceptionHandler = async (HttpContext context) =>
         {
+            var problemDetailsService = context.RequestServices.GetRequiredService<IProblemDetailsService>();
             var exceptionHandlerFeature = context.Features.Get<IExceptionHandlerFeature>();
             var error = exceptionHandlerFeature?.Error;
 
-            if (context.RequestServices.GetService<IProblemDetailsService>() is { } problemDetailsService)
+            // Writes as JSON problem details
+            await problemDetailsService.WriteAsync(new()
             {
-                // Writes as JSON problem details
-                await problemDetailsService.WriteAsync(new()
+                HttpContext = context,
+                AdditionalMetadata = exceptionHandlerFeature?.Endpoint?.Metadata,
+                ProblemDetails =
                 {
-                    HttpContext = context,
-                    AdditionalMetadata = exceptionHandlerFeature?.Endpoint?.Metadata,
-                    ProblemDetails =
-                    {
-                        Status = context.Response.StatusCode,
-                        Title = error?.GetType().FullName ?? "An error occurred while processing your request",
-                        Detail = error?.Message
-                    }
-                });
-            }
-            else
-            {
-                context.Response.ContentType = MediaTypeNames.Text.Plain;
-                var message = ReasonPhrases.GetReasonPhrase(context.Response.StatusCode) switch
-                {
-                    { Length: > 0 } reasonPhrase => reasonPhrase,
-                    _ => "An error occurred"
-                };
-
-                await context.Response.WriteAsync(message + "\r\n");
-                await context.Response.WriteAsync($"Request ID: {Activity.Current?.Id ?? context.TraceIdentifier}");
-            }
+                    Status = context.Response.StatusCode,
+                    Title = error?.GetType().FullName ?? "An error occurred while processing your request",
+                    Detail = error?.Message
+                }
+            });
         }
     });
 }

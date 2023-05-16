@@ -16,15 +16,15 @@ static void ConfigureServices(HostBuilderContext context, IServiceCollection ser
     // Adds ChatGPT service with hard-coded settings.
     //services.AddChatGpt(options =>
     //{
-    //    options.MessageLimit = 16;  // Default: 10
-    //    options.MessageExpiration = TimeSpan.FromMinutes(5);    // Default: 1 hour
-    //    options.DefaultModel = "my-model";
-
     //    // OpenAI.
     //    //options.UseOpenAI(apiKey: "", organization: "");
 
     //    // Azure OpenAI Service.
     //    //options.UseAzure(resourceName: "", apiKey: "", authenticationType: AzureAuthenticationType.ApiKey);
+
+    //    options.DefaultModel = "my-model";
+    //    options.MessageLimit = 16;  // Default: 10
+    //    options.MessageExpiration = TimeSpan.FromMinutes(5);    // Default: 1 hour
     //});
 
     // Adds ChatGPT service using settings from IConfiguration.
