@@ -1,6 +1,5 @@
 using ChatGptBlazor.Wasm;
 using ChatGptNet;
-using ChatGptNet.Models;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 
@@ -12,8 +11,13 @@ builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.
 
 builder.Services.AddChatGpt(options =>
 {
-    options.ApiKey = "";
-    options.DefaultModel = ChatGptModels.Gpt35Turbo;  // Default: ChatGptModels.Gpt35Turbo
+    // OpenAI.
+    //options.UseOpenAI(apiKey: "", organization: "");
+
+    // Azure OpenAI Service.
+    //options.UseAzure(resourceName: "", apiKey: "", authenticationType: AzureAuthenticationType.ApiKey);
+
+    options.DefaultModel = "my-model";
     options.MessageLimit = 16;  // Default: 10
     options.MessageExpiration = TimeSpan.FromMinutes(5);    // Default: 1 hour
 });

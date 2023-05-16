@@ -24,11 +24,10 @@ internal class ChatGptClient : IChatGptClient
     public ChatGptClient(HttpClient httpClient, IMemoryCache cache, ChatGptOptions options)
     {
         this.httpClient = httpClient;
-        this.httpClient.DefaultRequestHeaders.Authorization = new("Bearer", options.ApiKey);
 
-        if (!string.IsNullOrWhiteSpace(options.Organization))
+        foreach (var header in options.ServiceConfiguration.GetRequestHeaders())
         {
-            this.httpClient.DefaultRequestHeaders.Add("OpenAI-Organization", options.Organization);
+            this.httpClient.DefaultRequestHeaders.TryAddWithoutValidation(header.Key, header.Value);
         }
 
         this.cache = cache;
@@ -72,8 +71,11 @@ internal class ChatGptClient : IChatGptClient
         var messages = CreateMessageList(conversationId, message);
         var request = CreateRequest(messages, false, parameters, model);
 
-        using var httpResponse = await httpClient.PostAsJsonAsync("chat/completions", request, jsonSerializerOptions, cancellationToken);
+        var requestUri = options.ServiceConfiguration.GetServiceEndpoint(model ?? options.DefaultModel);
+        using var httpResponse = await httpClient.PostAsJsonAsync(requestUri, request, jsonSerializerOptions, cancellationToken);
+
         var response = await httpResponse.Content.ReadFromJsonAsync<ChatGptResponse>(jsonSerializerOptions, cancellationToken: cancellationToken);
+        EnsureErrorIsSet(response!, httpResponse);
         response!.ConversationId = conversationId;
 
         if (response.IsSuccessful)
@@ -83,7 +85,7 @@ internal class ChatGptClient : IChatGptClient
         }
         else if (options.ThrowExceptionOnError)
         {
-            throw new ChatGptException(response.Error!, httpResponse.StatusCode);
+            throw new ChatGptException(response.Error, httpResponse.StatusCode);
         }
 
         return response;
@@ -102,7 +104,8 @@ internal class ChatGptClient : IChatGptClient
         var messages = CreateMessageList(conversationId, message);
         var request = CreateRequest(messages, true, parameters, model);
 
-        using var requestMessage = new HttpRequestMessage(HttpMethod.Post, "chat/completions")
+        var requestUri = options.ServiceConfiguration.GetServiceEndpoint(model ?? options.DefaultModel);
+        using var requestMessage = new HttpRequestMessage(HttpMethod.Post, requestUri)
         {
             Content = new StringContent(JsonSerializer.Serialize(request, jsonSerializerOptions), Encoding.UTF8, MediaTypeNames.Application.Json)
         };
@@ -163,13 +166,14 @@ internal class ChatGptClient : IChatGptClient
         else
         {
             var response = await httpResponse.Content.ReadFromJsonAsync<ChatGptResponse>(cancellationToken: cancellationToken);
+            EnsureErrorIsSet(response!, httpResponse);
+            response!.ConversationId = conversationId;
 
             if (options.ThrowExceptionOnError)
             {
-                throw new ChatGptException(response!.Error!, httpResponse.StatusCode);
+                throw new ChatGptException(response!.Error, httpResponse.StatusCode);
             }
 
-            response!.ConversationId = conversationId;
             yield return response;
         }
     }
@@ -249,7 +253,6 @@ internal class ChatGptClient : IChatGptClient
             Stream = stream,
             Temperature = parameters?.Temperature ?? options.DefaultParameters.Temperature,
             TopP = parameters?.TopP ?? options.DefaultParameters.TopP,
-            Choices = parameters?.Choices ?? options.DefaultParameters.Choices,
             MaxTokens = parameters?.MaxTokens ?? options.DefaultParameters.MaxTokens,
             PresencePenalty = parameters?.PresencePenalty ?? options.DefaultParameters.PresencePenalty,
             FrequencyPenalty = parameters?.FrequencyPenalty ?? options.DefaultParameters.FrequencyPenalty,
@@ -283,5 +286,17 @@ internal class ChatGptClient : IChatGptClient
         }
 
         cache.Set(conversationId, messages, options.MessageExpiration);
+    }
+
+    private static void EnsureErrorIsSet(ChatGptResponse response, HttpResponseMessage httpResponse)
+    {
+        if (!httpResponse.IsSuccessStatusCode && response.Error is null)
+        {
+            response.Error = new ChatGptError
+            {
+                Message = httpResponse.ReasonPhrase ?? httpResponse.StatusCode.ToString(),
+                Code = ((int)httpResponse.StatusCode).ToString()
+            };
+        }
     }
 }

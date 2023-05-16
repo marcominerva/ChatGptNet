@@ -27,11 +27,6 @@ public class ChatGptParameters
     public double? TopP { get; set; }
 
     /// <summary>
-    /// Gets or sets how many chat completion choices to generate for each input message (default: 1).
-    /// </summary>
-    public int? Choices { get; set; }
-
-    /// <summary>
     /// Gets or sets the maximum number of tokens to generate in the chat completion. The total length of input tokens and generated tokens is limited by the model's context length.
     /// </summary>
     public int? MaxTokens { get; set; }

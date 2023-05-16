@@ -1,12 +1,15 @@
-﻿namespace ChatGptNet.Models;
+﻿using ChatGptNet.ServiceConfigurations;
+
+namespace ChatGptNet.Models;
 
 /// <summary>
-/// Contains all the currently supported chat completion models.
+/// Contains all the chat completion models that are currently supported by OpenAI.
 /// </summary>
 /// <remarks>
 /// See <see href="https://platform.openai.com/docs/models/overview">Models overview</see> for more information.
 /// </remarks>
-public static class ChatGptModels
+/// <seealso cref="OpenAIChatGptServiceConfiguration"/>
+public static class OpenAIChatGptModels
 {
     /// <summary>
     /// GPT-3.5 model can understand and generate natural language or code and it is optimized for chat.
@@ -33,5 +36,4 @@ public static class ChatGptModels
     /// </remarks>
     /// <seealso cref="Gpt4"/>
     public const string Gpt4_32k = "gpt-4-32k";
-
 }
