@@ -1,20 +1,21 @@
 ﻿using ChatGptNet.Exceptions;
 using ChatGptNet.Models;
+using ChatGptNet.ServiceConfigurations;
 
 namespace ChatGptNet;
 
 /// <summary>
-/// Options class that provides settings for configuring ChatGPT
+/// Options class that provides settings for configuring ChatGPT.
 /// </summary>
 public record ChatGptOptions
 {
     /// <summary>
-    /// Gets or sets the API Key to access the service.
+    /// Gets or sets the configuration settings for accessing the service.
     /// </summary>
-    /// <remarks>
-    /// See <see href="https://help.openai.com/en/articles/4936850-where-do-i-find-my-secret-api-key">Where do I find my Secret API Key?</see> for more information.
-    /// </remarks>
-    public string? ApiKey { get; set; }
+    /// <seealso cref="ChatGptServiceConfiguration"/>
+    /// <seealso cref="OpenAIChatGptServiceConfiguration"/>
+    /// <seealso cref="AzureChatGptServiceConfiguration"/>
+    internal ChatGptServiceConfiguration ServiceConfiguration { get; set; } = default!;
 
     /// <summary>
     /// Gets or sets the maximum number of messages to use for chat completion (default: 10).
@@ -29,21 +30,16 @@ public record ChatGptOptions
     /// <summary>
     /// Gets or sets a value that determines whether to throw a <see cref="ChatGptException"/> when an error occurred (default: <see langword="true"/>). If this property is set to <see langword="false"></see>, API errors are returned in the <see cref="ChatGptResponse"/> object.
     /// </summary>
-    /// <see cref="ChatGptException"/>
+    /// <seealso cref="ChatGptException"/>
     /// <seealso cref="ChatGptResponse"/>
     public bool ThrowExceptionOnError { get; set; } = true;
 
     /// <summary>
-    /// Gets or sets a value that determines the organization the user belongs to.
+    /// Gets or sets the default model for chat completion. (default: <see cref="OpenAIChatGptModels.Gpt35Turbo"/> when the provider is <see cref="OpenAIChatGptServiceConfiguration"> OpenAI</see>).
     /// </summary>
-    /// <remarks>For users who belong to multiple organizations, you can pass a header to specify which organization is used for an API request. Usage from these API requests will count against the specified organization's subscription quota.</remarks>
-    public string? Organization { get; set; }
-
-    /// <summary>
-    /// Gets or sets the default model for chat completion. (default: <see cref="ChatGptModels.Gpt35Turbo"/>).
-    /// </summary>
-    /// <see cref="ChatGptModels"/>
-    public string DefaultModel { get; set; } = ChatGptModels.Gpt35Turbo;
+    /// <seealso cref="OpenAIChatGptModels"/>
+    /// <seealso cref="OpenAIChatGptServiceConfiguration"/>
+    public string? DefaultModel { get; set; }
 
     /// <summary>
     ///  Gets or sets the default parameters for chat completion.

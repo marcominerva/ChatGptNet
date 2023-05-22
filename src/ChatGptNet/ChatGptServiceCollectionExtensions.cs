@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.Caching.Memory;
+﻿using ChatGptNet.Models;
+using ChatGptNet.ServiceConfigurations;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -71,6 +73,10 @@ public static class ChatGptServiceCollectionExtensions
 
         var options = new ChatGptOptions();
         setupAction.Invoke(options);
+
+        ArgumentNullException.ThrowIfNull(options.ServiceConfiguration);
+
+        SetMissingDefaults(options);
         services.AddSingleton(options);
 
         AddChatGptCore(services);
@@ -95,7 +101,13 @@ public static class ChatGptServiceCollectionExtensions
         ArgumentNullException.ThrowIfNull(configuration);
 
         var options = new ChatGptOptions();
-        configuration.GetSection(sectionName).Bind(options);
+        var configurationSection = configuration.GetSection(sectionName);
+        configurationSection.Bind(options);
+
+        // Creates the service configuration (OpenAI or Azure) according to the configuration settings.
+        options.ServiceConfiguration = ChatGptServiceConfiguration.Create(configurationSection);
+
+        SetMissingDefaults(options);
         services.AddSingleton(options);
 
         AddChatGptCore(services);
@@ -109,7 +121,7 @@ public static class ChatGptServiceCollectionExtensions
     /// <param name="services">The <see cref="IServiceCollection"/> to add services to.</param>
     /// <param name="setupAction">The <see cref="Action{IServiceProvider, ChatGptOptions}"/> to configure the provided <see cref="ChatGptOptions"/>.</param>
     /// <returns>A reference to this instance after the operation has completed.</returns>
-    /// <remarks>Use this this method if it is necessary to dynamically set options like <see cref="ChatGptOptions.ApiKey"/> (for example, using other services via dependency injection).
+    /// <remarks>Use this this method if it is necessary to dynamically set options (for example, using other services via dependency injection).
     /// This method automatically adds a <see cref="MemoryCache"/> that is used to save chat messages for completion.
     /// </remarks>
     /// <seealso cref="ChatGptOptions"/>
@@ -120,10 +132,15 @@ public static class ChatGptServiceCollectionExtensions
         ArgumentNullException.ThrowIfNull(services);
         ArgumentNullException.ThrowIfNull(setupAction);
 
-        var options = new ChatGptOptions();
         services.AddScoped(provider =>
         {
+            var options = new ChatGptOptions();
             setupAction.Invoke(provider, options);
+
+            ArgumentNullException.ThrowIfNull(options.ServiceConfiguration);
+
+            SetMissingDefaults(options);
+
             return options;
         });
 
@@ -135,10 +152,15 @@ public static class ChatGptServiceCollectionExtensions
     private static void AddChatGptCore(IServiceCollection services)
     {
         services.AddMemoryCache();
+        services.AddHttpClient<IChatGptClient, ChatGptClient>();
+    }
 
-        services.AddHttpClient<IChatGptClient, ChatGptClient>(client =>
+    private static void SetMissingDefaults(ChatGptOptions options)
+    {
+        // If the provider is OpenAI and no default model has been specified, uses gpt-3.5-turbo by default.
+        if (options.ServiceConfiguration is OpenAIChatGptServiceConfiguration && string.IsNullOrWhiteSpace(options.DefaultModel))
         {
-            client.BaseAddress = new Uri("https://api.openai.com/v1/");
-        });
+            options.DefaultModel = OpenAIChatGptModels.Gpt35Turbo;
+        }
     }
 }

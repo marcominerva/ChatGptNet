@@ -35,7 +35,7 @@
             </div>
 
             <div class="input-group">
-                <input type="text" class="form-control" @bind="message" placeholder="Ask me anything" @bind:event="oninput" />
+                <input type="text" class="form-control" @bind="message" placeholder="Ask me anything" @bind:event="oninput" @onkeypress="OnTypingMessageAsync" />
                 <button type="button" class="btn btn-primary" @onclick="AskAsync" disabled="@(!CanSendMessage())">
                     Send
                 </button>
@@ -47,6 +47,10 @@
 
 @code {
 
+    private ElementReference anchor;
+
+    private static readonly MarkdownPipeline markdownPipeline = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build();
+
     private class ChatEntry
     {
         public string Sender { get; set; } = string.Empty;
@@ -54,15 +58,19 @@
     }
 
     private Guid conversationId = Guid.NewGuid();
-    private ElementReference anchor;
-    private static readonly MarkdownPipeline markdownPipeline = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build();
     private List<ChatEntry> messages = new();
     private string? message;
     private bool isAsking;
 
     private bool CanSendMessage()
+        => !string.IsNullOrWhiteSpace(message) && !isAsking;
+
+    private async Task OnTypingMessageAsync(KeyboardEventArgs keyboardEventArgs)
     {
-        return !string.IsNullOrWhiteSpace(message) && !isAsking;
+        if (keyboardEventArgs.Code is "Enter")
+        {
+            await AskAsync();
+        }
     }
 
     private async Task AskAsync()
@@ -72,22 +80,25 @@
             isAsking = true;
 
             messages.Add(new ChatEntry { Sender = ChatGptRoles.User, Content = message! });
-
             var responseMessage = new ChatEntry { Sender = ChatGptRoles.Assistant, Content = string.Empty };
 
             var responseStream = chatGptClient.AskStreamAsync(conversationId, message!);
+
             message = string.Empty;
 
             await Task.Delay(500);
             messages.Add(responseMessage);
+
             StateHasChanged();
             await jsRuntime.InvokeVoidAsync(@"scrollIntoView", anchor);
 
             await foreach (var delta in responseStream.AsDeltas())
             {
                 responseMessage.Content += delta;
+
                 await Task.Delay(80);
                 StateHasChanged();
+
                 await jsRuntime.InvokeVoidAsync(@"scrollIntoView", anchor);
             }
 
