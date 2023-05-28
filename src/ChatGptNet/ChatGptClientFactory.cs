@@ -4,27 +4,35 @@ namespace ChatGptNet;
 
 internal class ChatGptClientFactory : IChatGptClientFactory
 {
+    private readonly IServiceProvider services;
     private readonly IMemoryCache memoryCache;
     private readonly ChatGptOptions defaultOptions;
 
-    public ChatGptClientFactory(IMemoryCache memoryCache, ChatGptOptions defaultOptions)
+    public ChatGptClientFactory(IServiceProvider services, IMemoryCache memoryCache, ChatGptOptions defaultOptions)
     {
+        this.services = services;
         this.memoryCache = memoryCache;
         this.defaultOptions = defaultOptions;
     }
 
-    public IChatGptClient CreateClient(Action<ChatGptOptions> setupAction)
+    public IChatGptClient CreateClient(Action<IServiceProvider, ChatGptOptions>? setupAction)
     {
-        ArgumentNullException.ThrowIfNull(setupAction);
-
         var options = defaultOptions with { };
-        setupAction(options);
 
-        var httpClient = new HttpClient()
-        {
-            BaseAddress = new Uri("https://api.openai.com/v1/"),
-        };
+        if (setupAction is not null)
+            setupAction(services, options);
 
-        return new ChatGptClient(httpClient, memoryCache, options);
+        return new ChatGptClient(new HttpClient(), memoryCache, options);
+    }
+    public IChatGptClient CreateClient(Action<ChatGptOptions>? setupAction)
+    {
+        if (setupAction is null)
+            return CreateClient();
+
+        return CreateClient((s, o) => setupAction(o));
+    }
+    public IChatGptClient CreateClient()
+    {
+        return CreateClient((Action<IServiceProvider, ChatGptOptions>?)null);
     }
 }

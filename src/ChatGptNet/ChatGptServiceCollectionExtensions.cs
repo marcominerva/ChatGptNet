@@ -3,6 +3,7 @@ using ChatGptNet.ServiceConfigurations;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 
 namespace ChatGptNet;
 
@@ -17,20 +18,28 @@ public static class ChatGptServiceCollectionExtensions
     /// <param name="services">The <see cref="IServiceCollection"/> to add services to.</param>
     /// <param name="setupAction">The <see cref="Action{ChatGptOptions}"/> to configure the provided <see cref="ChatGptOptions"/>.</param>
     /// <returns>A reference to this instance after the operation has completed.</returns>
-    public static IServiceCollection AddChatGptClientFactory(this IServiceCollection services, Action<ChatGptOptions> setupAction)
+    public static IServiceCollection AddChatGptClientFactory(this IServiceCollection services, Action<ChatGptOptions>? setupAction)
     {
         ArgumentNullException.ThrowIfNull(services);
-        ArgumentNullException.ThrowIfNull(setupAction);
 
         var options = new ChatGptOptions();
-        setupAction.Invoke(options);
 
-        services.AddMemoryCache();
-        services.AddSingleton<IChatGptClientFactory, ChatGptClientFactory>(
-            s => new ChatGptClientFactory(s.GetRequiredService<IMemoryCache>(), options)
-        );
+        if (setupAction is not null)
+            setupAction.Invoke(options);
+
+        services.AddChatGptClientFactoryCore(options);
 
         return services;
+    }
+
+    /// <summary>
+    /// Registers a <see cref="ChatGptClientFactory"/> instance.
+    /// </summary>
+    /// <param name="services">The <see cref="IServiceCollection"/> to add services to.</param>
+    /// <returns>A reference to this instance after the operation has completed.</returns>
+    public static IServiceCollection AddChatGptClientFactory(this IServiceCollection services)
+    {
+        return services.AddChatGptClientFactory(null);
     }
 
     /// <summary>
@@ -46,13 +55,15 @@ public static class ChatGptServiceCollectionExtensions
         ArgumentNullException.ThrowIfNull(configuration);
 
         var options = new ChatGptOptions();
-        configuration.GetSection(sectionName).Bind(options);
-        services.AddSingleton(options);
+        var configurationSection = configuration.GetSection(sectionName);
+        configurationSection.Bind(options);
 
-        services.AddMemoryCache();
-        services.AddSingleton<IChatGptClientFactory, ChatGptClientFactory>(
-            s => new ChatGptClientFactory(s.GetRequiredService<IMemoryCache>(), options)
-        );
+        // Creates the service configuration (OpenAI or Azure) according to the configuration settings.
+        options.ServiceConfiguration = ChatGptServiceConfiguration.Create(configurationSection);
+
+        SetMissingDefaults(options);
+
+        services.AddChatGptClientFactoryCore(options);
 
         return services;
     }
@@ -147,6 +158,14 @@ public static class ChatGptServiceCollectionExtensions
         AddChatGptCore(services);
 
         return services;
+    }
+
+    private static void AddChatGptClientFactoryCore(this IServiceCollection services, ChatGptOptions options)
+    {
+        services.AddMemoryCache();
+        services.AddSingleton<IChatGptClientFactory, ChatGptClientFactory>(
+            s => new ChatGptClientFactory(s, s.GetRequiredService<IMemoryCache>(), options)
+        );
     }
 
     private static void AddChatGptCore(IServiceCollection services)
