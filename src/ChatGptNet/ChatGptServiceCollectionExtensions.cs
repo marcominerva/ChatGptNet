@@ -105,6 +105,7 @@ public static class ChatGptServiceCollectionExtensions
     private static void AddChatGptCore(IServiceCollection services)
     {
         services.AddMemoryCache();
+        services.AddSingleton<IChatGptCache, ChatGptMemoryCache>();
         services.AddHttpClient<IChatGptClient, ChatGptClient>();
     }
 

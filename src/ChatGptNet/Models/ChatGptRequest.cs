@@ -19,7 +19,7 @@ public class ChatGptRequest
     /// Gets or sets the messages to generate chat completions for.
     /// </summary>
     /// <seealso cref="ChatGptMessage"/>
-    public ChatGptMessage[] Messages { get; set; } = Array.Empty<ChatGptMessage>();
+    public IEnumerable<ChatGptMessage> Messages { get; set; } = Enumerable.Empty<ChatGptMessage>();
 
     /// <summary>
     /// Gets or sets a value that specify if response will be sent in streaming as partial message deltas.
