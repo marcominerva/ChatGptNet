@@ -5,9 +5,9 @@ using ChatGptNet.ServiceConfigurations;
 namespace ChatGptNet;
 
 /// <summary>
-/// Options class that provides settings for configuring ChatGPT.
+/// Builder class to define settings for configuring ChatGPT.
 /// </summary>
-public class ChatGptOptions
+public class ChatGptOptionsBuilder
 {
     /// <summary>
     /// Gets or sets the configuration settings for accessing the service.
@@ -45,7 +45,7 @@ public class ChatGptOptions
     ///  Gets or sets the default parameters for chat completion.
     /// </summary>
     /// <see cref="ChatGptParameters"/>
-    public ChatGptParameters DefaultParameters { get; internal set; } = new();
+    public ChatGptParameters DefaultParameters { get; } = new();
 
     /// <summary>
     /// Gets or sets the user identification for chat completion, which can help OpenAI to monitor and detect abuse.
@@ -54,4 +54,16 @@ public class ChatGptOptions
     /// See <see href="https://platform.openai.com/docs/guides/safety-best-practices/end-user-ids">Safety best practices</see> for more information.
     /// </remarks>
     public string? User { get; set; }
+
+    internal ChatGptOptions Build()
+        => new()
+        {
+            MessageLimit = MessageLimit,
+            DefaultModel = DefaultModel,
+            DefaultParameters = DefaultParameters,
+            MessageExpiration = MessageExpiration,
+            ThrowExceptionOnError = ThrowExceptionOnError,
+            ServiceConfiguration = ServiceConfiguration,
+            User = User
+        };
 }
