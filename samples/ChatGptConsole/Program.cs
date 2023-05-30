@@ -1,5 +1,6 @@
 ﻿using ChatGptConsole;
 using ChatGptNet;
+using ChatGptNet.Models;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
@@ -28,5 +29,29 @@ static void ConfigureServices(HostBuilderContext context, IServiceCollection ser
     //});
 
     // Adds ChatGPT service using settings from IConfiguration.
-    services.AddChatGpt(context.Configuration);
+    services.AddChatGpt(context.Configuration)
+    //.WithCache<LocalMessageCache>() // Uncomment this line to use a custom cache implementation instead of the default MemoryCache.
+    ;
+}
+
+public class LocalMessageCache : IChatGptCache
+{
+    private readonly Dictionary<Guid, List<ChatGptMessage>> localCache = new();
+
+    public Task SetAsync(Guid conversationId, IEnumerable<ChatGptMessage> messages, TimeSpan expiration)
+    {
+        localCache[conversationId] = messages.ToList();
+        return Task.CompletedTask;
+    }
+    public Task<List<ChatGptMessage>?> GetAsync(Guid conversationId)
+    {
+        localCache.TryGetValue(conversationId, out var messages);
+        return Task.FromResult(messages);
+    }
+
+    public Task RemoveAsync(Guid conversationId)
+    {
+        localCache.Remove(conversationId);
+        return Task.CompletedTask;
+    }
 }
