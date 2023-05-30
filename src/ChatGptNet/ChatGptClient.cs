@@ -79,7 +79,7 @@ internal class ChatGptClient : IChatGptClient
         if (response.IsSuccessful)
         {
             // Adds the response message to the conversation cache.
-            await UpdateHistoryAsync(conversationId, messages, response.Choices[0].Message);
+            await UpdateHistoryAsync(conversationId, messages, response.Choices.First().Message);
         }
         else if (options.ThrowExceptionOnError)
         {
@@ -126,7 +126,7 @@ internal class ChatGptClient : IChatGptClient
                         var json = line["data: ".Length..];
                         var response = JsonSerializer.Deserialize<ChatGptResponse>(json, jsonSerializerOptions);
 
-                        var content = response!.Choices?[0].Delta?.Content;
+                        var content = response!.Choices?.FirstOrDefault()?.Delta?.Content;
 
                         if (!string.IsNullOrEmpty(content))
                         {
@@ -134,7 +134,7 @@ internal class ChatGptClient : IChatGptClient
                             {
                                 // If this is the first response, trims all the initial special characters.
                                 content = content.TrimStart('\n');
-                                response.Choices![0].Delta!.Content = content;
+                                response.Choices!.First().Delta!.Content = content;
                             }
 
                             // Yields the response only if there is an actual content.

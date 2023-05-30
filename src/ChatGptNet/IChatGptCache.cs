@@ -23,7 +23,7 @@ public interface IChatGptCache
     /// <param name="conversationId">The unique identifier of the conversation.</param>
     /// <returns>The message list of the conversation, or <see langword="null"/> if the Conversation Id does not exist.</returns>
     /// <seealso cref="ChatGptMessage"/>
-    Task<List<ChatGptMessage>> GetAsync(Guid conversationId);
+    Task<List<ChatGptMessage>?> GetAsync(Guid conversationId);
 
     /// <summary>
     /// Removes from the cache all the message for the given <paramref name="conversationId"/>.

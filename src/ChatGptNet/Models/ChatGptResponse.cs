@@ -43,7 +43,7 @@ public class ChatGptResponse
     /// <summary>
     /// Gets or sets the list of choices that has been provided by chat completion.
     /// </summary>
-    public ChatGptChoice[] Choices { get; set; } = Array.Empty<ChatGptChoice>();
+    public IEnumerable<ChatGptChoice> Choices { get; set; } = Enumerable.Empty<ChatGptChoice>();
 
     /// <summary>
     /// Gets a value that determines if the response was successful.
@@ -53,7 +53,8 @@ public class ChatGptResponse
     /// <summary>
     /// Gets the content of the first choice, if available.
     /// </summary>
-    /// <returns>The content of the first choice, if available</returns>
-    /// <remarks>When using streaming responses, the <see cref="GetMessage"/> property return a partial message delta.</remarks>
+    /// <returns>The content of the first choice, if available.</returns>
+    /// <remarks>When using streaming responses, the <see cref="GetMessage"/> property returns a partial message delta.</remarks>
+    /// <seealso cref="ChatGptRequest.Stream"/>
     public string? GetMessage() => Choices.FirstOrDefault()?.Delta?.Content ?? Choices.FirstOrDefault()?.Message.Content.Trim();
 }
