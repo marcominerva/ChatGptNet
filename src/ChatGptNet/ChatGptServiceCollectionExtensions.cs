@@ -7,7 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 namespace ChatGptNet;
 
 /// <summary>
-/// Provides extension methods for adding ChatGPT support in NET applications.
+/// Provides extension methods for adding ChatGPT support in .NET applications.
 /// </summary>
 public static class ChatGptServiceCollectionExtensions
 {
@@ -16,11 +16,14 @@ public static class ChatGptServiceCollectionExtensions
     /// </summary>
     /// <param name="services">The <see cref="IServiceCollection"/> to add services to.</param>
     /// <param name="builder">The <see cref="ChatGptOptionsBuilder"/> to configure options.</param>
-    /// <returns>A reference to this instance after the operation has completed.</returns>
-    /// <remarks>This method automatically adds a <see cref="MemoryCache"/> that is used to save chat messages for completion.</remarks>
+    /// <returns>A <see cref="IChatGptBuilder"/> that can be used to further customize ChatGPT.</returns>
+    /// <remarks>This method automatically adds a <see cref="MemoryCache"/> that is used to save conversation history for chat completion.
+    /// It is possibile to use <see cref="IChatGptBuilderExtensions.WithCache{TImplementation}(IChatGptBuilder)"/> to specify another cache implementation.
+    /// </remarks>
     /// <seealso cref="ChatGptOptionsBuilder"/>
     /// <seealso cref="MemoryCacheServiceCollectionExtensions.AddMemoryCache(IServiceCollection)"/>
-    public static IServiceCollection AddChatGpt(this IServiceCollection services, Action<ChatGptOptionsBuilder> builder)
+    /// <seealso cref="IChatGptBuilder"/>
+    public static IChatGptBuilder AddChatGpt(this IServiceCollection services, Action<ChatGptOptionsBuilder> builder)
     {
         ArgumentNullException.ThrowIfNull(services);
         ArgumentNullException.ThrowIfNull(builder);
@@ -33,9 +36,7 @@ public static class ChatGptServiceCollectionExtensions
         SetMissingDefaults(options);
         services.AddSingleton(options.Build());
 
-        AddChatGptCore(services);
-
-        return services;
+        return AddChatGptCore(services);
     }
 
     /// <summary>
@@ -44,12 +45,15 @@ public static class ChatGptServiceCollectionExtensions
     /// <param name="services">The <see cref="IServiceCollection"/> to add services to.</param>
     /// <param name="configuration">The <see cref="IConfiguration"/> being bound.</param>
     /// <param name="sectionName">The name of the configuration section that holds ChatGPT settings (default: ChatGPT).</param>
-    /// <returns>A reference to this instance after the operation has completed.</returns>
-    /// <remarks>This method automatically adds a <see cref="MemoryCache"/> that is used to save chat messages for completion.</remarks>
+    /// <returns>A <see cref="IChatGptBuilder"/> that can be used to further customize ChatGPT.</returns>
+    /// <remarks>This method automatically adds a <see cref="MemoryCache"/> that is used to save conversation history for chat completion.
+    /// It is possibile to use <see cref="IChatGptBuilderExtensions.WithCache{TImplementation}(IChatGptBuilder)"/> to specify another cache implementation.
+    /// </remarks>
     /// <seealso cref="ChatGptOptions"/>
     /// <seealso cref="IConfiguration"/>
     /// <seealso cref="MemoryCacheServiceCollectionExtensions.AddMemoryCache(IServiceCollection)"/>
-    public static IServiceCollection AddChatGpt(this IServiceCollection services, IConfiguration configuration, string sectionName = "ChatGPT")
+    /// <seealso cref="IChatGptBuilder"/>
+    public static IChatGptBuilder AddChatGpt(this IServiceCollection services, IConfiguration configuration, string sectionName = "ChatGPT")
     {
         ArgumentNullException.ThrowIfNull(services);
         ArgumentNullException.ThrowIfNull(configuration);
@@ -64,9 +68,7 @@ public static class ChatGptServiceCollectionExtensions
         SetMissingDefaults(options);
         services.AddSingleton(options.Build());
 
-        AddChatGptCore(services);
-
-        return services;
+        return AddChatGptCore(services);
     }
 
     /// <summary>
@@ -74,14 +76,16 @@ public static class ChatGptServiceCollectionExtensions
     /// </summary>
     /// <param name="services">The <see cref="IServiceCollection"/> to add services to.</param>
     /// <param name="builder">The <see cref="ChatGptOptionsBuilder"/> to configure options.</param>
-    /// <returns>A reference to this instance after the operation has completed.</returns>
+    /// <returns>A <see cref="IChatGptBuilder"/> that can be used to further customize ChatGPT.</returns>
     /// <remarks>Use this this method if it is necessary to dynamically set options (for example, using other services via dependency injection).
-    /// This method automatically adds a <see cref="MemoryCache"/> that is used to save chat messages for completion.
+    /// This method automatically adds a <see cref="MemoryCache"/> that is used to save conversation history for chat completion.
+    /// It is possibile to use <see cref="IChatGptBuilderExtensions.WithCache{TImplementation}(IChatGptBuilder)"/> to specify another cache implementation.
     /// </remarks>
     /// <seealso cref="ChatGptOptions"/>
     /// <seealso cref="IServiceProvider"/>
     /// <seealso cref="MemoryCacheServiceCollectionExtensions.AddMemoryCache(IServiceCollection)"/>
-    public static IServiceCollection AddChatGpt(this IServiceCollection services, Action<IServiceProvider, ChatGptOptionsBuilder> builder)
+    /// <seealso cref="IChatGptBuilder"/>
+    public static IChatGptBuilder AddChatGpt(this IServiceCollection services, Action<IServiceProvider, ChatGptOptionsBuilder> builder)
     {
         ArgumentNullException.ThrowIfNull(services);
         ArgumentNullException.ThrowIfNull(builder);
@@ -97,16 +101,16 @@ public static class ChatGptServiceCollectionExtensions
             return options.Build();
         });
 
-        AddChatGptCore(services);
-
-        return services;
+        return AddChatGptCore(services);
     }
 
-    private static void AddChatGptCore(IServiceCollection services)
+    private static IChatGptBuilder AddChatGptCore(IServiceCollection services)
     {
         services.AddMemoryCache();
         services.AddSingleton<IChatGptCache, ChatGptMemoryCache>();
-        services.AddHttpClient<IChatGptClient, ChatGptClient>();
+
+        var httpClientBuilder = services.AddHttpClient<IChatGptClient, ChatGptClient>();
+        return new ChatGptBuilder(services, httpClientBuilder);
     }
 
     private static void SetMissingDefaults(ChatGptOptionsBuilder options)

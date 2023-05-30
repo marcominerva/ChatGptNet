@@ -1,9 +1,11 @@
-﻿namespace ChatGptNet.ServiceConfigurations;
+﻿using ChatGptNet.ServiceConfigurations;
+
+namespace ChatGptNet;
 
 /// <summary>
-/// Provides extensions to configure settings for accessing ChatGPT service
+/// Provides extensions to configure settings for accessing ChatGPT service.
 /// </summary>
-public static class ChatGptOptionsExtensions
+public static class ChatGptOptionsBuilderExtensions
 {
     /// <summary>
     /// Configures OpenAI settings.
