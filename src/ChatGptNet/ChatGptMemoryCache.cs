@@ -20,8 +20,8 @@ internal class ChatGptMemoryCache : IChatGptCache
 
     public Task<List<ChatGptMessage>?> GetAsync(Guid conversationId)
     {
-        var items = cache.Get<List<ChatGptMessage>?>(conversationId);
-        return Task.FromResult(items);
+        var messages = cache.Get<List<ChatGptMessage>?>(conversationId);
+        return Task.FromResult(messages);
     }
 
     public Task RemoveAsync(Guid conversationId)

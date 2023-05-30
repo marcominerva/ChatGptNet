@@ -3,7 +3,7 @@
 namespace ChatGptNet.ServiceConfigurations;
 
 /// <summary>
-/// Contains configuration settings for Azure OpenAI services.
+/// Contains configuration settings for Azure OpenAI service.
 /// </summary>
 internal class AzureChatGptServiceConfiguration : ChatGptServiceConfiguration
 {

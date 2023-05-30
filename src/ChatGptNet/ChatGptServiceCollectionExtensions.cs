@@ -106,6 +106,7 @@ public static class ChatGptServiceCollectionExtensions
 
     private static IChatGptBuilder AddChatGptCore(IServiceCollection services)
     {
+        // Uses MemoryCache by default.
         services.AddMemoryCache();
         services.AddSingleton<IChatGptCache, ChatGptMemoryCache>();
 

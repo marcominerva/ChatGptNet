@@ -63,12 +63,40 @@ In Azure OpenAI Service, you're required to first [deploy a model](https://learn
 > **Note**
 Some models are not available in all regions. You can refer to [Model Summary table and region availability page](https://learn.microsoft.com/azure/cognitive-services/openai/concepts/models#model-summary-table-and-region-availability) to check current availabilities.
 
-### MessageLimit and MessageExpiration
+### Caching, MessageLimit and MessageExpiration
 
-ChatGPT is aimed to support conversational scenarios: user can talk to ChatGPT without specifying the full context for every interaction. However, conversation history isn't managed by OpenAI or Azure OpenAI service, so it's up to us to retain the current state. **ChatGptNet** handles this requirement using a [MemoryCache](https://learn.microsoft.com/en-us/dotnet/api/microsoft.extensions.caching.memory.memorycache) that stores messages for each conversation. The behavior can be set using the following properties:
+ChatGPT is aimed to support conversational scenarios: user can talk to ChatGPT without specifying the full context for every interaction. However, conversation history isn't managed by OpenAI or Azure OpenAI service, so it's up to us to retain the current state. By default, **ChatGptNet** handles this requirement using a [MemoryCache](https://learn.microsoft.com/en-us/dotnet/api/microsoft.extensions.caching.memory.memorycache) that stores messages for each conversation. The behavior can be set using the following properties:
 
 * *MessageLimit*: specifies how many messages for each conversation must be saved. When this limit is reached, oldest messages are automatically removed.
 * *MessageExpiration*: specifies the time interval used to maintain messages in cache, regardless their count.
+
+If necessary, it is possibile to provide a custom Cache by implementing the [IChatGptCache](https://github.com/marcominerva/ChatGptNet/blob/master/src/ChatGptNet/IChatGptCache.cs) interface and then calling the **WithCache** extension method:
+
+    public class LocalMessageCache : IChatGptCache
+    {
+        private readonly Dictionary<Guid, List<ChatGptMessage>> localCache = new();
+
+        public Task SetAsync(Guid conversationId, IEnumerable<ChatGptMessage> messages, TimeSpan expiration)
+        {
+            localCache[conversationId] = messages.ToList();
+            return Task.CompletedTask;
+        }
+
+        public Task<List<ChatGptMessage>?> GetAsync(Guid conversationId)
+        {
+            localCache.TryGetValue(conversationId, out var messages);
+            return Task.FromResult(messages);
+        }
+
+        public Task RemoveAsync(Guid conversationId)
+        {
+            localCache.Remove(conversationId);
+            return Task.CompletedTask;
+        }
+    }
+
+    // Registers the custom cache at application startup.
+    builder.Services.AddChatGpt(/* ... */).WithCache<LocalMessageCache>();
 
 We can also set ChatGPT parameters for chat completion at startup. Check the [official documentation](https://platform.openai.com/docs/api-reference/chat/create) for the list of available parameters and their meaning.
 

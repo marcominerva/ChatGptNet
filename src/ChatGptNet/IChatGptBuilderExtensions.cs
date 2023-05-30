@@ -14,7 +14,7 @@ public static class IChatGptBuilderExtensions
     /// <typeparam name="TImplementation">The implementation of <see cref="IChatGptCache"/> to use.</typeparam>
     /// <param name="builder">The <see cref="IChatGptBuilder"/> object to configure.</param>
     /// <returns>The <see cref="IChatGptBuilder"/> to further customize ChatGPT.</returns>
-    /// <remarks><typeparamref name="TImplementation"/> is registered as Singleton.</remarks>
+    /// <remarks><typeparamref name="TImplementation"/> is registered as singleton.</remarks>
     /// <seealso cref="IChatGptBuilder"/>
     /// <seealso cref="IChatGptCache"/>
     public static IChatGptBuilder WithCache<TImplementation>(this IChatGptBuilder builder)
