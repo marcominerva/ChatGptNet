@@ -14,7 +14,12 @@ static void ConfigureServices(HostBuilderContext context, IServiceCollection ser
 {
     services.AddSingleton<Application>();
 
-    // Adds ChatGPT service with hard-coded settings.
+    // Adds ChatGPT service using settings from IConfiguration.
+    services.AddChatGpt(context.Configuration)
+    //.WithCache<LocalMessageCache>() // Uncomment this line to use a custom cache implementation instead of the default MemoryCache.
+    ;
+
+    // Adds ChatGPT service and configure options via code.
     //services.AddChatGpt(options =>
     //{
     //    // OpenAI.
@@ -28,10 +33,14 @@ static void ConfigureServices(HostBuilderContext context, IServiceCollection ser
     //    options.MessageExpiration = TimeSpan.FromMinutes(5);    // Default: 1 hour
     //});
 
-    // Adds ChatGPT service using settings from IConfiguration.
-    services.AddChatGpt(context.Configuration)
-    //.WithCache<LocalMessageCache>() // Uncomment this line to use a custom cache implementation instead of the default MemoryCache.
-    ;
+    // Adds ChatGPT service using settings from IConfiguration and code.
+    //services.AddChatGpt(options =>
+    //{
+    //    options.UseConfiguration(context.Configuration);
+
+    //    options.UseOpenAI(apiKey: "");
+    //    options.DefaultModel = OpenAIChatGptModels.Gpt35Turbo;
+    //});
 }
 
 public class LocalMessageCache : IChatGptCache

@@ -9,7 +9,7 @@ namespace ChatGptNet.Models;
 public class ChatGptResponse
 {
     /// <summary>
-    /// Gets or sets the Id of the response
+    /// Gets or sets the Id of the response.
     /// </summary>
     public string Id { get; set; } = string.Empty;
 

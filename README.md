@@ -100,7 +100,7 @@ If necessary, it is possibile to provide a custom Cache by implementing the [ICh
 
 We can also set ChatGPT parameters for chat completion at startup. Check the [official documentation](https://platform.openai.com/docs/api-reference/chat/create) for the list of available parameters and their meaning.
 
-## Configuration using an external source
+### Configuration using an external source
 
 The configuration can be automatically read from [IConfiguration](https://learn.microsoft.com/en-us/dotnet/api/microsoft.extensions.configuration.iconfiguration), using for example a _ChatGPT_ section in the _appsettings.json_ file:
 
@@ -130,7 +130,7 @@ And then use the corresponding overload of che **AddChatGpt** method:
     // Adds ChatGPT service using settings from IConfiguration.
     builder.Services.AddChatGpt(builder.Configuration);
 
-## Configuring ChatGptNet dinamically
+### Configuring ChatGptNet dinamically
 
 The **AddChatGpt** method has also an overload that accepts an [IServiceProvider](https://learn.microsoft.com/dotnet/api/system.iserviceprovider) as argument. It can be used, for example, if we're in a Web API and we need to support scenarios in which every user has a different API Key that can be retrieved accessing a database via Dependency Injection:
 
@@ -144,6 +144,22 @@ The **AddChatGpt** method has also an overload that accepts an [IServiceProvider
         options.UseOpenAI(apiKyey);
     });
 
+### Configuring ChatGptNet using both IConfiguration and code
+
+In more complex scenarios, it is possible to configure **ChatGptNet** using both code and [IConfiguration](https://learn.microsoft.com/en-us/dotnet/api/microsoft.extensions.configuration.iconfiguration). This can be useful if we want to set a bunch of common properties, but at the same time we need some configuration logic. For example:
+
+    builder.Services.AddChatGpt((services, options) =>
+    {
+        // Configure common properties (message limit and expiration, default parameters, ecc.) using IConfiguration.
+        options.UseConfiguration(builder.Configuration);
+
+        var accountService = services.GetRequiredService<IAccountService>();
+
+        // Dynamically gets the API Key from the service.
+        var apiKey = "..."        
+
+        options.UseOpenAI(apiKyey);
+    });
 
 ## Usage
 

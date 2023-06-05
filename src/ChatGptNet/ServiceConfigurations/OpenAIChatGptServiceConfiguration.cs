@@ -26,7 +26,7 @@ internal class OpenAIChatGptServiceConfiguration : ChatGptServiceConfiguration
     }
 
     /// <inheritdoc />
-    public override Uri GetServiceEndpoint(string? modelName) => new("https://api.openai.com/v1/chat/completions");
+    public override Uri GetServiceEndpoint(string? _) => new("https://api.openai.com/v1/chat/completions");
 
     /// <inheritdoc />
     public override IDictionary<string, string?> GetRequestHeaders()

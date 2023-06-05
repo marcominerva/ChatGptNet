@@ -45,7 +45,7 @@ public class ChatGptOptionsBuilder
     ///  Gets or sets the default parameters for chat completion.
     /// </summary>
     /// <see cref="ChatGptParameters"/>
-    public ChatGptParameters DefaultParameters { get; } = new();
+    public ChatGptParameters? DefaultParameters { get; set; } = new();
 
     /// <summary>
     /// Gets or sets the user identification for chat completion, which can help OpenAI to monitor and detect abuse.
@@ -60,7 +60,7 @@ public class ChatGptOptionsBuilder
         {
             MessageLimit = MessageLimit,
             DefaultModel = DefaultModel,
-            DefaultParameters = DefaultParameters,
+            DefaultParameters = DefaultParameters ?? new(),
             MessageExpiration = MessageExpiration,
             ThrowExceptionOnError = ThrowExceptionOnError,
             ServiceConfiguration = ServiceConfiguration,
