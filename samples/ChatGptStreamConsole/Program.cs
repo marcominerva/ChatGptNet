@@ -13,7 +13,7 @@ static void ConfigureServices(HostBuilderContext context, IServiceCollection ser
 {
     services.AddSingleton<Application>();
 
-    // Adds ChatGPT service with hard-coded settings.
+    // Adds ChatGPT service and configure options via code.
     //services.AddChatGpt(options =>
     //{
     //    // OpenAI.

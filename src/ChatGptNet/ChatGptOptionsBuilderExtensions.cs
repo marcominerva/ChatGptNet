@@ -1,4 +1,5 @@
 ﻿using ChatGptNet.ServiceConfigurations;
+using Microsoft.Extensions.Configuration;
 
 namespace ChatGptNet;
 
@@ -59,6 +60,26 @@ public static class ChatGptOptionsBuilderExtensions
             ApiKey = apiKey,
             AuthenticationType = authenticationType
         };
+
+        return builder;
+    }
+
+    /// <summary>
+    /// Configures the <see cref="ChatGptClient"/> reading configuration from the specified <see cref="IConfiguration"/> source.
+    /// </summary>
+    /// <param name="builder">The <see cref="ChatGptOptionsBuilder"/> object to configure.</param>
+    /// <param name="configuration">The <see cref="IConfiguration"/> being bound.</param>
+    /// <param name="sectionName">The name of the configuration section that holds ChatGPT settings (default: ChatGPT).</param>
+    /// <returns>A reference to this instance after the operation has completed.</returns>
+    /// <seealso cref="ChatGptOptionsBuilder"/>
+    /// <seealso cref="IConfiguration"/>
+    public static ChatGptOptionsBuilder UseConfiguration(this ChatGptOptionsBuilder builder, IConfiguration configuration, string sectionName = "ChatGPT")
+    {
+        var configurationSection = configuration.GetSection(sectionName);
+        configurationSection.Bind(builder);
+
+        // Creates the service configuration (OpenAI or Azure) according to the configuration settings.
+        builder.ServiceConfiguration = ChatGptServiceConfiguration.Create(configurationSection);
 
         return builder;
     }

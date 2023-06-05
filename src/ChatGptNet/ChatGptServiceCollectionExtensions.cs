@@ -59,11 +59,7 @@ public static class ChatGptServiceCollectionExtensions
         ArgumentNullException.ThrowIfNull(configuration);
 
         var options = new ChatGptOptionsBuilder();
-        var configurationSection = configuration.GetSection(sectionName);
-        configurationSection.Bind(options);
-
-        // Creates the service configuration (OpenAI or Azure) according to the configuration settings.
-        options.ServiceConfiguration = ChatGptServiceConfiguration.Create(configurationSection);
+        options.UseConfiguration(configuration, sectionName);
 
         SetMissingDefaults(options);
         services.AddSingleton(options.Build());
