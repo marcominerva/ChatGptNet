@@ -8,7 +8,7 @@ namespace ChatGptNet.Models;
 /// <remarks>
 /// See <see href="https://platform.openai.com/docs/api-reference/chat/create">Create chat completion (OpenAI)</see> or <see href="https://learn.microsoft.com/azure/cognitive-services/openai/reference#chat-completions">Chat Completions (Azure)</see> for more information.
 /// </remarks>
-public class ChatGptRequest
+internal class ChatGptRequest
 {
     /// <summary>
     /// Gets or sets the ID of the model to use.
