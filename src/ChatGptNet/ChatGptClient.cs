@@ -33,7 +33,7 @@ internal class ChatGptClient : IChatGptClient
         this.options = options;
     }
 
-    public async Task<Guid> SetupAsync(Guid conversationId, string message)
+    public async Task<Guid> SetupAsync(Guid conversationId, string message, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(message);
 
@@ -52,7 +52,7 @@ internal class ChatGptClient : IChatGptClient
             }
         };
 
-        await cache.SetAsync(conversationId, messages, options.MessageExpiration);
+        await cache.SetAsync(conversationId, messages, options.MessageExpiration, cancellationToken);
         return conversationId;
     }
 
@@ -66,7 +66,7 @@ internal class ChatGptClient : IChatGptClient
             conversationId = Guid.NewGuid();
         }
 
-        var messages = await CreateMessageListAsync(conversationId, message);
+        var messages = await CreateMessageListAsync(conversationId, message, cancellationToken);
         var request = CreateRequest(messages, false, parameters, model);
 
         var requestUri = options.ServiceConfiguration.GetServiceEndpoint(model ?? options.DefaultModel);
@@ -79,7 +79,7 @@ internal class ChatGptClient : IChatGptClient
         if (response.IsSuccessful)
         {
             // Adds the response message to the conversation cache.
-            await UpdateHistoryAsync(conversationId, messages, response.Choices.First().Message);
+            await UpdateHistoryAsync(conversationId, messages, response.Choices.First().Message, cancellationToken);
         }
         else if (options.ThrowExceptionOnError)
         {
@@ -99,7 +99,7 @@ internal class ChatGptClient : IChatGptClient
             conversationId = Guid.NewGuid();
         }
 
-        var messages = await CreateMessageListAsync(conversationId, message);
+        var messages = await CreateMessageListAsync(conversationId, message, cancellationToken);
         var request = CreateRequest(messages, true, parameters, model);
 
         var requestUri = options.ServiceConfiguration.GetServiceEndpoint(model ?? options.DefaultModel);
@@ -159,7 +159,7 @@ internal class ChatGptClient : IChatGptClient
             {
                 Role = ChatGptRoles.Assistant,
                 Content = contentBuilder.ToString()
-            });
+            }, cancellationToken);
         }
         else
         {
@@ -176,32 +176,32 @@ internal class ChatGptClient : IChatGptClient
         }
     }
 
-    public async Task<IEnumerable<ChatGptMessage>> GetConversationAsync(Guid conversationId)
+    public async Task<IEnumerable<ChatGptMessage>> GetConversationAsync(Guid conversationId, CancellationToken cancellationToken = default)
     {
-        var messages = await cache.GetAsync(conversationId) ?? Enumerable.Empty<ChatGptMessage>();
+        var messages = await cache.GetAsync(conversationId, cancellationToken) ?? Enumerable.Empty<ChatGptMessage>();
         return messages;
     }
 
-    public async Task DeleteConversationAsync(Guid conversationId, bool preserveSetup = false)
+    public async Task DeleteConversationAsync(Guid conversationId, bool preserveSetup = false, CancellationToken cancellationToken = default)
     {
         if (!preserveSetup)
         {
             // We don't want to preserve setup message, so just deletes all the cache history.
-            await cache.RemoveAsync(conversationId);
+            await cache.RemoveAsync(conversationId, cancellationToken);
         }
         else
         {
-            var messages = await cache.GetAsync(conversationId);
+            var messages = await cache.GetAsync(conversationId, cancellationToken);
             if (messages is not null)
             {
                 // Removes all the messages, except system ones.
                 messages.RemoveAll(m => m.Role != ChatGptRoles.System);
-                await cache.SetAsync(conversationId, messages, options.MessageExpiration);
+                await cache.SetAsync(conversationId, messages, options.MessageExpiration, cancellationToken);
             }
         }
     }
 
-    public async Task<Guid> LoadConversationAsync(Guid conversationId, IEnumerable<ChatGptMessage> messages, bool replaceHistory = true)
+    public async Task<Guid> LoadConversationAsync(Guid conversationId, IEnumerable<ChatGptMessage> messages, bool replaceHistory = true, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(messages);
 
@@ -215,25 +215,25 @@ internal class ChatGptClient : IChatGptClient
         {
             // If messages must replace history, just use the current list, discarding all the previously cached content.
             // If messages.Count() > ChatGptOptions.MessageLimit, the UpdateCache take care of taking only the last messages.
-            await UpdateCacheAsync(conversationId, messages);
+            await UpdateCacheAsync(conversationId, messages, cancellationToken);
         }
         else
         {
             // Retrieves the current history and adds new messages.
-            var conversationHistory = await cache.GetAsync(conversationId) ?? new List<ChatGptMessage>();
+            var conversationHistory = await cache.GetAsync(conversationId, cancellationToken) ?? new List<ChatGptMessage>();
             conversationHistory.AddRange(messages);
 
             // If messages total length > ChatGptOptions.MessageLimit, the UpdateCache take care of taking only the last messages.
-            await UpdateCacheAsync(conversationId, conversationHistory);
+            await UpdateCacheAsync(conversationId, conversationHistory, cancellationToken);
         }
 
         return conversationId;
     }
 
-    private async Task<List<ChatGptMessage>> CreateMessageListAsync(Guid conversationId, string message)
+    private async Task<List<ChatGptMessage>> CreateMessageListAsync(Guid conversationId, string message, CancellationToken cancellationToken = default)
     {
         // Checks whether a list of messages for the given conversationId already exists.
-        var conversationHistory = await cache.GetAsync(conversationId);
+        var conversationHistory = await cache.GetAsync(conversationId, cancellationToken);
         List<ChatGptMessage> messages = conversationHistory is not null ? new(conversationHistory) : new();
 
         messages.Add(new()
@@ -259,13 +259,13 @@ internal class ChatGptClient : IChatGptClient
             User = options.User,
         };
 
-    private async Task UpdateHistoryAsync(Guid conversationId, IList<ChatGptMessage> messages, ChatGptMessage message)
+    private async Task UpdateHistoryAsync(Guid conversationId, IList<ChatGptMessage> messages, ChatGptMessage message, CancellationToken cancellationToken = default)
     {
         messages.Add(message);
-        await UpdateCacheAsync(conversationId, messages);
+        await UpdateCacheAsync(conversationId, messages, cancellationToken);
     }
 
-    private async Task UpdateCacheAsync(Guid conversationId, IEnumerable<ChatGptMessage> messages)
+    private async Task UpdateCacheAsync(Guid conversationId, IEnumerable<ChatGptMessage> messages, CancellationToken cancellationToken = default)
     {
         // If the maximum number of messages has been reached, deletes the oldest ones.
         // Note: system message does not count for message limit.
@@ -285,7 +285,7 @@ internal class ChatGptClient : IChatGptClient
             messages = conversation.ToList();
         }
 
-        await cache.SetAsync(conversationId, messages, options.MessageExpiration);
+        await cache.SetAsync(conversationId, messages, options.MessageExpiration, cancellationToken);
     }
 
     private static void EnsureErrorIsSet(ChatGptResponse response, HttpResponseMessage httpResponse)
