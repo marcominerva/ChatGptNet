@@ -47,7 +47,7 @@ Register ChatGPT service at application startup:
 
 ### DefaultModel
 
-ChatGPT can be used with different models for chat completion, both on OpenAI and Azure OpenAI service. With the *DefaultModel* property, you can specify the default model that will be used, unless you pass an explicit value in the **AskAsync** method:
+ChatGPT can be used with different models for chat completion, both on OpenAI and Azure OpenAI service. With the *DefaultModel* property, you can specify the default model that will be used, unless you pass an explicit value in the **AskAsync** method.
 
 ##### OpenAI
 
