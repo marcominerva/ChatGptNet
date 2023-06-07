@@ -6,8 +6,11 @@
 public class ChatGptMessage
 {
     /// <summary>
-    /// Gets or sets the role (source) of the message. Valid values are: <em>system</em>, <em>user</em> and <em>assistant</em>.
+    /// Gets or sets the role (source) of the message.
     /// </summary>
+    /// <remarks>
+    ///  Valid values are: <em>system</em>, <em>user</em> and <em>assistant</em>.
+    ///  </remarks>
     public string Role { get; set; } = string.Empty;
 
     /// <summary>
