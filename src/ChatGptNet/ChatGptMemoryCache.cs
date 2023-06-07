@@ -12,19 +12,19 @@ internal class ChatGptMemoryCache : IChatGptCache
         this.cache = cache;
     }
 
-    public Task SetAsync(Guid conversationId, IEnumerable<ChatGptMessage> messages, TimeSpan expiration)
+    public Task SetAsync(Guid conversationId, IEnumerable<ChatGptMessage> messages, TimeSpan expiration, CancellationToken cancellationToken = default)
     {
         cache.Set(conversationId, messages, expiration);
         return Task.CompletedTask;
     }
 
-    public Task<List<ChatGptMessage>?> GetAsync(Guid conversationId)
+    public Task<List<ChatGptMessage>?> GetAsync(Guid conversationId, CancellationToken cancellationToken = default)
     {
         var messages = cache.Get<List<ChatGptMessage>?>(conversationId);
         return Task.FromResult(messages);
     }
 
-    public Task RemoveAsync(Guid conversationId)
+    public Task RemoveAsync(Guid conversationId, CancellationToken cancellationToken = default)
     {
         cache.Remove(conversationId);
         return Task.CompletedTask;
