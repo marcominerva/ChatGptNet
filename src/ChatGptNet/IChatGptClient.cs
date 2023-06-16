@@ -35,6 +35,7 @@ public interface IChatGptClient
     /// Requests a new chat interaction using the default completion model specified in the <see cref="ChatGptOptions.DefaultModel"/> property.
     /// </summary>
     /// <param name="message">The message.</param>
+    /// <param name="functionParameters"></param>
     /// <param name="parameters">A <see cref="ChatGptParameters"/> object used to override the default completion parameters in the <see cref="ChatGptOptions.DefaultParameters"/> property.</param>
     /// <param name="cancellationToken">The token to monitor for cancellation requests.</param>
     /// <returns>The chat completion response.</returns>
@@ -45,14 +46,15 @@ public interface IChatGptClient
     /// <seealso cref="ChatGptResponse"/>
     /// <seealso cref="ChatGptOptions"/>
     /// <seealso cref="ChatGptParameters"/>
-    Task<ChatGptResponse> AskAsync(string message, ChatGptParameters? parameters = null, CancellationToken cancellationToken = default) =>
-        AskAsync(Guid.NewGuid(), message, parameters, null, cancellationToken);
+    Task<ChatGptResponse> AskAsync(string message, ChatGptFunctionParameters? functionParameters = null, ChatGptParameters? parameters = null, CancellationToken cancellationToken = default) =>
+        AskAsync(Guid.NewGuid(), message, functionParameters, parameters, null, cancellationToken);
 
     /// <summary>
     /// Requests a chat interaction.
     /// </summary>
     /// <param name="conversationId">The unique identifier of the conversation, used to automatically retrieve previous messages in the chat history.</param>
     /// <param name="message">The message.</param>
+    /// <param name="functionParameters"></param>
     /// <param name="parameters">A <seealso cref="ChatGptParameters"/> object used to override the default completion parameters in the <see cref="ChatGptOptions.DefaultParameters"/> property.</param>
     /// <param name="model">The chat completion model to use. If model is <see langword="null"/>, then the one specified in the <see cref="ChatGptOptions.DefaultModel"/> property will be used.</param>
     /// <param name="cancellationToken">The token to monitor for cancellation requests.</param>
@@ -62,7 +64,7 @@ public interface IChatGptClient
     /// <seealso cref="ChatGptRequest"/>
     /// <seealso cref="ChatGptResponse"/>
     /// <seealso cref="ChatGptParameters"/>
-    Task<ChatGptResponse> AskAsync(Guid conversationId, string message, ChatGptParameters? parameters = null, string? model = null, CancellationToken cancellationToken = default);
+    Task<ChatGptResponse> AskAsync(Guid conversationId, string message, ChatGptFunctionParameters? functionParameters = null, ChatGptParameters? parameters = null, string? model = null, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Requests a new chat interaction (using the default completion model specified in the <see cref="ChatGptOptions.DefaultModel"/> property) with streaming response, like in ChatGPT.

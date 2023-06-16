@@ -32,4 +32,6 @@ public class ChatGptChoice
     /// </remarks>
     [JsonPropertyName("finish_reason")]
     public string FinishReason { get; set; } = string.Empty;
+
+    public bool IsFunctionCall => Message.FunctionCall is not null;
 }

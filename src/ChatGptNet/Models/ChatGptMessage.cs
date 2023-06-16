@@ -1,4 +1,7 @@
-﻿namespace ChatGptNet.Models;
+﻿using System.Text.Json;
+using System.Text.Json.Serialization;
+
+namespace ChatGptNet.Models;
 
 /// <summary>
 /// Represents a single chat message.
@@ -16,5 +19,15 @@ public class ChatGptMessage
     /// <summary>
     /// The content of the message.
     /// </summary>
-    public string Content { get; set; } = string.Empty;
+    public string? Content { get; set; } = null;
+
+    [JsonPropertyName("function_call")]
+    public ChatGptFunctionCall? FunctionCall { get; set; } = null!;
+}
+
+public class ChatGptFunctionCall
+{
+    public string Name { get; set; } = string.Empty;
+
+    public JsonDocument? Arguments { get; set; } = null!;
 }

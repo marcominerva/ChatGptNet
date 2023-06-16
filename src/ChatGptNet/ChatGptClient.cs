@@ -56,7 +56,7 @@ internal class ChatGptClient : IChatGptClient
         return conversationId;
     }
 
-    public async Task<ChatGptResponse> AskAsync(Guid conversationId, string message, ChatGptParameters? parameters = null, string? model = null, CancellationToken cancellationToken = default)
+    public async Task<ChatGptResponse> AskAsync(Guid conversationId, string message, ChatGptFunctionParameters? functionParameters = null, ChatGptParameters? parameters = null, string? model = null, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(message);
 
@@ -67,7 +67,7 @@ internal class ChatGptClient : IChatGptClient
         }
 
         var messages = await CreateMessageListAsync(conversationId, message, cancellationToken);
-        var request = CreateRequest(messages, false, parameters, model);
+        var request = CreateRequest(messages, functionParameters, false, parameters, model);
 
         var requestUri = options.ServiceConfiguration.GetServiceEndpoint(model ?? options.DefaultModel);
         using var httpResponse = await httpClient.PostAsJsonAsync(requestUri, request, jsonSerializerOptions, cancellationToken);
@@ -100,7 +100,7 @@ internal class ChatGptClient : IChatGptClient
         }
 
         var messages = await CreateMessageListAsync(conversationId, message, cancellationToken);
-        var request = CreateRequest(messages, true, parameters, model);
+        var request = CreateRequest(messages, null, true, parameters, model);
 
         var requestUri = options.ServiceConfiguration.GetServiceEndpoint(model ?? options.DefaultModel);
         using var requestMessage = new HttpRequestMessage(HttpMethod.Post, requestUri)
@@ -245,11 +245,18 @@ internal class ChatGptClient : IChatGptClient
         return messages;
     }
 
-    private ChatGptRequest CreateRequest(IEnumerable<ChatGptMessage> messages, bool stream, ChatGptParameters? parameters = null, string? model = null)
+    private ChatGptRequest CreateRequest(IEnumerable<ChatGptMessage> messages, ChatGptFunctionParameters? functionParameters, bool stream, ChatGptParameters? parameters = null, string? model = null)
         => new()
         {
             Model = model ?? options.DefaultModel,
             Messages = messages,
+            Functions = functionParameters?.Functions,
+            FunctionCall = functionParameters?.FunctionCall switch
+            {
+                ChatGptFunctionCalls.None or ChatGptFunctionCalls.Auto => functionParameters.FunctionCall,
+                { } => JsonDocument.Parse($$"""{ "name": "{{functionParameters.FunctionCall}}" }"""),
+                _ => null
+            },
             Stream = stream,
             Temperature = parameters?.Temperature ?? options.DefaultParameters.Temperature,
             TopP = parameters?.TopP ?? options.DefaultParameters.TopP,
@@ -261,8 +268,11 @@ internal class ChatGptClient : IChatGptClient
 
     private async Task UpdateHistoryAsync(Guid conversationId, IList<ChatGptMessage> messages, ChatGptMessage message, CancellationToken cancellationToken = default)
     {
-        messages.Add(message);
-        await UpdateCacheAsync(conversationId, messages, cancellationToken);
+        if (!string.IsNullOrWhiteSpace(message.Content))
+        {
+            messages.Add(message);
+            await UpdateCacheAsync(conversationId, messages, cancellationToken);
+        }
     }
 
     private async Task UpdateCacheAsync(Guid conversationId, IEnumerable<ChatGptMessage> messages, CancellationToken cancellationToken = default)

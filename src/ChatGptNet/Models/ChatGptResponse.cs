@@ -56,5 +56,9 @@ public class ChatGptResponse
     /// <returns>The content of the first choice, if available.</returns>
     /// <remarks>When using streaming responses, the <see cref="GetMessage"/> property returns a partial message delta.</remarks>
     /// <seealso cref="ChatGptRequest.Stream"/>
-    public string? GetMessage() => Choices.FirstOrDefault()?.Delta?.Content ?? Choices.FirstOrDefault()?.Message.Content.Trim();
+    public string? GetMessage() => Choices.FirstOrDefault()?.Delta?.Content ?? Choices.FirstOrDefault()?.Message.Content?.Trim();
+
+    public bool IsFunctionCall => Choices.FirstOrDefault()?.IsFunctionCall ?? false;
+
+    public ChatGptFunctionCall? GetFunctionCall() => Choices.FirstOrDefault()?.Message.FunctionCall;
 }
