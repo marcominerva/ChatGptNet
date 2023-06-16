@@ -94,7 +94,7 @@ internal class Application
 
                     var functionParameters = new ChatGptFunctionParameters
                     {
-                        FunctionCall = ChatGptFunctionCalls.Auto,   // This is the default is functions are present.
+                        FunctionCall = ChatGptFunctionCalls.Auto,   // This is the default if functions are present.
                         Functions = functions
                     };
 

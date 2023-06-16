@@ -1,5 +1,4 @@
-﻿using System.Text.Json;
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 
 namespace ChatGptNet.Models;
 
@@ -22,10 +21,22 @@ internal class ChatGptRequest
     /// <seealso cref="ChatGptMessage"/>
     public IEnumerable<ChatGptMessage> Messages { get; set; } = Enumerable.Empty<ChatGptMessage>();
 
-    public IEnumerable<ChatGptFunction>? Functions { get; set; } = null;
+    /// <summary>
+    /// Gets or sets a list of functions the model may generate JSON inputs for.
+    /// </summary>
+    /// <seealso cref="ChatGptFunction"/>
+    /// <seealso cref="FunctionCall"/>
+    public IEnumerable<ChatGptFunction>? Functions { get; set; }
 
+    /// <summary>
+    /// Controls how the model responds to function calls. <em>none</em> means the model does not call a function, and responds to the end-user. <em>auto</em> means the model can pick between an end-user or calling a function. Specifying a particular function via <code>{"name": "my_function"}</code> forces the model to call that function.
+    /// </summary>
+    /// <remarks>
+    /// <em>none</em> is the default when no functions are present. <em>auto</em> is the default if functions are present.
+    /// </remarks>
+    /// <seealso cref="ChatGptFunction"/>
     [JsonPropertyName("function_call")]
-    public object? FunctionCall { get; set; } = null;
+    public object? FunctionCall { get; set; }
 
     /// <summary>
     /// Gets or sets a value that specify if response will be sent in streaming as partial message deltas.
@@ -50,12 +61,6 @@ internal class ChatGptRequest
     /// <seealso cref="Temperature"/>
     [JsonPropertyName("top_p")]
     public double? TopP { get; set; }
-
-    /// <summary>
-    /// Gets or sets how many chat completion choices to generate for each input message (default: 1).
-    /// </summary>
-    [JsonPropertyName("n")]
-    public int? Choices { get; set; }
 
     /// <summary>
     /// Gets or sets the maximum number of tokens to generate in the chat completion. The total length of input tokens and generated tokens is limited by the model's context length.
@@ -88,20 +93,4 @@ internal class ChatGptRequest
     /// See <see href="https://platform.openai.com/docs/guides/safety-best-practices/end-user-ids">Safety best practices</see> for more information.
     /// </remarks>
     public string? User { get; set; }
-}
-
-public class ChatGptFunction
-{
-    public string Name { get; set; } = string.Empty;
-
-    public string? Description { get; set; } = null;
-
-    public JsonDocument? Parameters { get; set; } = null;
-}
-
-public class ChatGptFunctionParameters
-{
-    public string? FunctionCall { get; set; } = null;
-
-    public IEnumerable<ChatGptFunction>? Functions { get; set; } = null;
 }

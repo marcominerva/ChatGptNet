@@ -58,7 +58,13 @@ public class ChatGptResponse
     /// <seealso cref="ChatGptRequest.Stream"/>
     public string? GetMessage() => Choices.FirstOrDefault()?.Delta?.Content ?? Choices.FirstOrDefault()?.Message.Content?.Trim();
 
+    /// <summary>
+    /// Gets a value indicating whether the first choice, if available, contains a function call. 
+    /// </summary>
     public bool IsFunctionCall => Choices.FirstOrDefault()?.IsFunctionCall ?? false;
 
+    /// <summary>
+    /// Gets or sets the function call for the message of the first choice, if available.
+    /// </summary>
     public ChatGptFunctionCall? GetFunctionCall() => Choices.FirstOrDefault()?.Message.FunctionCall;
 }

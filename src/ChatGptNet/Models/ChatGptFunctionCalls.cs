@@ -17,7 +17,7 @@ public static class ChatGptFunctionCalls
     /// The model can pick between an end-user or calling a function.
     /// </summary>
     /// <remarks>
-    /// This is the default if functions are present
+    /// This is the default if functions are present.
     /// </remarks>
     public const string Auto = "auto";
 }
