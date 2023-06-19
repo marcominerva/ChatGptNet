@@ -4,7 +4,7 @@
 
 | public type | description |
 | --- | --- |
-| class [ChatGptBuilder](./ChatGptNet/ChatGptBuilder.md) |  |
+| class [ChatGptBuilder](./ChatGptNet/ChatGptBuilder.md) | Represents the default builder for configuring ChatGPT. |
 | class [ChatGptOptions](./ChatGptNet/ChatGptOptions.md) | Options class that provides settings for configuring ChatGPT. |
 | class [ChatGptOptionsBuilder](./ChatGptNet/ChatGptOptionsBuilder.md) | Builder class to define settings for configuring ChatGPT. |
 | static class [ChatGptOptionsBuilderExtensions](./ChatGptNet/ChatGptOptionsBuilderExtensions.md) | Provides extensions to configure settings for accessing ChatGPT service. |

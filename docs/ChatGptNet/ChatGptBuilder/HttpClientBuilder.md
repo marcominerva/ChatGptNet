@@ -1,5 +1,7 @@
 # ChatGptBuilder.HttpClientBuilder property
 
+Gets the IHttpClientBuilder used to configure the HttpClient used by ChatGPT.
+
 ```csharp
 public IHttpClientBuilder HttpClientBuilder { get; }
 ```

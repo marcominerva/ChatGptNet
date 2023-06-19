@@ -1,5 +1,7 @@
 # ChatGptBuilder.Services property
 
+Gets the IServiceCollection where ChatGPT services are registered.
+
 ```csharp
 public IServiceCollection Services { get; }
 ```
