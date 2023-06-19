@@ -16,6 +16,7 @@ internal class Application
     public async Task ExecuteAsync()
     {
         Console.WriteLine("Welcome! You can ask me whatever you want, but if you ask me something about the weather, I will probably suggest you to call a function.");
+
         var conversationId = await chatGptClient.SetupAsync("Don't make assumptions about what values to plug into functions. Ask for clarification if a user request is ambiguous.");
 
         var functions = new List<ChatGptFunction>
