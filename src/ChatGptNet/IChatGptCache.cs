@@ -3,7 +3,7 @@
 namespace ChatGptNet;
 
 /// <summary>
-/// Represents a local in-memory cache.
+/// Represents the interface used to define the caching behavior for ChatGPT messages.
 /// </summary>
 public interface IChatGptCache
 {

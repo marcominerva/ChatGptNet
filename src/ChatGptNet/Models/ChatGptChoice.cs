@@ -28,8 +28,20 @@ public class ChatGptChoice
     /// Gets or sets a value specifying why the choice has been returned.
     /// </summary>
     /// <remarks>
-    /// Possible values are: <em>stop</em> (API returned complete model output), <em>length</em> (incomplete model output due to max_tokens parameter or token limit), <em>content_filter</em> (omitted content due to a flag from content filters) or <em>null</em> (API response still in progress or incomplete).
+    /// Possible values are:
+    /// <list type="bullet">
+    /// <item><description>stop: API returned complete model output</description></item>
+    /// <item><description>length: incomplete model output due to <em>max_tokens</em> parameter or token limit</description></item>
+    /// <item><description>function_call: the model decided to call a function</description></item>
+    /// <item><description>content_filter: omitted content due to a flag from content filters</description></item>
+    /// <item><description>null: API response still in progress or incomplete</description></item>
+    /// </list>
     /// </remarks>
     [JsonPropertyName("finish_reason")]
     public string FinishReason { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Gets a value indicating whether this choice contains a function call. 
+    /// </summary>
+    public bool IsFunctionCall => Message.FunctionCall is not null;
 }
