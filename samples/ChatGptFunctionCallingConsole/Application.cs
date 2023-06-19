@@ -104,7 +104,7 @@ internal class Application
 
                         Console.ResetColor();
 
-                        // Simulate the calling to the functions.
+                        // Simulate the calling to the function.
                         var functionResponse = await GetWeatherAsync(functionCall.GetArgumentsAsJson());
                         Console.WriteLine(functionResponse);
                         await chatGptClient.AddFunctionResponseAsync(conversationId, functionCall.Name, functionResponse);
