@@ -1,6 +1,6 @@
 # IChatGptCache interface
 
-Represents a local in-memory cache.
+Represents the interface used to define the caching behavior for ChatGPT messages.
 
 ```csharp
 public interface IChatGptCache

@@ -11,7 +11,7 @@
 | static class [ChatGptServiceCollectionExtensions](./ChatGptNet/ChatGptServiceCollectionExtensions.md) | Provides extension methods for adding ChatGPT support in .NET applications. |
 | interface [IChatGptBuilder](./ChatGptNet/IChatGptBuilder.md) | Represents a builder for configuring ChatGPT. |
 | static class [IChatGptBuilderExtensions](./ChatGptNet/IChatGptBuilderExtensions.md) | Provides extension methods for configuring ChatGPT after service creation. |
-| interface [IChatGptCache](./ChatGptNet/IChatGptCache.md) | Represents a local in-memory cache. |
+| interface [IChatGptCache](./ChatGptNet/IChatGptCache.md) | Represents the interface used to define the caching behavior for ChatGPT messages. |
 | interface [IChatGptClient](./ChatGptNet/IChatGptClient.md) | Provides methods to interact with ChatGPT. |
 
 ## ChatGptNet.Exceptions namespace
