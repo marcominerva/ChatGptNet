@@ -227,7 +227,7 @@ The library is 100% compatible also with Blazor WebAssembly applications:
 
 ![](https://raw.githubusercontent.com/marcominerva/ChatGptNet/master/assets/ChatGptBlazor.WasmStreaming.gif)
 
-Check the [Samples folder](https://github.com/marcominerva/ChatGptNet/tree/master/samples) for more information about the different implementations.
+Check out the [Samples folder](https://github.com/marcominerva/ChatGptNet/tree/master/samples) for more information about the different implementations.
 
 ## Changing the assistant's behavior
 
@@ -254,6 +254,108 @@ Conversation history is automatically deleted when expiration time (specified by
     await chatGptClient.DeleteConversationAsync(conversationId, preserveSetup: false);
 
 The _preserveSetup_ argument allows to decide whether mantain also the _system_ message that has been set with the **SetupAsync** method (default: _false_).
+
+## Function calling
+
+With function calling, we can describe functions and have the model intelligently choose to output a JSON object containing arguments to call those functions. This is a new way to more reliably connect GPT's capabilities with external tools and APIs.
+
+> **Note**
+Currently, only OpenAI _gpt-3.5-turbo-0613_ and _gpt-4-0613_ models support function calling.
+
+**ChatGptNet** fully supports function calling by providing an overload of the **AskAsync** method that allows to specify function specifications. If this parameter is supplied, then the model will decide when this it is appropiate to use one the functions. For example:
+
+    var functions = new List<ChatGptFunction>
+    {
+        new()
+        {
+            Name = "GetCurrentWeather",
+            Description = "Get the current weather",
+            Parameters = JsonDocument.Parse("""                                        
+            {
+                "type": "object",
+                "properties": {
+                    "location": {
+                        "type": "string",
+                        "description": "The city and/or the zip code"
+                    },
+                    "format": {
+                        "type": "string",
+                        "enum": ["celsius", "fahrenheit"],
+                        "description": "The temperature unit to use. Infer this from the users location."
+                    }
+                },
+                "required": ["location", "format"]
+            }
+            """)
+        },
+        new()
+        {
+            Name = "GetWeatherForecast",
+            Description = "Get an N-day weather forecast",
+            Parameters = JsonDocument.Parse("""                                        
+            {
+                "type": "object",
+                "properties": {
+                    "location": {
+                        "type": "string",
+                        "description": "The city and/or the zip code"
+                    },
+                    "format": {
+                        "type": "string",
+                        "enum": ["celsius", "fahrenheit"],
+                        "description": "The temperature unit to use. Infer this from the users location."
+                    },
+                    "daysNumber": {
+                        "type": "integer",
+                        "description": "The number of days to forecast"
+                    }
+                },
+                "required": ["location", "format", "daysNumber"]
+            }
+            """)
+        }
+    };
+
+    var functionParameters = new ChatGptFunctionParameters
+    {
+        FunctionCall = ChatGptFunctionCalls.Auto,   // This is the default if functions are present.
+        Functions = functions
+    };
+
+    var response = await chatGptClient.AskAsync("What is the weather like in Taggia?", functionParameters);
+
+We can pass an arbitrary number of functions, each one with a name, a description and a JSON schema describing the function parameters, following the [JSON Schema references](https://json-schema.org/understanding-json-schema). Under the hood, functions are injected into the system message in a syntax the model has been trained on. This means functions count against the model's context limit and are billed as input tokens. 
+
+The response object returned by the **AskAsync** method provides a property to check if the model has selected a function call:
+
+    if (response.IsFunctionCall)
+    {
+        Console.WriteLine("I have identified a function to call:");
+
+        var functionCall = response.GetFunctionCall()!;
+
+        Console.WriteLine(functionCall.Name);
+        Console.WriteLine(functionCall.Arguments);
+    }
+
+This code will print something like this:
+
+    I have identified a function to call:
+    GetCurrentWeather
+    {
+        "location": "Taggia",
+        "format": "celsius"
+    }
+
+Note that the API will not actually execute any function calls. It is up to developers to execute function calls using model outputs.
+
+After the actual execution, we need to call the **AddFunctionResponseAsync** method on the **ChatGptClient** to add the response to the conversation history, just like a standard message, so that it will be automatically used for chat completion:
+
+    // Calls the remote function API.
+    var functionResponse = await GetWeatherAsync(functionCall.Arguments);
+    await chatGptClient.AddFunctionResponseAsync(conversationId, functionCall.Name, functionResponse);
+
+Check out the [Function calling sample](https://github.com/marcominerva/ChatGptNet/blob/master/samples/ChatGptFunctionCallingConsole/Application.cs#L18) for a complete implementation of this workflow.
 
 ## Contribute
 
