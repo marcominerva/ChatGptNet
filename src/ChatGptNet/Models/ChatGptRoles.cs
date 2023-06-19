@@ -19,4 +19,9 @@ public class ChatGptRoles
     /// The assistant role.
     /// </summary>
     public const string Assistant = "assistant";
+
+    /// <summary>
+    /// The function role.
+    /// </summary>
+    public const string Function = "function";
 }

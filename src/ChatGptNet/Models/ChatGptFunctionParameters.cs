@@ -6,7 +6,7 @@
 public class ChatGptFunctionParameters
 {
     /// <summary>
-    /// Controls how the model responds to function calls. <em>none</em> means the model does not call a function, and responds to the end-user. <em>auto</em> means the model can pick between an end-user or calling a function. Specifying a particular function via <code>{"name": "my_function"}</code> forces the model to call that function.
+    /// Controls how the model responds to function calls. <em>none</em> means the model does not call a function, and responds to the end-user. <em>auto</em> means the model can pick between an end-user or calling a function. Specifying a particular function name forces the model to call that function.
     /// </summary>
     /// <remarks>
     /// <em>none</em> is the default when no functions are present. <em>auto</em> is the default if functions are present.

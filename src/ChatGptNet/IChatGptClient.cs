@@ -191,4 +191,17 @@ public interface IChatGptClient
     /// <returns>The <see cref="Task"/> corresponding to the asynchronous operation.</returns>
     /// <seealso cref="SetupAsync(Guid, string, CancellationToken)"/>
     Task DeleteConversationAsync(Guid conversationId, bool preserveSetup = false, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Adds a function response to the conversation history.
+    /// </summary>
+    /// <param name="conversationId">The unique identifier of the conversation.</param>
+    /// <param name="functionName">The name of the function.</param>
+    /// <param name="content">The content of the function response.</param>
+    /// <param name="cancellationToken">The token to monitor for cancellation requests.</param>
+    /// <returns>The <see cref="Task"/> corresponding to the asynchronous operation.</returns>
+    /// <exception cref="InvalidOperationException">The conversation history is empty.</exception>
+    /// <seealso cref="AskAsync(string, ChatGptFunctionParameters?, ChatGptParameters?, CancellationToken)"/>
+    /// <seealso cref="ChatGptFunctionCall"/>
+    Task AddFunctionResponseAsync(Guid conversationId, string functionName, string content, CancellationToken cancellationToken = default);
 }
