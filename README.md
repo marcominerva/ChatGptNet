@@ -262,7 +262,7 @@ With function calling, we can describe functions and have the model intelligentl
 > **Note**
 Currently, only OpenAI _gpt-3.5-turbo-0613_ and _gpt-4-0613_ models support function calling.
 
-**ChatGptNet** fully supports function calling by providing an overload of the **AskAsync** method that allows to specify function specifications. If this parameter is supplied, then the model will decide when this it is appropiate to use one the functions. For example:
+**ChatGptNet** fully supports function calling by providing an overload of the **AskAsync** method that allows to specify function specifications. If this parameter is supplied, then the model will decide when it is appropiate to use one the functions. For example:
 
     var functions = new List<ChatGptFunction>
     {
