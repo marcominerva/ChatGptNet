@@ -13,6 +13,7 @@ public interface IChatGptClient
 | [AddFunctionResponseAsync](IChatGptClient/AddFunctionResponseAsync.md)(…) | Adds a function response to the conversation history. |
 | [AskAsync](IChatGptClient/AskAsync.md)(…) | Requests a new chat interaction using the default completion model specified in the [`DefaultModel`](./ChatGptOptions/DefaultModel.md) property. (4 methods) |
 | [AskStreamAsync](IChatGptClient/AskStreamAsync.md)(…) | Requests a new chat interaction (using the default completion model specified in the [`DefaultModel`](./ChatGptOptions/DefaultModel.md) property) with streaming response, like in ChatGPT. (2 methods) |
+| [ConversationExistsAsync](IChatGptClient/ConversationExistsAsync.md)(…) | Determines if a chat conversation exists. |
 | [DeleteConversationAsync](IChatGptClient/DeleteConversationAsync.md)(…) | Deletes a chat conversation, clearing all the history. |
 | [GetConversationAsync](IChatGptClient/GetConversationAsync.md)(…) | Retrieves a chat conversation from the cache. |
 | [LoadConversationAsync](IChatGptClient/LoadConversationAsync.md)(…) | Loads messages into a new conversation. (2 methods) |

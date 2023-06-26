@@ -1,6 +1,6 @@
 # OpenAIChatGptModels.Gpt4_32k field
 
-A model with the same capabilities as the base [`Gpt4`](./Gpt4.md) model but with 4x the context length.
+A model with the same capabilities as the base [`Gpt4`](./Gpt4.md) model but with 4 times the token limit of [`Gpt4`](./Gpt4.md).
 
 ```csharp
 public const string Gpt4_32k;
@@ -8,7 +8,7 @@ public const string Gpt4_32k;
 
 ## Remarks
 
-This model is currently in a limited beta and only accessible to those who have been granted access. See [GPT-4](https://platform.openai.com/docs/models/gpt-4) for more information.
+This model supports 32.768 tokens and is currently in a limited beta and only accessible to those who have been granted access. See [GPT-4](https://platform.openai.com/docs/models/gpt-4) for more information.
 
 ## See Also
 

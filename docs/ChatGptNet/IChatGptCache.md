@@ -10,6 +10,7 @@ public interface IChatGptCache
 
 | name | description |
 | --- | --- |
+| [ExistsAsync](IChatGptCache/ExistsAsync.md)(…) | Gets a value that indicates whether the given conversation exists in the cache. |
 | [GetAsync](IChatGptCache/GetAsync.md)(…) | Gets the list of messages for the given *conversationId*. |
 | [RemoveAsync](IChatGptCache/RemoveAsync.md)(…) | Removes from the cache all the message for the given *conversationId*. |
 | [SetAsync](IChatGptCache/SetAsync.md)(…) | Saves the list of messages for the given *conversationId*, using the specified *expiration*. |

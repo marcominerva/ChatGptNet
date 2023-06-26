@@ -34,4 +34,12 @@ public interface IChatGptCache
     /// <param name="cancellationToken">The token to monitor for cancellation requests.</param>
     /// <returns>The <see cref="Task"/> corresponding to the asynchronous operation.</returns>
     Task RemoveAsync(Guid conversationId, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Gets a value that indicates whether the given conversation exists in the cache.
+    /// </summary>
+    /// <param name="conversationId">The unique identifier of the conversation.</param>
+    /// <param name="cancellationToken">The token to monitor for cancellation requests.</param>
+    /// <returns>The <see cref="Task"/> corresponding to the asynchronous operation.</returns>
+    Task<bool> ExistsAsync(Guid conversationId, CancellationToken cancellationToken = default);
 }

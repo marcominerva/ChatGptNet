@@ -11,9 +11,9 @@ public static class OpenAIChatGptModels
 | name | description |
 | --- | --- |
 | const [Gpt35Turbo](OpenAIChatGptModels/Gpt35Turbo.md) | GPT-3.5 model can understand and generate natural language or code and it is optimized for chat. |
-| const [Gpt35Turbo_16k](OpenAIChatGptModels/Gpt35Turbo_16k.md) | A model with the same capabilities as the standard [`Gpt35Turbo`](./OpenAIChatGptModels/Gpt35Turbo.md) model but with 4 times the context. |
+| const [Gpt35Turbo_16k](OpenAIChatGptModels/Gpt35Turbo_16k.md) | A model with the same capabilities as the standard [`Gpt35Turbo`](./OpenAIChatGptModels/Gpt35Turbo.md) model but with 4 times the token limit of [`Gpt35Turbo`](./OpenAIChatGptModels/Gpt35Turbo.md). |
 | const [Gpt4](OpenAIChatGptModels/Gpt4.md) | GPT-4 is a large multimodal model that can solve difficult problems with greater accuracy than any of our previous models, thanks to its broader general knowledge and advanced reasoning capabilities. is optimized for chat but works well for traditional completions tasks. |
-| const [Gpt4_32k](OpenAIChatGptModels/Gpt4_32k.md) | A model with the same capabilities as the base [`Gpt4`](./OpenAIChatGptModels/Gpt4.md) model but with 4x the context length. |
+| const [Gpt4_32k](OpenAIChatGptModels/Gpt4_32k.md) | A model with the same capabilities as the base [`Gpt4`](./OpenAIChatGptModels/Gpt4.md) model but with 4 times the token limit of [`Gpt4`](./OpenAIChatGptModels/Gpt4.md). |
 
 ## Remarks
 

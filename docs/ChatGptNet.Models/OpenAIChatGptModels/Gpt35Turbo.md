@@ -8,7 +8,7 @@ public const string Gpt35Turbo;
 
 ## Remarks
 
-See [GPT-3.5](https://platform.openai.com/docs/models/gpt-3-5) for more information.
+This model supports 4.096 tokens. See [GPT-3.5](https://platform.openai.com/docs/models/gpt-3-5) for more information.
 
 ## See Also
 
