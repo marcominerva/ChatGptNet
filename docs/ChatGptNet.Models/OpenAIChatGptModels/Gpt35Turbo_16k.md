@@ -1,6 +1,6 @@
 # OpenAIChatGptModels.Gpt35Turbo_16k field
 
-A model with the same capabilities as the standard [`Gpt35Turbo`](./Gpt35Turbo.md) model but with 4 times the context.
+A model with the same capabilities as the standard [`Gpt35Turbo`](./Gpt35Turbo.md) model but with 4 times the token limit of [`Gpt35Turbo`](./Gpt35Turbo.md).
 
 ```csharp
 public const string Gpt35Turbo_16k;
@@ -8,7 +8,7 @@ public const string Gpt35Turbo_16k;
 
 ## Remarks
 
-See [GPT-3.5](https://platform.openai.com/docs/models/gpt-3-5) for more information.
+This model supports 16.384 tokens. See [GPT-3.5](https://platform.openai.com/docs/models/gpt-3-5) for more information.
 
 ## See Also
 
