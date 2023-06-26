@@ -93,6 +93,12 @@ If necessary, it is possibile to provide a custom Cache by implementing the [ICh
             localCache.Remove(conversationId);
             return Task.CompletedTask;
         }
+
+        public Task<bool> ExistsAsync(Guid conversationId, CancellationToken cancellationToken = default)
+        {
+            var exists = localCache.ContainsKey(conversationId);
+            return Task.FromResult(exists);
+        }
     }
 
     // Registers the custom cache at application startup.

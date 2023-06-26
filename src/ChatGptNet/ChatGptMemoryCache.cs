@@ -29,4 +29,10 @@ internal class ChatGptMemoryCache : IChatGptCache
         cache.Remove(conversationId);
         return Task.CompletedTask;
     }
+
+    public Task<bool> ExistsAsync(Guid conversationId, CancellationToken cancellationToken = default)
+    {
+        var exists = cache.TryGetValue(conversationId, out _);
+        return Task.FromResult(exists);
+    }
 }

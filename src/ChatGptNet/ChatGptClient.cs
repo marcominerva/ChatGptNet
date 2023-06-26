@@ -180,6 +180,12 @@ internal class ChatGptClient : IChatGptClient
         return messages;
     }
 
+    public async Task<bool> ConversationExistsAsync(Guid conversationId, CancellationToken cancellationToken = default)
+    {
+        var exists = await cache.ExistsAsync(conversationId, cancellationToken);
+        return exists;
+    }
+
     public async Task DeleteConversationAsync(Guid conversationId, bool preserveSetup = false, CancellationToken cancellationToken = default)
     {
         if (!preserveSetup)

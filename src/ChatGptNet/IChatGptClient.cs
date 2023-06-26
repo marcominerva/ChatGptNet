@@ -183,6 +183,14 @@ public interface IChatGptClient
     Task<Guid> LoadConversationAsync(Guid conversationId, IEnumerable<ChatGptMessage> messages, bool replaceHistory = true, CancellationToken cancellationToken = default);
 
     /// <summary>
+    /// Determines if a chat conversation exists.
+    /// </summary>
+    /// <param name="conversationId">The unique identifier of the conversation.</param>
+    /// <param name="cancellationToken">The token to monitor for cancellation requests.</param>
+    /// <returns><see langword="true"/> if the conversation exists; otherwise, <see langword="false"/>.</returns>
+    public Task<bool> ConversationExistsAsync(Guid conversationId, CancellationToken cancellationToken = default);
+
+    /// <summary>
     /// Deletes a chat conversation, clearing all the history.
     /// </summary>
     /// <param name="conversationId">The unique identifier of the conversation.</param>
