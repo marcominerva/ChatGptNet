@@ -44,22 +44,23 @@ public static class ChatGptOptionsBuilderExtensions
     /// <param name="apiVersion">The API version of the Azure OpenAI service</param>
     /// <param name="authenticationType">Specify if <paramref name="apiKey"/> is an actual API Key or an Azure Active Directory token.</param>
     /// <returns>A reference to this instance after the operation has completed.</returns>
-    /// <exception cref="ArgumentNullException"><paramref name="resourceName"/> or <paramref name="apiKey"/> are <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException"><paramref name="resourceName"/>, <paramref name="apiKey"/> or <paramref name="apiVersion"/> are <see langword="null"/>.</exception>
     /// <remarks>
     /// See <see href="https://learn.microsoft.com/azure/cognitive-services/openai/reference#authentication">Azure OpenAI Service Authentication</see> and <see href="https://learn.microsoft.com/azure/cognitive-services/openai/how-to/managed-identity">Authenticating with Azure Active Directory</see> for more information about authentication.
     /// </remarks>
     /// <seealso cref="ChatGptOptionsBuilder"/>
-    public static ChatGptOptionsBuilder UseAzure(this ChatGptOptionsBuilder builder, string resourceName, string apiKey, string? apiVersion = AzureChatGptServiceConfiguration.DefaultApiVersion, AzureAuthenticationType authenticationType = AzureAuthenticationType.ApiKey)
+    public static ChatGptOptionsBuilder UseAzure(this ChatGptOptionsBuilder builder, string resourceName, string apiKey, string apiVersion = AzureChatGptServiceConfiguration.DefaultApiVersion, AzureAuthenticationType authenticationType = AzureAuthenticationType.ApiKey)
     {
         ArgumentNullException.ThrowIfNull(builder);
         ArgumentNullException.ThrowIfNull(resourceName);
+        ArgumentNullException.ThrowIfNull(apiVersion);
         ArgumentNullException.ThrowIfNull(apiKey);
 
         builder.ServiceConfiguration = new AzureChatGptServiceConfiguration
         {
             ResourceName = resourceName,
             ApiKey = apiKey,
-            ApiVersion = apiVersion ?? AzureChatGptServiceConfiguration.DefaultApiVersion,
+            ApiVersion = apiVersion,
             AuthenticationType = authenticationType
         };
 
