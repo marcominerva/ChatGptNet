@@ -33,7 +33,7 @@ public static class OpenAIChatGptModels
     /// GPT-4 is a large multimodal model that can solve difficult problems with greater accuracy than any of our previous models, thanks to its broader general knowledge and advanced reasoning capabilities. is optimized for chat but works well for traditional completions tasks.
     /// </summary>
     /// <remarks>
-    /// This model supports 8.192 tokens and is currently in a limited beta and only accessible to those who have been granted access. See <see href="https://platform.openai.com/docs/models/gpt-4">GPT-4</see> for more information.
+    /// This model supports 8.192 tokens. See <see href="https://platform.openai.com/docs/models/gpt-4">GPT-4</see> for more information.
     /// </remarks>
     /// <seealso cref="Gpt4_32k"/>
     public const string Gpt4 = "gpt-4";
@@ -42,7 +42,7 @@ public static class OpenAIChatGptModels
     /// A model with the same capabilities as the base <see cref="Gpt4"/> model but with 4 times the token limit of <see cref="Gpt4"/>.
     /// </summary>
     /// <remarks>
-    /// This model supports 32.768 tokens and is currently in a limited beta and only accessible to those who have been granted access. See <see href="https://platform.openai.com/docs/models/gpt-4">GPT-4</see> for more information.
+    /// This model supports 32.768 tokens. See <see href="https://platform.openai.com/docs/models/gpt-4">GPT-4</see> for more information.
     /// </remarks>
     /// <seealso cref="Gpt4"/>
     public const string Gpt4_32k = "gpt-4-32k";

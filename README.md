@@ -53,9 +53,6 @@ ChatGPT can be used with different models for chat completion, both on OpenAI an
 
 Currently available models are: _gpt-3.5-turbo_, _gpt-3.5-turbo-16k_, _gpt-4_ and _gpt-4-32k_. They have fixed names, available in the [OpenAIChatGptModels.cs file](https://github.com/marcominerva/ChatGptNet/blob/master/src/ChatGptNet/Models/ChatGptModels.cs).
 
-> **Note**
-The _gpt-4_ and _gpt-4-32k_ models are currently in a limited beta and only accessible to those who have been granted access. You can find more information in the [models documentation page](https://platform.openai.com/docs/models/gpt-4) of the [OpenAI site](https://openai.com/).
-
 ##### Azure OpenAI Service
 
 In Azure OpenAI Service, you're required to first [deploy a model](https://learn.microsoft.com/azure/cognitive-services/openai/how-to/create-resource?pivots=web-portal#deploy-a-model) before you can make calls. When you deploy a model, you need to assign it a name, that must match the name you use with **ChatGptNet**.
