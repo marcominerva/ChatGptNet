@@ -8,7 +8,7 @@ public const string Gpt4_32k;
 
 ## Remarks
 
-This model supports 32.768 tokens and is currently in a limited beta and only accessible to those who have been granted access. See [GPT-4](https://platform.openai.com/docs/models/gpt-4) for more information.
+This model supports 32.768 tokens. See [GPT-4](https://platform.openai.com/docs/models/gpt-4) for more information.
 
 ## See Also
 
