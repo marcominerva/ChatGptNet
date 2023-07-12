@@ -43,6 +43,10 @@ Register ChatGPT service at application startup:
 
 - _ResourceName_: the name of your Azure OpenAI Resource (required).
 - _ApiKey_: Azure OpenAI provides two methods for authentication. You can use either API Keys or Azure Active Directory (required).
+- _ApiVersion_: the version of the API to use (optional). Allowed values:
+  - 2023-03-15-preview
+  - 2023-05-15
+  - 2023-06-01-preview (default).
 - _AuthenticationType_: it specifies if the key is an actual API Key or an [Azure Active Directory token](https://learn.microsoft.com/azure/cognitive-services/openai/how-to/managed-identity) (optional, default: "ApiKey").
 
 ### DefaultModel
@@ -108,11 +112,12 @@ We can also set ChatGPT parameters for chat completion at startup. Check the [of
 The configuration can be automatically read from [IConfiguration](https://learn.microsoft.com/en-us/dotnet/api/microsoft.extensions.configuration.iconfiguration), using for example a _ChatGPT_ section in the _appsettings.json_ file:
 
     "ChatGPT": {
-        "Provider": "OpenAI",           // Optional. Allowed values: OpenAI (default) or Azure
-        "ApiKey": "",                   // Required
-        //"Organization": "",           // Optional, used only by OpenAI
-        "ResourceName": "",             // Required when using Azure OpenAI Service
-        "AuthenticationType": "ApiKey", // Optional, used only by Azure OpenAI Service. Allowed values : ApiKey (default) or ActiveDirectory
+        "Provider": "OpenAI",               // Optional. Allowed values: OpenAI (default) or Azure
+        "ApiKey": "",                       // Required
+        //"Organization": "",               // Optional, used only by OpenAI
+        "ResourceName": "",                 // Required when using Azure OpenAI Service
+        "ApiVersion": "2023-06-01-preview", // Optional, used only by Azure OpenAI Service. Allowed values: 2023-03-15-preview, 2023-05-15 or 2023-06-01-preview (default)
+        "AuthenticationType": "ApiKey",     // Optional, used only by Azure OpenAI Service. Allowed values: ApiKey (default) or ActiveDirectory
 
         "DefaultModel": "my-model",
         "MessageLimit": 20,
