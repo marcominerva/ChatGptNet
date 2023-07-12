@@ -4,7 +4,7 @@ Configures Azure OpenAI Service settings.
 
 ```csharp
 public static ChatGptOptionsBuilder UseAzure(this ChatGptOptionsBuilder builder, 
-    string resourceName, string apiKey, 
+    string resourceName, string apiKey, string? apiVersion = "2023-06-01-preview", 
     AzureAuthenticationType authenticationType = AzureAuthenticationType.ApiKey)
 ```
 
@@ -13,6 +13,7 @@ public static ChatGptOptionsBuilder UseAzure(this ChatGptOptionsBuilder builder,
 | builder | The [`ChatGptOptionsBuilder`](../ChatGptOptionsBuilder.md) object to configure. |
 | resourceName | The name of the Azure OpenAI Resource. |
 | apiKey | The access key to access the service. |
+| apiVersion | The API version of the Azure OpenAI service |
 | authenticationType | Specify if *apiKey* is an actual API Key or an Azure Active Directory token. |
 
 ## Return Value
