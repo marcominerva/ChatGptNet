@@ -4,7 +4,7 @@ Configures Azure OpenAI Service settings.
 
 ```csharp
 public static ChatGptOptionsBuilder UseAzure(this ChatGptOptionsBuilder builder, 
-    string resourceName, string apiKey, string? apiVersion = "2023-06-01-preview", 
+    string resourceName, string apiKey, string apiVersion = "2023-06-01-preview", 
     AzureAuthenticationType authenticationType = AzureAuthenticationType.ApiKey)
 ```
 
@@ -24,7 +24,7 @@ A reference to this instance after the operation has completed.
 
 | exception | condition |
 | --- | --- |
-| ArgumentNullException | *resourceName* or *apiKey* are `null`. |
+| ArgumentNullException | *resourceName*, *apiKey* or *apiVersion* are `null`. |
 
 ## Remarks
 
