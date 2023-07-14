@@ -267,9 +267,6 @@ The _preserveSetup_ argument allows to decide whether mantain also the _system_ 
 
 With function calling, we can describe functions and have the model intelligently choose to output a JSON object containing arguments to call those functions. This is a new way to more reliably connect GPT's capabilities with external tools and APIs.
 
-> **Note**
-Currently, only OpenAI _gpt-3.5-turbo-0613_ and _gpt-4-0613_ models support function calling.
-
 **ChatGptNet** fully supports function calling by providing an overload of the **AskAsync** method that allows to specify function specifications. If this parameter is supplied, then the model will decide when it is appropiate to use one the functions. For example:
 
     var functions = new List<ChatGptFunction>
