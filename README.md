@@ -46,7 +46,8 @@ Register ChatGPT service at application startup:
 - _ApiVersion_: the version of the API to use (optional). Allowed values:
   - 2023-03-15-preview
   - 2023-05-15
-  - 2023-06-01-preview (default).
+  - 2023-06-01-preview
+  - 2023-07-01-preview (default)
 - _AuthenticationType_: it specifies if the key is an actual API Key or an [Azure Active Directory token](https://learn.microsoft.com/azure/cognitive-services/openai/how-to/managed-identity) (optional, default: "ApiKey").
 
 ### DefaultModel
@@ -116,7 +117,7 @@ The configuration can be automatically read from [IConfiguration](https://learn.
         "ApiKey": "",                       // Required
         //"Organization": "",               // Optional, used only by OpenAI
         "ResourceName": "",                 // Required when using Azure OpenAI Service
-        "ApiVersion": "2023-06-01-preview", // Optional, used only by Azure OpenAI Service. Allowed values: 2023-03-15-preview, 2023-05-15 or 2023-06-01-preview (default)
+        "ApiVersion": "2023-07-01-preview", // Optional, used only by Azure OpenAI Service (default: 2023-07-01-preview)
         "AuthenticationType": "ApiKey",     // Optional, used only by Azure OpenAI Service. Allowed values: ApiKey (default) or ActiveDirectory
 
         "DefaultModel": "my-model",
@@ -267,7 +268,14 @@ The _preserveSetup_ argument allows to decide whether mantain also the _system_ 
 
 With function calling, we can describe functions and have the model intelligently choose to output a JSON object containing arguments to call those functions. This is a new way to more reliably connect GPT's capabilities with external tools and APIs.
 
-**ChatGptNet** fully supports function calling by providing an overload of the **AskAsync** method that allows to specify function specifications. If this parameter is supplied, then the model will decide when it is appropiate to use one the functions. For example:
+> **Note**
+Currently, on Azure OpenAI Service, function calling is supported  in the following models in API version `2023-07-01-preview`:
+>- gpt-35-turbo-0613
+>- gpt-35-turbo-16k-0613
+>- gpt-4-0613
+>- gpt-4-32k-0613
+
+**ChatGptNet** fully supports function calling by providing an overload of the **AskAsync** method that allows to specify function definitions. If this parameter is supplied, then the model will decide when it is appropiate to use one the functions. For example:
 
     var functions = new List<ChatGptFunction>
     {
