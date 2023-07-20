@@ -46,6 +46,19 @@ public class ChatGptResponse
     public IEnumerable<ChatGptChoice> Choices { get; set; } = Enumerable.Empty<ChatGptChoice>();
 
     /// <summary>
+    /// Gets or sets the list of prompt annotations determined by the content filtering system.
+    /// </summary>
+    [JsonPropertyName("prompt_annotations")]
+    public IEnumerable<ChatGptPromptAnnotations>? PromptAnnotations { get; set; }
+
+    /// <summary>
+    /// Gets or sets a value indicating whether any prompt has been filtered by content filtering system.
+    /// </summary>
+    public bool IsPromptFiltered => PromptAnnotations?.Any(
+        p => p.ContentFilterResults.Hate.Filtered || p.ContentFilterResults.SelfHarm.Filtered || p.ContentFilterResults.Violence.Filtered
+            || p.ContentFilterResults.Sexual.Filtered) ?? false;
+
+    /// <summary>
     /// Gets a value that determines if the response was successful.
     /// </summary>
     public bool IsSuccessful => Error is null;

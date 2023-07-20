@@ -30,4 +30,10 @@ public class ChatGptError
     /// Gets or sets the error code.
     /// </summary>
     public string? Code { get; set; }
+
+    /// <summary>
+    /// Gets or sets the HTTP status code.
+    /// </summary>
+    [JsonPropertyName("status")]
+    public int StatusCode { get; set; }
 }
