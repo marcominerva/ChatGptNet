@@ -117,7 +117,7 @@ We can also set ChatGPT parameters for chat completion at startup. Check the [of
 
 The configuration can be automatically read from [IConfiguration](https://learn.microsoft.com/en-us/dotnet/api/microsoft.extensions.configuration.iconfiguration), using for example a _ChatGPT_ section in the _appsettings.json_ file:
 
-```json
+```yaml
 "ChatGPT": {
     "Provider": "OpenAI",               // Optional. Allowed values: OpenAI (default) or Azure
     "ApiKey": "",                       // Required
