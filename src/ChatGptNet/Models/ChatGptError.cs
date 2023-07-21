@@ -32,8 +32,13 @@ public class ChatGptError
     public string? Code { get; set; }
 
     /// <summary>
-    /// Gets or sets the HTTP status code.
+    /// Gets or sets the HTTP status code of the error.
     /// </summary>
     [JsonPropertyName("status")]
     public int StatusCode { get; set; }
+
+    /// <summary>
+    /// Contains further details about the error.
+    /// </summary>
+    public ChatGptInnerError? InnerError { get; set; }
 }

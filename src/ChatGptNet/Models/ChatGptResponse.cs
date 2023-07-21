@@ -31,9 +31,14 @@ public class ChatGptResponse
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
     /// <summary>
+    /// Gets or sets the model name that has been used to generate the response.
+    /// </summary>
+    public string Model { get; set; } = string.Empty;
+
+    /// <summary>
     /// Gets or sets information about token usage.
     /// </summary>
-    public ChatGptUsage Usage { get; set; } = new();
+    public ChatGptUsage? Usage { get; set; }
 
     /// <summary>
     /// Gets or sets the error occurred during the chat completion execution, if any.

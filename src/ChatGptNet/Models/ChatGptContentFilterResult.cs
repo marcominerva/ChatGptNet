@@ -3,7 +3,10 @@
 /// <summary>
 /// Contains detail about a particular content filter result.
 /// </summary>
-public class ChtaGptContentFilterResult
+/// <remarks>
+/// See <see href="https://learn.microsoft.com/azure/ai-services/openai/concepts/content-filter">Content filtering</see> for more information.
+/// </remarks>
+public class ChatGptContentFilterResult
 {
     /// <summary>
     /// Gets or sets a value indicating whether the content has been filtered.
@@ -34,5 +37,6 @@ public class ChtaGptContentFilterResult
     ///   </item>
     /// </list>
     /// </remarks>
+    /// <seealso cref="ChatGptContentFilterSeverityLevels"/>
     public string Severity { get; set; } = string.Empty;
 }
