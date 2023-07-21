@@ -12,8 +12,10 @@ public class ChatGptError
 | --- | --- |
 | [ChatGptError](ChatGptError/ChatGptError.md)() | The default constructor. |
 | [Code](ChatGptError/Code.md) { get; set; } | Gets or sets the error code. |
+| [InnerError](ChatGptError/InnerError.md) { get; set; } | Contains further details about the error. |
 | [Message](ChatGptError/Message.md) { get; set; } | Gets or sets the error message. |
 | [Parameter](ChatGptError/Parameter.md) { get; set; } | Gets or sets the parameter that caused the error. |
+| [StatusCode](ChatGptError/StatusCode.md) { get; set; } | Gets or sets the HTTP status code of the error. |
 | [Type](ChatGptError/Type.md) { get; set; } | Gets or sets the error type. |
 
 ## Remarks

@@ -72,9 +72,6 @@ internal class ChatGptClient : IChatGptClient
         var requestUri = options.ServiceConfiguration.GetServiceEndpoint(model ?? options.DefaultModel);
         using var httpResponse = await httpClient.PostAsJsonAsync(requestUri, request, jsonSerializerOptions, cancellationToken);
 
-        var text = await httpResponse.Content.ReadAsStringAsync(cancellationToken);
-        Console.WriteLine(text);
-
         var response = await httpResponse.Content.ReadFromJsonAsync<ChatGptResponse>(jsonSerializerOptions, cancellationToken: cancellationToken);
         NormalizeResponse(httpResponse, response!, conversationId);
 
@@ -129,10 +126,6 @@ internal class ChatGptClient : IChatGptClient
                     if (line.StartsWith("data: {"))
                     {
                         var json = line["data: ".Length..];
-
-                        Console.WriteLine(json);
-                        Console.WriteLine();
-
                         var response = JsonSerializer.Deserialize<ChatGptResponse>(json, jsonSerializerOptions);
 
                         // Saves partial response fields that need to be added in the next response.
