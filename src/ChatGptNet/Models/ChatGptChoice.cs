@@ -19,6 +19,21 @@ public class ChatGptChoice
     public ChatGptMessage Message { get; set; } = new();
 
     /// <summary>
+    /// Gets or sets the content filter results for the this <see cref="ChatGptChoice"/>.
+    /// </summary>
+    /// <seealso cref="ChatGptChoice"/>
+    [JsonPropertyName("content_filter_results")]
+    public ChatGptContentFilterResults? ContentFilterResults { get; set; }
+
+    /// <summary>
+    /// Gets or sets a value indicating whether the this <see cref="ChatGptChoice"/> has been filtered by content filtering system.
+    /// </summary>
+    /// <seealso cref="ChatGptChoice"/>
+    public bool IsChoiceFiltered => ContentFilterResults is not null
+        && (ContentFilterResults.Hate.Filtered || ContentFilterResults.SelfHarm.Filtered || ContentFilterResults.Violence.Filtered
+            || ContentFilterResults.Sexual.Filtered);
+
+    /// <summary>
     /// When using streaming responses, gets or sets the partial message delta associated with this <see cref="ChatGptChoice"/>.
     /// </summary>
     /// <see cref="ChatGptRequest.Stream"/>

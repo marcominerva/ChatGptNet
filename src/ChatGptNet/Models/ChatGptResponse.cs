@@ -31,9 +31,14 @@ public class ChatGptResponse
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
     /// <summary>
+    /// Gets or sets the model name that has been used to generate the response.
+    /// </summary>
+    public string Model { get; set; } = string.Empty;
+
+    /// <summary>
     /// Gets or sets information about token usage.
     /// </summary>
-    public ChatGptUsage Usage { get; set; } = new();
+    public ChatGptUsage? Usage { get; set; }
 
     /// <summary>
     /// Gets or sets the error occurred during the chat completion execution, if any.
@@ -44,6 +49,19 @@ public class ChatGptResponse
     /// Gets or sets the list of choices that has been provided by chat completion.
     /// </summary>
     public IEnumerable<ChatGptChoice> Choices { get; set; } = Enumerable.Empty<ChatGptChoice>();
+
+    /// <summary>
+    /// Gets or sets the list of prompt annotations determined by the content filtering system.
+    /// </summary>
+    [JsonPropertyName("prompt_annotations")]
+    public IEnumerable<ChatGptPromptAnnotations>? PromptAnnotations { get; set; }
+
+    /// <summary>
+    /// Gets or sets a value indicating whether any prompt has been filtered by content filtering system.
+    /// </summary>
+    public bool IsPromptFiltered => PromptAnnotations?.Any(
+        p => p.ContentFilterResults.Hate.Filtered || p.ContentFilterResults.SelfHarm.Filtered || p.ContentFilterResults.Violence.Filtered
+            || p.ContentFilterResults.Sexual.Filtered) ?? false;
 
     /// <summary>
     /// Gets a value that determines if the response was successful.
