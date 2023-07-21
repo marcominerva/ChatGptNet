@@ -113,6 +113,9 @@ internal class ChatGptClient : IChatGptClient
         {
             var contentBuilder = new StringBuilder();
 
+            ChatGptUsage? usage = null;
+            IEnumerable<ChatGptPromptAnnotations>? promptAnnotations = null;
+
             using (var responseStream = await httpResponse.Content.ReadAsStreamAsync(cancellationToken))
             {
                 using var reader = new StreamReader(responseStream);
@@ -124,6 +127,10 @@ internal class ChatGptClient : IChatGptClient
                     {
                         var json = line["data: ".Length..];
                         var response = JsonSerializer.Deserialize<ChatGptResponse>(json, jsonSerializerOptions);
+
+                        // Saves partial response fields that need to be added in the next response.
+                        usage ??= response!.Usage;
+                        promptAnnotations ??= response!.PromptAnnotations;
 
                         var content = response!.Choices?.FirstOrDefault()?.Delta?.Content;
 
@@ -142,6 +149,9 @@ internal class ChatGptClient : IChatGptClient
                                 contentBuilder.Append(content);
 
                                 response.ConversationId = conversationId;
+                                response.Usage = usage;
+                                response.PromptAnnotations = promptAnnotations;
+
                                 yield return response;
                             }
                         }
@@ -336,6 +346,11 @@ internal class ChatGptClient : IChatGptClient
                 Message = httpResponse.ReasonPhrase ?? httpResponse.StatusCode.ToString(),
                 Code = ((int)httpResponse.StatusCode).ToString()
             };
+        }
+
+        if (response.Error is not null)
+        {
+            response.Error.StatusCode = (int)httpResponse.StatusCode;
         }
     }
 }

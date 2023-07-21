@@ -31,13 +31,18 @@
 | public type | description |
 | --- | --- |
 | class [ChatGptChoice](./ChatGptNet.Models/ChatGptChoice.md) | Represent a chat completion choice. |
+| class [ChatGptContentFilterResult](./ChatGptNet.Models/ChatGptContentFilterResult.md) | Contains detail about a particular content filter result. |
+| class [ChatGptContentFilterResults](./ChatGptNet.Models/ChatGptContentFilterResults.md) | Contains details about conteng filtering results. |
+| static class [ChatGptContentFilterSeverityLevels](./ChatGptNet.Models/ChatGptContentFilterSeverityLevels.md) | Contains all the content filter severity levels defined by Azure OpenAI Service. |
 | class [ChatGptError](./ChatGptNet.Models/ChatGptError.md) | Contains information about the error occurred while invoking the service. |
 | class [ChatGptFunction](./ChatGptNet.Models/ChatGptFunction.md) | Represents the description of a function available for ChatGPT. |
 | class [ChatGptFunctionCall](./ChatGptNet.Models/ChatGptFunctionCall.md) | Represents a function call. |
 | static class [ChatGptFunctionCalls](./ChatGptNet.Models/ChatGptFunctionCalls.md) | Contains constants for ChatGPT function call types. |
 | class [ChatGptFunctionParameters](./ChatGptNet.Models/ChatGptFunctionParameters.md) | Contains parameters about the function calls that are available for ChatGPT. |
+| class [ChatGptInnerError](./ChatGptNet.Models/ChatGptInnerError.md) | Contains further details about the error. |
 | class [ChatGptMessage](./ChatGptNet.Models/ChatGptMessage.md) | Represents a single chat message. |
 | class [ChatGptParameters](./ChatGptNet.Models/ChatGptParameters.md) | Represents chat completion parameters. |
+| class [ChatGptPromptAnnotations](./ChatGptNet.Models/ChatGptPromptAnnotations.md) | Contains information about content filtering for input prompts. |
 | class [ChatGptResponse](./ChatGptNet.Models/ChatGptResponse.md) | Represents a chat completion response. |
 | class [ChatGptRoles](./ChatGptNet.Models/ChatGptRoles.md) | Contains constants for all the possible roles. |
 | class [ChatGptUsage](./ChatGptNet.Models/ChatGptUsage.md) | Contains information about the API usage. |

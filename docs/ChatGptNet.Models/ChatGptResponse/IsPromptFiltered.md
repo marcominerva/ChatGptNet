@@ -1,14 +1,13 @@
-# ChatGptResponse.Usage property
+# ChatGptResponse.IsPromptFiltered property
 
-Gets or sets information about token usage.
+Gets or sets a value indicating whether any prompt has been filtered by content filtering system.
 
 ```csharp
-public ChatGptUsage? Usage { get; set; }
+public bool IsPromptFiltered { get; }
 ```
 
 ## See Also
 
-* class [ChatGptUsage](../ChatGptUsage.md)
 * class [ChatGptResponse](../ChatGptResponse.md)
 * namespace [ChatGptNet.Models](../../ChatGptNet.md)
 

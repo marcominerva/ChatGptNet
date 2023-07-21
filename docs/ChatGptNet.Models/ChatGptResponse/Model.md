@@ -1,14 +1,13 @@
-# ChatGptResponse.Usage property
+# ChatGptResponse.Model property
 
-Gets or sets information about token usage.
+Gets or sets the model name that has been used to generate the response.
 
 ```csharp
-public ChatGptUsage? Usage { get; set; }
+public string Model { get; set; }
 ```
 
 ## See Also
 
-* class [ChatGptUsage](../ChatGptUsage.md)
 * class [ChatGptResponse](../ChatGptResponse.md)
 * namespace [ChatGptNet.Models](../../ChatGptNet.md)
 
