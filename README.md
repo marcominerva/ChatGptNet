@@ -208,8 +208,16 @@ var message = response.GetMessage();
 
 ### Handling a conversation
 
-The **AskAsync** method has an overload (the one shown in the example above) that requires a *conversationId* parameter. If we pass an empty value, a random one is generated and returned.
-We can pass this value in subsequent invocations of **AskAsync** so that the library automatically retrieves previous messages of the current conversation (according to *MessageLimit* and *MessageExpiration* settings) and send them to chat completion API.
+The **AskAsync** and **AskStreamAsync** (see below) methods provides overloads that require a *conversationId* parameter. If we pass an empty value, a random one is generated and returned.
+We can pass this value in subsequent invocations of **AskAsync** or **AskStreamAsync**, so that the library automatically retrieves previous messages of the current conversation (according to *MessageLimit* and *MessageExpiration* settings) and send them to chat completion API.
+
+This is the default behavior for all the chat interactions. If you want to exlude a particular interaction from the conversation history, you can set the *addToChatHistory* argument to *false*:
+
+```csharp
+var response = await chatGptClient.AskAsync(conversationId, message, addToChatHistory: false);
+```
+
+In this way, the message will be sent to the chat completion API, but it and the corresponding answer from ChatGPT will not be added to the conversation history.
 
 ### Response streaming
 

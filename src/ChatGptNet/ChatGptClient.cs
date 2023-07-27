@@ -38,10 +38,7 @@ internal class ChatGptClient : IChatGptClient
         ArgumentNullException.ThrowIfNull(message);
 
         // Ensures that conversationId isn't empty.
-        if (conversationId == Guid.Empty)
-        {
-            conversationId = Guid.NewGuid();
-        }
+        conversationId = (conversationId == Guid.Empty) ? Guid.NewGuid() : conversationId;
 
         var messages = new List<ChatGptMessage>
         {
@@ -56,15 +53,12 @@ internal class ChatGptClient : IChatGptClient
         return conversationId;
     }
 
-    public async Task<ChatGptResponse> AskAsync(Guid conversationId, string message, ChatGptFunctionParameters? functionParameters = null, ChatGptParameters? parameters = null, string? model = null, CancellationToken cancellationToken = default)
+    public async Task<ChatGptResponse> AskAsync(Guid conversationId, string message, ChatGptFunctionParameters? functionParameters = null, ChatGptParameters? parameters = null, string? model = null, bool addToConversationHistory = true, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(message);
 
         // Ensures that conversationId isn't empty.
-        if (conversationId == Guid.Empty)
-        {
-            conversationId = Guid.NewGuid();
-        }
+        conversationId = (conversationId == Guid.Empty) ? Guid.NewGuid() : conversationId;
 
         var messages = await CreateMessageListAsync(conversationId, message, cancellationToken);
         var request = CreateRequest(messages, functionParameters, false, parameters, model);
@@ -77,8 +71,11 @@ internal class ChatGptClient : IChatGptClient
 
         if (response!.IsSuccessful)
         {
-            // Adds the response message to the conversation cache.
-            await AddAssistantResponseAsync(conversationId, messages, response.Choices.First().Message, cancellationToken);
+            if (addToConversationHistory)
+            {
+                // Adds the response message to the conversation cache.
+                await AddAssistantResponseAsync(conversationId, messages, response.Choices.First().Message, cancellationToken);
+            }
         }
         else if (options.ThrowExceptionOnError)
         {
@@ -88,15 +85,12 @@ internal class ChatGptClient : IChatGptClient
         return response;
     }
 
-    public async IAsyncEnumerable<ChatGptResponse> AskStreamAsync(Guid conversationId, string message, ChatGptParameters? parameters = null, string? model = null, [EnumeratorCancellation] CancellationToken cancellationToken = default)
+    public async IAsyncEnumerable<ChatGptResponse> AskStreamAsync(Guid conversationId, string message, ChatGptParameters? parameters = null, string? model = null, bool addToConversationHistory = true, [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(message);
 
         // Ensures that conversationId isn't empty.
-        if (conversationId == Guid.Empty)
-        {
-            conversationId = Guid.NewGuid();
-        }
+        conversationId = (conversationId == Guid.Empty) ? Guid.NewGuid() : conversationId;
 
         var messages = await CreateMessageListAsync(conversationId, message, cancellationToken);
         var request = CreateRequest(messages, null, true, parameters, model);
@@ -163,12 +157,15 @@ internal class ChatGptClient : IChatGptClient
                 }
             }
 
-            // Adds the response message to the conversation cache.
-            await AddAssistantResponseAsync(conversationId, messages, new()
+            if (addToConversationHistory)
             {
-                Role = ChatGptRoles.Assistant,
-                Content = contentBuilder.ToString()
-            }, cancellationToken);
+                // Adds the response message to the conversation cache.
+                await AddAssistantResponseAsync(conversationId, messages, new()
+                {
+                    Role = ChatGptRoles.Assistant,
+                    Content = contentBuilder.ToString()
+                }, cancellationToken);
+            }
         }
         else
         {
@@ -220,10 +217,7 @@ internal class ChatGptClient : IChatGptClient
         ArgumentNullException.ThrowIfNull(messages);
 
         // Ensures that conversationId isn't empty.
-        if (conversationId == Guid.Empty)
-        {
-            conversationId = Guid.NewGuid();
-        }
+        conversationId = (conversationId == Guid.Empty) ? Guid.NewGuid() : conversationId;
 
         if (replaceHistory)
         {
