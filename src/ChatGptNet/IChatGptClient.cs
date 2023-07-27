@@ -14,7 +14,7 @@ public interface IChatGptClient
     /// <param name="message">The system message.</param>
     /// <param name="cancellationToken">The token to monitor for cancellation requests.</param>
     /// <returns>The unique identifier of the new conversation.</returns>
-    /// <remarks>This method creates a new conversation with a system message and a random Conversation Id. Then, call <see cref="AskAsync(Guid, string, ChatGptParameters, string, CancellationToken)"/> with this Id to start the actual conversation.</remarks>
+    /// <remarks>This method creates a new conversation with a system message and a random Conversation Id. Then, call <see cref="AskAsync(Guid, string, ChatGptParameters, string, bool, CancellationToken)"/> with this Id to start the actual conversation.</remarks>
     /// <exception cref="ArgumentNullException"><paramref name="message"/> is <see langword="null"/>.</exception>
     /// <seealso cref="AskAsync(Guid, string, ChatGptParameters, string, bool, CancellationToken)"/>
     Task<Guid> SetupAsync(string message, CancellationToken cancellationToken = default)
@@ -26,7 +26,7 @@ public interface IChatGptClient
     /// <param name="conversationId">The unique identifier of the conversation, used to automatically retrieve previous messages in the chat history.</param>
     /// <param name="message">The system message.</param>
     /// <param name="cancellationToken">The token to monitor for cancellation requests.</param>
-    /// <remarks>This method creates a new conversation, with a system message and the given <paramref name="conversationId"/>. If a conversation with this Id already exists, it will be automatically cleared. Then, call <see cref="AskAsync(Guid, string, ChatGptParameters, string, CancellationToken)"/> to start the actual conversation.</remarks>
+    /// <remarks>This method creates a new conversation, with a system message and the given <paramref name="conversationId"/>. If a conversation with this Id already exists, it will be automatically cleared. Then, call <see cref="AskAsync(Guid, string, ChatGptParameters, string, bool, CancellationToken)"/> to start the actual conversation.</remarks>
     /// <exception cref="ArgumentNullException"><paramref name="message"/> is <see langword="null"/>.</exception>
     /// <seealso cref="AskAsync(Guid, string, ChatGptFunctionParameters, ChatGptParameters, string, bool, CancellationToken)"/>
     Task<Guid> SetupAsync(Guid conversationId, string message, CancellationToken cancellationToken = default);
