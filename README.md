@@ -12,25 +12,28 @@ A ChatGPT integration library for .NET, supporting both OpenAI and Azure OpenAI 
 
 The library is available on [NuGet](https://www.nuget.org/packages/ChatGptNet). Just search for *ChatGptNet* in the **Package Manager GUI** or run the following command in the **.NET CLI**:
 
-    dotnet add package ChatGptNet
+```shell
+dotnet add package ChatGptNet
+```
 
 ## Configuration
 
 Register ChatGPT service at application startup:
 
-    builder.Services.AddChatGpt(options =>
-    {
-        // OpenAI.
-        //options.UseOpenAI(apiKey: "", organization: "");
+```csharp
+builder.Services.AddChatGpt(options =>
+{
+    // OpenAI.
+    //options.UseOpenAI(apiKey: "", organization: "");
 
-        // Azure OpenAI Service.
-        //options.UseAzure(resourceName: "", apiKey: "", authenticationType: AzureAuthenticationType.ApiKey);
+    // Azure OpenAI Service.
+    //options.UseAzure(resourceName: "", apiKey: "", authenticationType: AzureAuthenticationType.ApiKey);
 
-        options.DefaultModel = "my-model";
-        options.MessageLimit = 16;  // Default: 10
-        options.MessageExpiration = TimeSpan.FromMinutes(5);    // Default: 1 hour
-    });
-
+    options.DefaultModel = "my-model";
+    options.MessageLimit = 16;  // Default: 10
+    options.MessageExpiration = TimeSpan.FromMinutes(5);    // Default: 1 hour
+});
+```
 
 **ChatGptNet** supports both OpenAI and Azure OpenAI Service, so it is necessary to set the correct configuration settings based on the chosen provider:
 
@@ -74,37 +77,39 @@ ChatGPT is aimed to support conversational scenarios: user can talk to ChatGPT w
 
 If necessary, it is possibile to provide a custom Cache by implementing the [IChatGptCache](https://github.com/marcominerva/ChatGptNet/blob/master/src/ChatGptNet/IChatGptCache.cs) interface and then calling the **WithCache** extension method:
 
-    public class LocalMessageCache : IChatGptCache
+```csharp
+public class LocalMessageCache : IChatGptCache
+{
+    private readonly Dictionary<Guid, List<ChatGptMessage>> localCache = new();
+
+    public Task SetAsync(Guid conversationId, IEnumerable<ChatGptMessage> messages, TimeSpan expiration, CancellationToken cancellationToken = default)
     {
-        private readonly Dictionary<Guid, List<ChatGptMessage>> localCache = new();
-
-        public Task SetAsync(Guid conversationId, IEnumerable<ChatGptMessage> messages, TimeSpan expiration, CancellationToken cancellationToken = default)
-        {
-            localCache[conversationId] = messages.ToList();
-            return Task.CompletedTask;
-        }
-
-        public Task<List<ChatGptMessage>?> GetAsync(Guid conversationId, CancellationToken cancellationToken = default)
-        {
-            localCache.TryGetValue(conversationId, out var messages);
-            return Task.FromResult(messages);
-        }
-
-        public Task RemoveAsync(Guid conversationId, CancellationToken cancellationToken = default)
-        {
-            localCache.Remove(conversationId);
-            return Task.CompletedTask;
-        }
-
-        public Task<bool> ExistsAsync(Guid conversationId, CancellationToken cancellationToken = default)
-        {
-            var exists = localCache.ContainsKey(conversationId);
-            return Task.FromResult(exists);
-        }
+        localCache[conversationId] = messages.ToList();
+        return Task.CompletedTask;
     }
 
-    // Registers the custom cache at application startup.
-    builder.Services.AddChatGpt(/* ... */).WithCache<LocalMessageCache>();
+    public Task<List<ChatGptMessage>?> GetAsync(Guid conversationId, CancellationToken cancellationToken = default)
+    {
+        localCache.TryGetValue(conversationId, out var messages);
+        return Task.FromResult(messages);
+    }
+
+    public Task RemoveAsync(Guid conversationId, CancellationToken cancellationToken = default)
+    {
+        localCache.Remove(conversationId);
+        return Task.CompletedTask;
+    }
+
+    public Task<bool> ExistsAsync(Guid conversationId, CancellationToken cancellationToken = default)
+    {
+        var exists = localCache.ContainsKey(conversationId);
+        return Task.FromResult(exists);
+    }
+}
+
+// Registers the custom cache at application startup.
+builder.Services.AddChatGpt(/* ... */).WithCache<LocalMessageCache>();
+```
 
 We can also set ChatGPT parameters for chat completion at startup. Check the [official documentation](https://platform.openai.com/docs/api-reference/chat/create) for the list of available parameters and their meaning.
 
@@ -112,82 +117,94 @@ We can also set ChatGPT parameters for chat completion at startup. Check the [of
 
 The configuration can be automatically read from [IConfiguration](https://learn.microsoft.com/en-us/dotnet/api/microsoft.extensions.configuration.iconfiguration), using for example a _ChatGPT_ section in the _appsettings.json_ file:
 
-    "ChatGPT": {
-        "Provider": "OpenAI",               // Optional. Allowed values: OpenAI (default) or Azure
-        "ApiKey": "",                       // Required
-        //"Organization": "",               // Optional, used only by OpenAI
-        "ResourceName": "",                 // Required when using Azure OpenAI Service
-        "ApiVersion": "2023-07-01-preview", // Optional, used only by Azure OpenAI Service (default: 2023-07-01-preview)
-        "AuthenticationType": "ApiKey",     // Optional, used only by Azure OpenAI Service. Allowed values: ApiKey (default) or ActiveDirectory
+```yaml
+"ChatGPT": {
+    "Provider": "OpenAI",               // Optional. Allowed values: OpenAI (default) or Azure
+    "ApiKey": "",                       // Required
+    //"Organization": "",               // Optional, used only by OpenAI
+    "ResourceName": "",                 // Required when using Azure OpenAI Service
+    "ApiVersion": "2023-07-01-preview", // Optional, used only by Azure OpenAI Service (default: 2023-07-01-preview)
+    "AuthenticationType": "ApiKey",     // Optional, used only by Azure OpenAI Service. Allowed values: ApiKey (default) or ActiveDirectory
 
-        "DefaultModel": "my-model",
-        "MessageLimit": 20,
-        "MessageExpiration": "00:30:00",
-        "ThrowExceptionOnError": true
-        //"User": "UserName",
-        //"DefaultParameters": {
-        //    "Temperature": 0.8,
-        //    "TopP": 1,
-        //    "MaxTokens": 500,
-        //    "PresencePenalty": 0,
-        //    "FrequencyPenalty": 0
-        //}
-    }
+    "DefaultModel": "my-model",
+    "MessageLimit": 20,
+    "MessageExpiration": "00:30:00",
+    "ThrowExceptionOnError": true
+    //"User": "UserName",
+    //"DefaultParameters": {
+    //    "Temperature": 0.8,
+    //    "TopP": 1,
+    //    "MaxTokens": 500,
+    //    "PresencePenalty": 0,
+    //    "FrequencyPenalty": 0
+    //}
+}
+```
 
 And then use the corresponding overload of che **AddChatGpt** method:
 
-    // Adds ChatGPT service using settings from IConfiguration.
-    builder.Services.AddChatGpt(builder.Configuration);
+```csharp
+// Adds ChatGPT service using settings from IConfiguration.
+builder.Services.AddChatGpt(builder.Configuration);
+```
 
 ### Configuring ChatGptNet dinamically
 
 The **AddChatGpt** method has also an overload that accepts an [IServiceProvider](https://learn.microsoft.com/dotnet/api/system.iserviceprovider) as argument. It can be used, for example, if we're in a Web API and we need to support scenarios in which every user has a different API Key that can be retrieved accessing a database via Dependency Injection:
 
-    builder.Services.AddChatGpt((services, options) =>
-    {
-        var accountService = services.GetRequiredService<IAccountService>();
+```csharp
+builder.Services.AddChatGpt((services, options) =>
+{
+    var accountService = services.GetRequiredService<IAccountService>();
 
-        // Dynamically gets the API Key from the service.
-        var apiKey = "..."        
+    // Dynamically gets the API Key from the service.
+    var apiKey = "..."        
 
-        options.UseOpenAI(apiKyey);
-    });
+    options.UseOpenAI(apiKyey);
+});
+```
 
 ### Configuring ChatGptNet using both IConfiguration and code
 
 In more complex scenarios, it is possible to configure **ChatGptNet** using both code and [IConfiguration](https://learn.microsoft.com/en-us/dotnet/api/microsoft.extensions.configuration.iconfiguration). This can be useful if we want to set a bunch of common properties, but at the same time we need some configuration logic. For example:
 
-    builder.Services.AddChatGpt((services, options) =>
-    {
-        // Configure common properties (message limit and expiration, default parameters, ecc.) using IConfiguration.
-        options.UseConfiguration(builder.Configuration);
+```csharp
+builder.Services.AddChatGpt((services, options) =>
+{
+    // Configure common properties (message limit and expiration, default parameters, ecc.) using IConfiguration.
+    options.UseConfiguration(builder.Configuration);
 
-        var accountService = services.GetRequiredService<IAccountService>();
+    var accountService = services.GetRequiredService<IAccountService>();
 
-        // Dynamically gets the API Key from the service.
-        var apiKey = "..."        
+    // Dynamically gets the API Key from the service.
+    var apiKey = "..."        
 
-        options.UseOpenAI(apiKyey);
-    });
+    options.UseOpenAI(apiKyey);
+});
+```
 
 ## Usage
 
 The library can be used in any .NET application built with .NET 6.0 or later. For example, we can create a Minimal API in this way:
 
-    app.MapPost("/api/chat/ask", async (Request request, IChatGptClient chatGptClient) =>
-    {
-        var response = await chatGptClient.AskAsync(request.ConversationId, request.Message);
-        return TypedResults.Ok(response);
-    })
-    .WithOpenApi();
+```csharp
+app.MapPost("/api/chat/ask", async (Request request, IChatGptClient chatGptClient) =>
+{
+    var response = await chatGptClient.AskAsync(request.ConversationId, request.Message);
+    return TypedResults.Ok(response);
+})
+.WithOpenApi();
 
-    // ...
+// ...
 
-    public record class Request(Guid ConversationId, string Message);
+public record class Request(Guid ConversationId, string Message);
+```
 
 If we just want to retrieve the response message, we can call the **GetMessage** method:
 
-    var message = response.GetMessage();
+```csharp
+var message = response.GetMessage();
+```
 
 ### Handling a conversation
 
@@ -202,37 +219,41 @@ This is the default behavior for all the chat interactions. If you want to exlud
 
 Chat completion API supports response streaming. When using this feature, partial message deltas will be sent, like in ChatGPT. Tokens will be sent as data-only server-sent events as they become available. **ChatGptNet** provides response streaming using the **AskStreamAsync** method:
 
-    // Requests a streaming response.
-    var responseStream = chatGptClient.AskStreamAsync(conversationId, message);
+```csharp
+// Requests a streaming response.
+var responseStream = chatGptClient.AskStreamAsync(conversationId, message);
 
-    await foreach (var response in responseStream)
-    {
-        Console.Write(response.GetMessage());
-        await Task.Delay(80);
-    }
+await foreach (var response in responseStream)
+{
+    Console.Write(response.GetMessage());
+    await Task.Delay(80);
+}
+```
 
 ![](https://raw.githubusercontent.com/marcominerva/ChatGptNet/master/assets/ChatGptConsoleStreaming.gif)
 
 Response streaming works by returning an [IAsyncEnumerable](https://learn.microsoft.com/en-us/dotnet/api/system.collections.generic.iasyncenumerable-1), so it can be used even in a Web API project:
 
-    app.MapGet("/api/chat/stream", (Guid? conversationId, string message, IChatGptClient chatGptClient) =>
+```csharp
+app.MapGet("/api/chat/stream", (Guid? conversationId, string message, IChatGptClient chatGptClient) =>
+{
+    async IAsyncEnumerable<string> Stream()
     {
-        async IAsyncEnumerable<string> Stream()
+        // Requests a streaming response.
+        var responseStream = chatGptClient.AskStreamAsync(conversationId.GetValueOrDefault(), message);
+
+        // Uses the "AsDeltas" extension method to retrieve partial message deltas only.
+        await foreach (var delta in responseStream.AsDeltas())
         {
-            // Requests a streaming response.
-            var responseStream = chatGptClient.AskStreamAsync(conversationId.GetValueOrDefault(), message);
-
-            // Uses the "AsDeltas" extension method to retrieve partial message deltas only.
-            await foreach (var delta in responseStream.AsDeltas())
-            {
-                yield return delta;
-                await Task.Delay(50);
-            }
+            yield return delta;
+            await Task.Delay(50);
         }
+    }
 
-        return Stream();
-    })
-    .WithOpenApi();
+    return Stream();
+})
+.WithOpenApi();
+```
 
 ![](https://raw.githubusercontent.com/marcominerva/ChatGptNet/master/assets/ChatGptApiStreaming.gif)
 
@@ -253,7 +274,9 @@ ChatGPT supports messages with the _system_ role to influence how the assistant 
 
 **ChatGptNet** provides this feature using the **SetupAsync** method:
 
-    var conversationId await = chatGptClient.SetupAsync("Answer in rhyme");
+```csharp
+var conversationId await = chatGptClient.SetupAsync("Answer in rhyme");
+```
 
 If we use the same *conversationId* when calling  **AskAsync**, then the *system* message will be automatically sent along with every request, so that the assistant will know how to behave.
 
@@ -264,7 +287,9 @@ The *system* message does not count for messages limit number.
 
 Conversation history is automatically deleted when expiration time (specified by *MessageExpiration* property) is reached. However, if necessary it is possible to immediately clear the history:
 
-    await chatGptClient.DeleteConversationAsync(conversationId, preserveSetup: false);
+```csharp
+await chatGptClient.DeleteConversationAsync(conversationId, preserveSetup: false);
+```
 
 The _preserveSetup_ argument allows to decide whether mantain also the _system_ message that has been set with the **SetupAsync** method (default: _false_).
 
@@ -281,79 +306,83 @@ Currently, on Azure OpenAI Service, function calling is supported  in the follow
 
 **ChatGptNet** fully supports function calling by providing an overload of the **AskAsync** method that allows to specify function definitions. If this parameter is supplied, then the model will decide when it is appropiate to use one the functions. For example:
 
-    var functions = new List<ChatGptFunction>
+```csharp
+var functions = new List<ChatGptFunction>
+{
+    new()
     {
-        new()
+        Name = "GetCurrentWeather",
+        Description = "Get the current weather",
+        Parameters = JsonDocument.Parse("""                                        
         {
-            Name = "GetCurrentWeather",
-            Description = "Get the current weather",
-            Parameters = JsonDocument.Parse("""                                        
-            {
-                "type": "object",
-                "properties": {
-                    "location": {
-                        "type": "string",
-                        "description": "The city and/or the zip code"
-                    },
-                    "format": {
-                        "type": "string",
-                        "enum": ["celsius", "fahrenheit"],
-                        "description": "The temperature unit to use. Infer this from the users location."
-                    }
+            "type": "object",
+            "properties": {
+                "location": {
+                    "type": "string",
+                    "description": "The city and/or the zip code"
                 },
-                "required": ["location", "format"]
-            }
-            """)
-        },
-        new()
-        {
-            Name = "GetWeatherForecast",
-            Description = "Get an N-day weather forecast",
-            Parameters = JsonDocument.Parse("""                                        
-            {
-                "type": "object",
-                "properties": {
-                    "location": {
-                        "type": "string",
-                        "description": "The city and/or the zip code"
-                    },
-                    "format": {
-                        "type": "string",
-                        "enum": ["celsius", "fahrenheit"],
-                        "description": "The temperature unit to use. Infer this from the users location."
-                    },
-                    "daysNumber": {
-                        "type": "integer",
-                        "description": "The number of days to forecast"
-                    }
-                },
-                "required": ["location", "format", "daysNumber"]
-            }
-            """)
+                "format": {
+                    "type": "string",
+                    "enum": ["celsius", "fahrenheit"],
+                    "description": "The temperature unit to use. Infer this from the users location."
+                }
+            },
+            "required": ["location", "format"]
         }
-    };
-
-    var functionParameters = new ChatGptFunctionParameters
+        """)
+    },
+    new()
     {
-        FunctionCall = ChatGptFunctionCalls.Auto,   // This is the default if functions are present.
-        Functions = functions
-    };
+        Name = "GetWeatherForecast",
+        Description = "Get an N-day weather forecast",
+        Parameters = JsonDocument.Parse("""                                        
+        {
+            "type": "object",
+            "properties": {
+                "location": {
+                    "type": "string",
+                    "description": "The city and/or the zip code"
+                },
+                "format": {
+                    "type": "string",
+                    "enum": ["celsius", "fahrenheit"],
+                    "description": "The temperature unit to use. Infer this from the users location."
+                },
+                "daysNumber": {
+                    "type": "integer",
+                    "description": "The number of days to forecast"
+                }
+            },
+            "required": ["location", "format", "daysNumber"]
+        }
+        """)
+    }
+};
 
-    var response = await chatGptClient.AskAsync("What is the weather like in Taggia?", functionParameters);
+var functionParameters = new ChatGptFunctionParameters
+{
+    FunctionCall = ChatGptFunctionCalls.Auto,   // This is the default if functions are present.
+    Functions = functions
+};
+
+var response = await chatGptClient.AskAsync("What is the weather like in Taggia?", functionParameters);
+```
 
 We can pass an arbitrary number of functions, each one with a name, a description and a JSON schema describing the function parameters, following the [JSON Schema references](https://json-schema.org/understanding-json-schema). Under the hood, functions are injected into the system message in a syntax the model has been trained on. This means functions count against the model's context limit and are billed as input tokens. 
 
 The response object returned by the **AskAsync** method provides a property to check if the model has selected a function call:
 
-    if (response.IsFunctionCall)
-    {
-        Console.WriteLine("I have identified a function to call:");
+```csharp
+if (response.IsFunctionCall)
+{
+    Console.WriteLine("I have identified a function to call:");
 
-        var functionCall = response.GetFunctionCall()!;
+    var functionCall = response.GetFunctionCall()!;
 
-        Console.WriteLine(functionCall.Name);
-        Console.WriteLine(functionCall.Arguments);
-    }
+    Console.WriteLine(functionCall.Name);
+    Console.WriteLine(functionCall.Arguments);
+}
+```
 
 This code will print something like this:
 
@@ -368,9 +397,11 @@ Note that the API will not actually execute any function calls. It is up to deve
 
 After the actual execution, we need to call the **AddFunctionResponseAsync** method on the **ChatGptClient** to add the response to the conversation history, just like a standard message, so that it will be automatically used for chat completion:
 
-    // Calls the remote function API.
-    var functionResponse = await GetWeatherAsync(functionCall.Arguments);
-    await chatGptClient.AddFunctionResponseAsync(conversationId, functionCall.Name, functionResponse);
+```csharp
+// Calls the remote function API.
+var functionResponse = await GetWeatherAsync(functionCall.Arguments);
+await chatGptClient.AddFunctionResponseAsync(conversationId, functionCall.Name, functionResponse);
+```
 
 Check out the [Function calling sample](https://github.com/marcominerva/ChatGptNet/blob/master/samples/ChatGptFunctionCallingConsole/Application.cs#L18) for a complete implementation of this workflow.
 
