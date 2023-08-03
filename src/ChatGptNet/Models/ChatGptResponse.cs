@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Text.Json.Serialization;
 using ChatGptNet.Models.Converters;
 
 namespace ChatGptNet.Models;
@@ -59,6 +60,7 @@ public class ChatGptResponse
     /// <summary>
     /// Gets or sets a value indicating whether any prompt has been filtered by content filtering system.
     /// </summary>
+    [MemberNotNullWhen(true, nameof(PromptAnnotations))]
     public bool IsPromptFiltered => PromptAnnotations?.Any(
         p => p.ContentFilterResults.Hate.Filtered || p.ContentFilterResults.SelfHarm.Filtered || p.ContentFilterResults.Violence.Filtered
             || p.ContentFilterResults.Sexual.Filtered) ?? false;
@@ -66,6 +68,7 @@ public class ChatGptResponse
     /// <summary>
     /// Gets a value that determines if the response was successful.
     /// </summary>
+    [MemberNotNullWhen(false, nameof(Error))]
     public bool IsSuccessful => Error is null;
 
     /// <summary>

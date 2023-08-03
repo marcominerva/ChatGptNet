@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Text.Json.Serialization;
 
 namespace ChatGptNet.Models;
 
@@ -29,6 +30,7 @@ public class ChatGptChoice
     /// Gets or sets a value indicating whether the this <see cref="ChatGptChoice"/> has been filtered by content filtering system.
     /// </summary>
     /// <seealso cref="ChatGptChoice"/>
+    [MemberNotNullWhen(true, nameof(ContentFilterResults))]
     public bool IsChoiceFiltered => ContentFilterResults is not null
         && (ContentFilterResults.Hate.Filtered || ContentFilterResults.SelfHarm.Filtered || ContentFilterResults.Violence.Filtered
             || ContentFilterResults.Sexual.Filtered);
