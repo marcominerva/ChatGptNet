@@ -18,9 +18,9 @@ internal class ChatGptMemoryCache : IChatGptCache
         return Task.CompletedTask;
     }
 
-    public Task<List<ChatGptMessage>?> GetAsync(Guid conversationId, CancellationToken cancellationToken = default)
+    public Task<IEnumerable<ChatGptMessage>?> GetAsync(Guid conversationId, CancellationToken cancellationToken = default)
     {
-        var messages = cache.Get<List<ChatGptMessage>?>(conversationId);
+        var messages = cache.Get<IEnumerable<ChatGptMessage>?>(conversationId);
         return Task.FromResult(messages);
     }
 

@@ -39,6 +39,9 @@ public class ChatGptResponse
     /// <summary>
     /// Gets or sets information about token usage.
     /// </summary>
+    /// <remarks>
+    /// The <see cref="Usage"/> property is always <see langword="null"/> when requesting response streaming with <see cref="ChatGptClient.AskStreamAsync(Guid, string, ChatGptParameters?, string?, bool, CancellationToken)"/>.
+    /// </remarks>
     public ChatGptUsage? Usage { get; set; }
 
     /// <summary>

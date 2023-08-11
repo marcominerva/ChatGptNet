@@ -3,7 +3,7 @@
 Gets the list of messages for the given *conversationId*.
 
 ```csharp
-public Task<List<ChatGptMessage>?> GetAsync(Guid conversationId, 
+public Task<IEnumerable<ChatGptMessage>?> GetAsync(Guid conversationId, 
     CancellationToken cancellationToken = default)
 ```
 

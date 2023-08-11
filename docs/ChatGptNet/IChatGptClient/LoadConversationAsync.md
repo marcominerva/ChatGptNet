@@ -24,13 +24,14 @@ The unique identifier of the new conversation.
 
 ## Remarks
 
-This method creates a new conversation with a random Conversation Id. Then, call [`AskAsync`](./AskAsync.md) with this Id to start the actual conversation.
+This method creates a new conversation with a random Conversation Id. Then, call [`AskAsync`](./AskAsync.md) or [`AskStreamAsync`](./AskStreamAsync.md) with this Id to start the actual conversation.
 
 The total number of messages never exceeds the message limit defined in [`MessageLimit`](../ChatGptOptions/MessageLimit.md). If *messages* contains more, only the latest ones are loaded.
 
 ## See Also
 
 * property [MessageLimit](../ChatGptOptions/MessageLimit.md)
+* method [AskAsync](./AskAsync.md)
 * method [AskStreamAsync](./AskStreamAsync.md)
 * class [ChatGptMessage](../../ChatGptNet.Models/ChatGptMessage.md)
 * interface [IChatGptClient](../IChatGptClient.md)

@@ -6,6 +6,10 @@ Gets or sets information about token usage.
 public ChatGptUsage? Usage { get; set; }
 ```
 
+## Remarks
+
+The `Usage` property is always `null` when requesting response streaming with CancellationToken).
+
 ## See Also
 
 * class [ChatGptUsage](../ChatGptUsage.md)
