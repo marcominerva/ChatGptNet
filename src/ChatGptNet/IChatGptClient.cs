@@ -151,6 +151,17 @@ public interface IChatGptClient
     IAsyncEnumerable<ChatGptResponse> AskStreamAsync(Guid conversationId, string message, ChatGptParameters? parameters = null, string? model = null, bool addToConversationHistory = true, CancellationToken cancellationToken = default);
 
     /// <summary>
+    /// Explicitly adds a new interaction (a question and the corresponding answer) to the conversation history.
+    /// </summary>
+    /// <param name="conversationId">The unique identifier of the conversation.</param>
+    /// <param name="question">The question.</param>
+    /// <param name="answer">The answer.</param>
+    /// <param name="cancellationToken">The token to monitor for cancellation requests.</param>
+    /// <returns>The <see cref="Task"/> corresponding to the asynchronous operation.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="question"/> or <paramref name="answer"/> are <see langword="null"/>.</exception>
+    Task AddInteractionAsync(Guid conversationId, string question, string answer, CancellationToken cancellationToken = default);
+
+    /// <summary>
     /// Retrieves a chat conversation from the cache.
     /// </summary>
     /// <param name="conversationId">The unique identifier of the conversation.</param>

@@ -25,7 +25,7 @@ public interface IChatGptCache
     /// <param name="cancellationToken">The token to monitor for cancellation requests.</param>
     /// <returns>The message list of the conversation, or <see langword="null"/> if the Conversation Id does not exist.</returns>
     /// <seealso cref="ChatGptMessage"/>
-    Task<List<ChatGptMessage>?> GetAsync(Guid conversationId, CancellationToken cancellationToken = default);
+    Task<IEnumerable<ChatGptMessage>?> GetAsync(Guid conversationId, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Removes from the cache all the message for the given <paramref name="conversationId"/>.

@@ -80,7 +80,7 @@ If necessary, it is possibile to provide a custom Cache by implementing the [ICh
 ```csharp
 public class LocalMessageCache : IChatGptCache
 {
-    private readonly Dictionary<Guid, List<ChatGptMessage>> localCache = new();
+    private readonly Dictionary<Guid, IEnumerable<ChatGptMessage>> localCache = new();
 
     public Task SetAsync(Guid conversationId, IEnumerable<ChatGptMessage> messages, TimeSpan expiration, CancellationToken cancellationToken = default)
     {
@@ -88,7 +88,7 @@ public class LocalMessageCache : IChatGptCache
         return Task.CompletedTask;
     }
 
-    public Task<List<ChatGptMessage>?> GetAsync(Guid conversationId, CancellationToken cancellationToken = default)
+    public Task<IEnumerable<ChatGptMessage>?> GetAsync(Guid conversationId, CancellationToken cancellationToken = default)
     {
         localCache.TryGetValue(conversationId, out var messages);
         return Task.FromResult(messages);

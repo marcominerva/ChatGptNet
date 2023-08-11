@@ -118,9 +118,9 @@ app.MapGet("/api/chat/stream", (Guid? conversationId, string message, IChatGptCl
 })
 .WithOpenApi();
 
-app.MapDelete("/api/chat/{conversationId:guid}", async (Guid conversationId, IChatGptClient chatGptClient) =>
+app.MapDelete("/api/chat/{conversationId:guid}", async (Guid conversationId, bool? preserveSetup, IChatGptClient chatGptClient) =>
 {
-    await chatGptClient.DeleteConversationAsync(conversationId);
+    await chatGptClient.DeleteConversationAsync(conversationId, preserveSetup.GetValueOrDefault());
     return TypedResults.NoContent();
 })
 .WithOpenApi();
