@@ -1,17 +1,17 @@
-# IChatGptClient.AddFunctionResponseAsync method
+# IChatGptClient.AddInteractionAsync method
 
-Adds a function response to the conversation history.
+Explicitly adds a new interaction (a question and the corresponding answer) to the conversation history.
 
 ```csharp
-public Task AddFunctionResponseAsync(Guid conversationId, string functionName, string content, 
+public Task AddInteractionAsync(Guid conversationId, string question, string answer, 
     CancellationToken cancellationToken = default)
 ```
 
 | parameter | description |
 | --- | --- |
 | conversationId | The unique identifier of the conversation. |
-| functionName | The name of the function. |
-| content | The content of the function response. |
+| question | The question. |
+| answer | The answer. |
 | cancellationToken | The token to monitor for cancellation requests. |
 
 ## Return Value
@@ -22,13 +22,10 @@ The Task corresponding to the asynchronous operation.
 
 | exception | condition |
 | --- | --- |
-| InvalidOperationException | The conversation history is empty. |
+| ArgumentNullException | *question* or *answer* are `null`. |
 
 ## See Also
 
-* method [AskAsync](./AskAsync.md)
-* method [AskStreamAsync](./AskStreamAsync.md)
-* class [ChatGptFunctionCall](../../ChatGptNet.Models/ChatGptFunctionCall.md)
 * interface [IChatGptClient](../IChatGptClient.md)
 * namespace [ChatGptNet](../../ChatGptNet.md)
 

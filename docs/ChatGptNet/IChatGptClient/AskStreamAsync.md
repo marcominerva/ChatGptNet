@@ -4,13 +4,15 @@ Requests a new chat interaction (using the default completion model specified in
 
 ```csharp
 public IAsyncEnumerable<ChatGptResponse> AskStreamAsync(string message, 
-    ChatGptParameters? parameters = null, CancellationToken cancellationToken = default)
+    ChatGptParameters? parameters = null, bool addToConversationHistory = true, 
+    CancellationToken cancellationToken = default)
 ```
 
 | parameter | description |
 | --- | --- |
 | message | The message. |
 | parameters | A [`ChatGptParameters`](../../ChatGptNet.Models/ChatGptParameters.md) object used to override the default completion parameters in the [`DefaultParameters`](../ChatGptOptions/DefaultParameters.md) property. |
+| addToConversationHistory | Set to `true` to add the current chat interaction to the conversation history. |
 | cancellationToken | The token to monitor for cancellation requests. |
 
 ## Return Value
@@ -44,7 +46,7 @@ Requests a chat interaction with streaming response, like in ChatGPT.
 ```csharp
 public IAsyncEnumerable<ChatGptResponse> AskStreamAsync(Guid conversationId, string message, 
     ChatGptParameters? parameters = null, string? model = null, 
-    CancellationToken cancellationToken = default)
+    bool addToConversationHistory = true, CancellationToken cancellationToken = default)
 ```
 
 | parameter | description |
@@ -53,6 +55,7 @@ public IAsyncEnumerable<ChatGptResponse> AskStreamAsync(Guid conversationId, str
 | message | The message. |
 | parameters | A [`ChatGptParameters`](../../ChatGptNet.Models/ChatGptParameters.md) object used to override the default completion parameters in the [`DefaultParameters`](../ChatGptOptions/DefaultParameters.md) property. |
 | model | The chat completion model to use. If model is `null`, then the one specified in the [`DefaultModel`](../ChatGptOptions/DefaultModel.md) property will be used. |
+| addToConversationHistory | Set to `true` to add the current chat interaction to the conversation history. |
 | cancellationToken | The token to monitor for cancellation requests. |
 
 ## Return Value

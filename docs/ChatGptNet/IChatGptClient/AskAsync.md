@@ -4,13 +4,14 @@ Requests a new chat interaction using the default completion model specified in 
 
 ```csharp
 public Task<ChatGptResponse> AskAsync(string message, ChatGptParameters? parameters = null, 
-    CancellationToken cancellationToken = default)
+    bool addToConversationHistory = true, CancellationToken cancellationToken = default)
 ```
 
 | parameter | description |
 | --- | --- |
 | message | The message. |
 | parameters | A [`ChatGptParameters`](../../ChatGptNet.Models/ChatGptParameters.md) object used to override the default completion parameters in the [`DefaultParameters`](../ChatGptOptions/DefaultParameters.md) property. |
+| addToConversationHistory | Set to `true` to add the current chat interaction to the conversation history. |
 | cancellationToken | The token to monitor for cancellation requests. |
 
 ## Return Value
@@ -45,7 +46,7 @@ Requests a new chat interaction using the default completion model specified in 
 ```csharp
 public Task<ChatGptResponse> AskAsync(string message, 
     ChatGptFunctionParameters? functionParameters, ChatGptParameters? parameters = null, 
-    CancellationToken cancellationToken = default)
+    bool addToConversationHistory = true, CancellationToken cancellationToken = default)
 ```
 
 | parameter | description |
@@ -53,6 +54,7 @@ public Task<ChatGptResponse> AskAsync(string message,
 | message | The message. |
 | functionParameters | A [`ChatGptFunctionParameters`](../../ChatGptNet.Models/ChatGptFunctionParameters.md) object that contains the list of available functions for calling. |
 | parameters | A [`ChatGptParameters`](../../ChatGptNet.Models/ChatGptParameters.md) object used to override the default completion parameters in the [`DefaultParameters`](../ChatGptOptions/DefaultParameters.md) property. |
+| addToConversationHistory | Set to `true` to add the current chat interaction to the conversation history. |
 | cancellationToken | The token to monitor for cancellation requests. |
 
 ## Return Value
@@ -90,7 +92,7 @@ Requests a chat interaction.
 ```csharp
 public Task<ChatGptResponse> AskAsync(Guid conversationId, string message, 
     ChatGptParameters? parameters = null, string? model = null, 
-    CancellationToken cancellationToken = default)
+    bool addToConversationHistory = true, CancellationToken cancellationToken = default)
 ```
 
 | parameter | description |
@@ -99,6 +101,7 @@ public Task<ChatGptResponse> AskAsync(Guid conversationId, string message,
 | message | The message. |
 | parameters | A  object used to override the default completion parameters in the [`DefaultParameters`](../ChatGptOptions/DefaultParameters.md) property. |
 | model | The chat completion model to use. If model is `null`, then the one specified in the [`DefaultModel`](../ChatGptOptions/DefaultModel.md) property will be used. |
+| addToConversationHistory | Set to `true` to add the current chat interaction to the conversation history. |
 | cancellationToken | The token to monitor for cancellation requests. |
 
 ## Return Value
@@ -128,7 +131,8 @@ Requests a chat interaction.
 ```csharp
 public Task<ChatGptResponse> AskAsync(Guid conversationId, string message, 
     ChatGptFunctionParameters? functionParameters, ChatGptParameters? parameters = null, 
-    string? model = null, CancellationToken cancellationToken = default)
+    string? model = null, bool addToConversationHistory = true, 
+    CancellationToken cancellationToken = default)
 ```
 
 | parameter | description |
@@ -138,6 +142,7 @@ public Task<ChatGptResponse> AskAsync(Guid conversationId, string message,
 | functionParameters | A [`ChatGptFunctionParameters`](../../ChatGptNet.Models/ChatGptFunctionParameters.md) object that contains the list of available functions for calling. |
 | parameters | A  object used to override the default completion parameters in the [`DefaultParameters`](../ChatGptOptions/DefaultParameters.md) property. |
 | model | The chat completion model to use. If model is `null`, then the one specified in the [`DefaultModel`](../ChatGptOptions/DefaultModel.md) property will be used. |
+| addToConversationHistory | Set to `true` to add the current chat interaction to the conversation history. |
 | cancellationToken | The token to monitor for cancellation requests. |
 
 ## Return Value
