@@ -226,6 +226,7 @@ public interface IChatGptClient
     /// <param name="content">The content of the function response.</param>
     /// <param name="cancellationToken">The token to monitor for cancellation requests.</param>
     /// <returns>The <see cref="Task"/> corresponding to the asynchronous operation.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="functionName"/> or <paramref name="content"/> are <see langword="null"/>.</exception>
     /// <exception cref="InvalidOperationException">The conversation history is empty.</exception>
     /// <seealso  cref="AskAsync(Guid, string, ChatGptParameters?, string?, bool, CancellationToken)"/>
     /// <seealso cref="AskStreamAsync(Guid, string, ChatGptParameters?, string?, bool, CancellationToken)"/>

@@ -22,6 +22,7 @@ The Task corresponding to the asynchronous operation.
 
 | exception | condition |
 | --- | --- |
+| ArgumentNullException | *functionName* or *content* are `null`. |
 | InvalidOperationException | The conversation history is empty. |
 
 ## See Also

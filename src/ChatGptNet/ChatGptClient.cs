@@ -221,21 +221,16 @@ internal class ChatGptClient : IChatGptClient
         // Ensures that conversationId isn't empty.
         conversationId = (conversationId == Guid.Empty) ? Guid.NewGuid() : conversationId;
 
-        if (replaceHistory)
+        // If messages must replace history, just use the current list, discarding all the previously cached content.
+        if (!replaceHistory)
         {
-            // If messages must replace history, just use the current list, discarding all the previously cached content.
-            // If messages.Count() > ChatGptOptions.MessageLimit, the UpdateCacheAsync method takes care of taking only the last messages.
-            await UpdateCacheAsync(conversationId, messages, cancellationToken);
-        }
-        else
-        {
-            // Retrieves the current history and adds new messages.
+            // Otherwise, retrieves the current history and adds the messages.
             var conversationHistory = await cache.GetAsync(conversationId, cancellationToken) ?? Enumerable.Empty<ChatGptMessage>();
-            conversationHistory = conversationHistory.Union(messages);
-
-            // If messages.Count() > ChatGptOptions.MessageLimit, the UpdateCacheAsync method takes care of taking only the last messages.
-            await UpdateCacheAsync(conversationId, conversationHistory, cancellationToken);
+            messages = conversationHistory.Union(messages);
         }
+
+        // If messages.Count() > ChatGptOptions.MessageLimit, the UpdateCacheAsync method takes care of taking only the last messages.
+        await UpdateCacheAsync(conversationId, messages.ToList(), cancellationToken);
 
         return conversationId;
     }
@@ -265,6 +260,9 @@ internal class ChatGptClient : IChatGptClient
 
     public async Task AddFunctionResponseAsync(Guid conversationId, string functionName, string content, CancellationToken cancellationToken = default)
     {
+        ArgumentNullException.ThrowIfNull(functionName);
+        ArgumentNullException.ThrowIfNull(content);
+
         var messages = await cache.GetAsync(conversationId, cancellationToken);
         if (!messages?.Any() ?? true)
         {
