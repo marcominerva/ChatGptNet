@@ -53,6 +53,25 @@ internal class ChatGptClient : IChatGptClient
         return conversationId;
     }
 
+    public async Task<ChatGptEmbeddingResponse> CreateEmbeddingAsync(string message, string[]? messages = null, string? model = null, CancellationToken cancellationToken = default)
+    {
+        if (message == null && (messages == null || messages.Length < 1))
+            throw new ArgumentException($"Either ${nameof(message)} or {nameof(messages)} must be supplied");
+        var request = CreateEmbeddingsRequest(message, messages, model);
+        var requestUri = options.ServiceConfiguration.GetEmbeddingsEndpoint(model ?? options.DefaultModel);
+        using var httpResponse = await httpClient.PostAsJsonAsync(requestUri, request, jsonSerializerOptions, cancellationToken);
+
+        var response = await httpResponse.Content.ReadFromJsonAsync<ChatGptEmbeddingResponse>(jsonSerializerOptions, cancellationToken: cancellationToken);
+        NormalizeEmbeddingResponse(httpResponse, response!, model ?? options.DefaultModel);
+
+        if (!response!.IsSuccessful && options.ThrowExceptionOnError)
+        {
+            throw new ChatGptException(response.Error, httpResponse.StatusCode);
+        }
+
+        return response;
+    }
+
     public async Task<ChatGptResponse> AskAsync(Guid conversationId, string message, ChatGptFunctionParameters? functionParameters = null, ChatGptParameters? parameters = null, string? model = null, bool addToConversationHistory = true, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(message);
@@ -294,6 +313,13 @@ internal class ChatGptClient : IChatGptClient
         return messages;
     }
 
+    private ChatGptEmbeddingsRequest CreateEmbeddingsRequest(string? message, string[]? messages, string? model = null)
+    => new()
+    {
+        Model = model ?? options.DefaultModel,
+        Input = message != null ? new string[] { message } : messages
+    };
+
     private ChatGptRequest CreateRequest(IEnumerable<ChatGptMessage> messages, ChatGptFunctionParameters? functionParameters, bool stream, ChatGptParameters? parameters = null, string? model = null)
         => new()
         {
@@ -353,6 +379,28 @@ internal class ChatGptClient : IChatGptClient
     {
         response.ConversationId = conversationId;
 
+        if (string.IsNullOrWhiteSpace(response.Model) && model is not null)
+        {
+            response.Model = model;
+        }
+
+        if (!httpResponse.IsSuccessStatusCode && response.Error is null)
+        {
+            response.Error = new ChatGptError
+            {
+                Message = httpResponse.ReasonPhrase ?? httpResponse.StatusCode.ToString(),
+                Code = ((int)httpResponse.StatusCode).ToString()
+            };
+        }
+
+        if (response.Error is not null)
+        {
+            response.Error.StatusCode = (int)httpResponse.StatusCode;
+        }
+    }
+
+    private static void NormalizeEmbeddingResponse(HttpResponseMessage httpResponse, ChatGptEmbeddingResponse response, string? model)
+    {
         if (string.IsNullOrWhiteSpace(response.Model) && model is not null)
         {
             response.Model = model;

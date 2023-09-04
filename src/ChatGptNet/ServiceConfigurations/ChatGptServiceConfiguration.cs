@@ -20,6 +20,13 @@ internal abstract class ChatGptServiceConfiguration
     public abstract Uri GetServiceEndpoint(string? modelName = null);
 
     /// <summary>
+    /// Returns the <see cref="Uri"/> that creates embeddings.
+    /// </summary>
+    /// <param name="modelName">The name of the model for embeddings.</param>
+    /// <returns>The <see cref="Uri"/> of the service.</returns>
+    public abstract Uri GetEmbeddingsEndpoint(string? modelName = null);
+
+    /// <summary>
     /// Returns the headers that are required by the service to complete the request.
     /// </summary>
     /// <returns>The collection of headers.</returns>
