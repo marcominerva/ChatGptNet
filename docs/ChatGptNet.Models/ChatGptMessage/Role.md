@@ -1,6 +1,6 @@
 # ChatGptMessage.Role property
 
-Gets or sets the role (source) of the messages author.
+Gets or sets the role (source) of the message author.
 
 ```csharp
 public string Role { get; set; }
