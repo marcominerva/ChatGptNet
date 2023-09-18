@@ -101,7 +101,7 @@ app.MapPost("/api/chat", async (Request request, IChatGptClient chatGptClient) =
 
 app.MapGet("/api/chat/stream", (Guid? conversationId, string message, IChatGptClient chatGptClient) =>
 {
-    async IAsyncEnumerable<string> Stream()
+    async IAsyncEnumerable<string?> Stream()
     {
         // Requests a streaming response.
         var responseStream = chatGptClient.AskStreamAsync(conversationId.GetValueOrDefault(), message);

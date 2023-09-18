@@ -42,4 +42,9 @@ public class ChatGptContentFilterResults
     /// The sexual category describes language related to anatomical organs and genitals, romantic relationships, acts portrayed in erotic or affectionate terms, physical sexual acts, including those portrayed as an assault or a forced sexual violent act against one's will, prostitution, pornography, and abuse.
     /// </remarks>
     public ChatGptContentFilterResult Violence { get; set; } = new();
+
+    /// <summary>
+    /// Gets or sets the error occurred in the content filtering system, if any.
+    /// </summary>
+    public ChatGptContentFilterError? Error { get; set; }
 }
