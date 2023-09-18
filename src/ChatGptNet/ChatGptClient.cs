@@ -135,7 +135,7 @@ internal class ChatGptClient : IChatGptClient
                             // If all these conditions are met, it means that the response is still in progress. Saves the temporary choice.                            
                             previousChoice = currentChoice;
                         }
-                        else if (currentChoice?.FinishReason == "content_filter" && previousChoice is not null)
+                        else if (currentChoice?.FinishReason == ChatGptFinishReasons.ContentFilter && previousChoice is not null)
                         {
                             // This is the completion of a content filter response that refers to the previous temporary choice.
                             // Completes the previous choice using the current one.
