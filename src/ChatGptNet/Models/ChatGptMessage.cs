@@ -8,12 +8,12 @@ namespace ChatGptNet.Models;
 public class ChatGptMessage
 {
     /// <summary>
-    /// Gets or sets the role (source) of the messages author.
+    /// Gets or sets the role (source) of the message author.
     /// </summary>
     /// <remarks>
     ///  Valid values are: <em>system</em>, <em>user</em> <em>assistant</em> and <em>function</em>.
     ///  </remarks>
-    ///  <seealso cref="ChatGptRoles"/>
+    ///  <seealso cref="ChatGptRoles"/>    
     public string Role { get; set; } = string.Empty;
 
     /// <summary>
