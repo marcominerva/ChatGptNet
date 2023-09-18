@@ -1,9 +1,9 @@
 # ChatGptChoice.Message property
 
-Gets or sets the message associated with this [`ChatGptChoice`](../ChatGptChoice.md).
+Gets or sets the message associated with this [`ChatGptChoice`](../ChatGptChoice.md), if any.
 
 ```csharp
-public ChatGptMessage Message { get; set; }
+public ChatGptMessage? Message { get; set; }
 ```
 
 ## See Also

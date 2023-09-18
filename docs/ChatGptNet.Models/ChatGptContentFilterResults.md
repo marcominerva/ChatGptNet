@@ -11,6 +11,7 @@ public class ChatGptContentFilterResults
 | name | description |
 | --- | --- |
 | [ChatGptContentFilterResults](ChatGptContentFilterResults/ChatGptContentFilterResults.md)() | The default constructor. |
+| [Error](ChatGptContentFilterResults/Error.md) { get; set; } | Gets or sets the error occurred in the content filtering system, if any. |
 | [Hate](ChatGptContentFilterResults/Hate.md) { get; set; } | Gets of sets information about the hate content filter. |
 | [SelfHarm](ChatGptContentFilterResults/SelfHarm.md) { get; set; } | Gets of sets information about the self-harm content filter. |
 | [Sexual](ChatGptContentFilterResults/Sexual.md) { get; set; } | Gets of sets information about the sexual content filter. |
