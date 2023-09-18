@@ -40,7 +40,7 @@ internal class Application
 
                     var response = await chatGptClient.AskAsync(conversationId, message);
 
-                    Console.WriteLine(response.GetMessage());
+                    Console.WriteLine(response.GetContent());
                     Console.WriteLine();
                 }
             }

@@ -107,12 +107,12 @@ internal class ChatGptClient : IChatGptClient
         {
             var contentBuilder = new StringBuilder();
 
-            ChatGptUsage? usage = null;
-            IEnumerable<ChatGptPromptAnnotations>? promptAnnotations = null;
-
             using (var responseStream = await httpResponse.Content.ReadAsStreamAsync(cancellationToken))
             {
                 using var reader = new StreamReader(responseStream);
+
+                IEnumerable<ChatGptPromptFilterResults>? promptFilterResults = null;
+                ChatGptChoice? previousChoice = null;
 
                 while (!reader.EndOfStream)
                 {
@@ -122,19 +122,45 @@ internal class ChatGptClient : IChatGptClient
                         var json = line["data: ".Length..];
                         var response = JsonSerializer.Deserialize<ChatGptResponse>(json, jsonSerializerOptions);
 
-                        // Saves partial response fields that need to be added in the next response.
-                        usage ??= response!.Usage;
-                        promptAnnotations ??= response!.PromptAnnotations;
+                        response!.ConversationId = conversationId;
 
-                        var content = response!.Choices?.FirstOrDefault()?.Delta?.Content;
+                        promptFilterResults ??= response.PromptFilterResults;
+                        response.PromptFilterResults = promptFilterResults;
 
-                        if (!string.IsNullOrEmpty(content))
+                        var currentChoice = response.Choices?.FirstOrDefault();
+                        var content = currentChoice?.Delta?.Content;
+
+                        if (currentChoice?.FinishReason is null && currentChoice?.Delta?.Role == ChatGptRoles.Assistant && content is null)
                         {
+                            // If all these conditions are met, it means that the response is still in progress. Saves the temporary choice.                            
+                            previousChoice = currentChoice;
+                        }
+                        else if (currentChoice?.FinishReason == "content_filter" && previousChoice is not null)
+                        {
+                            // This is the completion of a content filter response that refers to the previous temporary choice.
+                            // Completes the previous choice using the current one.
+                            previousChoice.FinishReason = currentChoice.FinishReason;
+                            previousChoice.ContentFilterResults = currentChoice.ContentFilterResults;
+
+                            // Completes and yields the response.
+                            response.Choices = new[] { previousChoice };
+
+                            yield return response;
+
+                            // Resets the previous choice.
+                            previousChoice = null;
+                        }
+                        else if (!string.IsNullOrEmpty(content))
+                        {
+                            // It is a normal assistant response.
+                            // The currentChoice variable contains the full response.
+                            currentChoice!.Delta!.Role = ChatGptRoles.Assistant;
+
                             if (contentBuilder.Length == 0)
                             {
                                 // If this is the first response, trims all the initial special characters.
                                 content = content.TrimStart('\n');
-                                response.Choices!.First().Delta!.Content = content;
+                                currentChoice.Delta.Content = content;
                             }
 
                             // Yields the response only if there is an actual content.
@@ -142,12 +168,11 @@ internal class ChatGptClient : IChatGptClient
                             {
                                 contentBuilder.Append(content);
 
-                                response.ConversationId = conversationId;
-                                response.Usage = usage;
-                                response.PromptAnnotations = promptAnnotations;
-
                                 yield return response;
                             }
+
+                            // Resets the previous choice.
+                            previousChoice = null;
                         }
                     }
                     else if (line.StartsWith("data: [DONE]"))
@@ -315,9 +340,9 @@ internal class ChatGptClient : IChatGptClient
             User = options.User,
         };
 
-    private async Task AddAssistantResponseAsync(Guid conversationId, IList<ChatGptMessage> messages, ChatGptMessage message, CancellationToken cancellationToken = default)
+    private async Task AddAssistantResponseAsync(Guid conversationId, IList<ChatGptMessage> messages, ChatGptMessage? message, CancellationToken cancellationToken = default)
     {
-        if (!string.IsNullOrWhiteSpace(message.Content?.Trim()))
+        if (!string.IsNullOrWhiteSpace(message?.Content?.Trim()) || message?.FunctionCall is not null)
         {
             // Adds the message to the cache only if it has a content.
             messages.Add(message);

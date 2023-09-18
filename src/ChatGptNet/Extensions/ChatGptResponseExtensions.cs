@@ -16,11 +16,11 @@ public static class ChatGptResponseExtensions
     /// <returns>An <see cref="IAsyncEnumerable{T}"/> that allows to enumerate all the partial message deltas.</returns>
     /// <seealso cref="ChatGptResponse"/>
     [SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "This method returns an IAsyncEnumerable")]
-    public static async IAsyncEnumerable<string> AsDeltas(this IAsyncEnumerable<ChatGptResponse> responses)
+    public static async IAsyncEnumerable<string?> AsDeltas(this IAsyncEnumerable<ChatGptResponse> responses)
     {
         await foreach (var response in responses)
         {
-            yield return response.GetMessage()!;
+            yield return response.GetContent();
         }
     }
 }

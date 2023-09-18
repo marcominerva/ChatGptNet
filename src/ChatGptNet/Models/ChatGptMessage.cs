@@ -23,6 +23,7 @@ public class ChatGptMessage
     /// This property is required for all messages except <em>assistant</em> messages with function calls.
     /// </remarks>
     /// <seealso cref="ChatGptRoles"/>
+    [JsonIgnore(Condition = JsonIgnoreCondition.Never)]
     public string? Content { get; set; }
 
     /// <summary>
