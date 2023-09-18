@@ -112,7 +112,6 @@ internal class ChatGptClient : IChatGptClient
                 using var reader = new StreamReader(responseStream);
 
                 IEnumerable<ChatGptPromptFilterResults>? promptFilterResults = null;
-                ChatGptChoice? previousChoice = null;
 
                 while (!reader.EndOfStream)
                 {
@@ -120,59 +119,42 @@ internal class ChatGptClient : IChatGptClient
                     if (line.StartsWith("data: {"))
                     {
                         var json = line["data: ".Length..];
-                        var response = JsonSerializer.Deserialize<ChatGptResponse>(json, jsonSerializerOptions);
 
+                        var response = JsonSerializer.Deserialize<ChatGptResponse>(json, jsonSerializerOptions);
                         response!.ConversationId = conversationId;
 
                         promptFilterResults ??= response.PromptFilterResults;
                         response.PromptFilterResults = promptFilterResults;
 
-                        var currentChoice = response.Choices?.FirstOrDefault();
-                        var content = currentChoice?.Delta?.Content;
+                        var choice = response.Choices?.FirstOrDefault();
 
-                        if (currentChoice?.FinishReason is null && currentChoice?.Delta?.Role == ChatGptRoles.Assistant && content is null)
+                        if (choice?.Delta is not null)
                         {
-                            // If all these conditions are met, it means that the response is still in progress. Saves the temporary choice.                            
-                            previousChoice = currentChoice;
-                        }
-                        else if (currentChoice?.FinishReason == ChatGptFinishReasons.ContentFilter && previousChoice is not null)
-                        {
-                            // This is the completion of a content filter response that refers to the previous temporary choice.
-                            // Completes the previous choice using the current one.
-                            previousChoice.FinishReason = currentChoice.FinishReason;
-                            previousChoice.ContentFilterResults = currentChoice.ContentFilterResults;
+                            choice.Delta.Role = ChatGptRoles.Assistant;
+                            var content = choice.Delta.Content;
 
-                            // Completes and yields the response.
-                            response.Choices = new[] { previousChoice };
-
-                            yield return response;
-
-                            // Resets the previous choice.
-                            previousChoice = null;
-                        }
-                        else if (!string.IsNullOrEmpty(content))
-                        {
-                            // It is a normal assistant response.
-                            // The currentChoice variable contains the full response.
-                            currentChoice!.Delta!.Role = ChatGptRoles.Assistant;
-
-                            if (contentBuilder.Length == 0)
+                            if (choice.FinishReason == ChatGptFinishReasons.ContentFilter)
                             {
-                                // If this is the first response, trims all the initial special characters.
-                                content = content.TrimStart('\n');
-                                currentChoice.Delta.Content = content;
-                            }
-
-                            // Yields the response only if there is an actual content.
-                            if (content != string.Empty)
-                            {
-                                contentBuilder.Append(content);
-
+                                // The response has been filtered by the content filtering system. Returns the response as is.
                                 yield return response;
                             }
+                            else if (!string.IsNullOrEmpty(content))
+                            {
+                                // It is a normal assistant response.
+                                if (contentBuilder.Length == 0)
+                                {
+                                    // If this is the first response, trims all the initial special characters.
+                                    content = content.TrimStart('\n');
+                                    choice.Delta.Content = content;
+                                }
 
-                            // Resets the previous choice.
-                            previousChoice = null;
+                                // Yields the response only if there is an actual content.
+                                if (content != string.Empty)
+                                {
+                                    contentBuilder.Append(content);
+                                    yield return response;
+                                }
+                            }
                         }
                     }
                     else if (line.StartsWith("data: [DONE]"))
