@@ -1,9 +1,9 @@
-# ChatGptResponse.GetMessage method
+# ChatGptResponse.GetContent method
 
 Gets the content of the first choice, if available.
 
 ```csharp
-public string? GetMessage()
+public string? GetContent()
 ```
 
 ## Return Value
@@ -12,7 +12,7 @@ The content of the first choice, if available.
 
 ## Remarks
 
-When using streaming responses, the `GetMessage` property returns a partial message delta.
+When using streaming responses, this method returns a partial message delta.
 
 ## See Also
 

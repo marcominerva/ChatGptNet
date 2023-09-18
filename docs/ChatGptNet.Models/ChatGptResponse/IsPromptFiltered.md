@@ -1,6 +1,6 @@
 # ChatGptResponse.IsPromptFiltered property
 
-Gets or sets a value indicating whether any prompt has been filtered by content filtering system.
+Gets or sets a value indicating whether any prompt has been filtered by the content filtering system.
 
 ```csharp
 public bool IsPromptFiltered { get; }
