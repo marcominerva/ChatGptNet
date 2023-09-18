@@ -20,7 +20,7 @@ public static class ChatGptResponseExtensions
     {
         await foreach (var response in responses)
         {
-            yield return response.GetMessage();
+            yield return response.GetContent();
         }
     }
 }
