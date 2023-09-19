@@ -10,7 +10,7 @@ public static class IChatGptBuilderExtensions
 
 | name | description |
 | --- | --- |
-| static [WithCache&lt;TImplementation&gt;](IChatGptBuilderExtensions/WithCache.md)(…) | Uses a custom cache implementation for conversation handling. |
+| static [WithCache&lt;TImplementation&gt;](IChatGptBuilderExtensions/WithCache.md)(…) | Defines a custom cache implementation for conversation handling. |
 
 ## See Also
 

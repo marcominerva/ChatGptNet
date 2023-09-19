@@ -18,7 +18,7 @@ public static class ChatGptServiceCollectionExtensions
     /// <param name="builder">The <see cref="ChatGptOptionsBuilder"/> to configure options.</param>
     /// <returns>A <see cref="IChatGptBuilder"/> that can be used to further customize ChatGPT.</returns>
     /// <remarks>This method automatically adds a <see cref="MemoryCache"/> that is used to save conversation history for chat completion.
-    /// It is possibile to use <see cref="IChatGptBuilderExtensions.WithCache{TImplementation}(IChatGptBuilder)"/> to specify another cache implementation.
+    /// It is possibile to use <see cref="IChatGptBuilderExtensions.WithCache{TImplementation}(IChatGptBuilder, ServiceLifetime)"/> to specify another cache implementation.
     /// </remarks>
     /// <seealso cref="ChatGptOptionsBuilder"/>
     /// <seealso cref="MemoryCacheServiceCollectionExtensions.AddMemoryCache(IServiceCollection)"/>
@@ -47,7 +47,7 @@ public static class ChatGptServiceCollectionExtensions
     /// <param name="sectionName">The name of the configuration section that holds ChatGPT settings (default: ChatGPT).</param>
     /// <returns>A <see cref="IChatGptBuilder"/> that can be used to further customize ChatGPT.</returns>
     /// <remarks>This method automatically adds a <see cref="MemoryCache"/> that is used to save conversation history for chat completion.
-    /// It is possibile to use <see cref="IChatGptBuilderExtensions.WithCache{TImplementation}(IChatGptBuilder)"/> to specify another cache implementation.
+    /// It is possibile to use <see cref="IChatGptBuilderExtensions.WithCache{TImplementation}(IChatGptBuilder, ServiceLifetime)"/> to specify another cache implementation.
     /// </remarks>
     /// <seealso cref="ChatGptOptions"/>
     /// <seealso cref="IConfiguration"/>
@@ -75,7 +75,7 @@ public static class ChatGptServiceCollectionExtensions
     /// <returns>A <see cref="IChatGptBuilder"/> that can be used to further customize ChatGPT.</returns>
     /// <remarks>Use this this method if it is necessary to dynamically set options (for example, using other services via dependency injection).
     /// This method automatically adds a <see cref="MemoryCache"/> that is used to save conversation history for chat completion.
-    /// It is possibile to use <see cref="IChatGptBuilderExtensions.WithCache{TImplementation}(IChatGptBuilder)"/> to specify another cache implementation.
+    /// It is possibile to use <see cref="IChatGptBuilderExtensions.WithCache{TImplementation}(IChatGptBuilder, ServiceLifetime)"/> to specify another cache implementation.
     /// </remarks>
     /// <seealso cref="ChatGptOptions"/>
     /// <seealso cref="IServiceProvider"/>
