@@ -126,12 +126,11 @@ internal class ChatGptClient : IChatGptClient
         {
             var contentBuilder = new StringBuilder();
 
-            ChatGptUsage? usage = null;
-            IEnumerable<ChatGptPromptAnnotations>? promptAnnotations = null;
-
             using (var responseStream = await httpResponse.Content.ReadAsStreamAsync(cancellationToken))
             {
                 using var reader = new StreamReader(responseStream);
+
+                IEnumerable<ChatGptPromptFilterResults>? promptFilterResults = null;
 
                 while (!reader.EndOfStream)
                 {
@@ -139,33 +138,41 @@ internal class ChatGptClient : IChatGptClient
                     if (line.StartsWith("data: {"))
                     {
                         var json = line["data: ".Length..];
+
                         var response = JsonSerializer.Deserialize<ChatGptResponse>(json, jsonSerializerOptions);
+                        response!.ConversationId = conversationId;
 
-                        // Saves partial response fields that need to be added in the next response.
-                        usage ??= response!.Usage;
-                        promptAnnotations ??= response!.PromptAnnotations;
+                        promptFilterResults ??= response.PromptFilterResults;
+                        response.PromptFilterResults = promptFilterResults;
 
-                        var content = response!.Choices?.FirstOrDefault()?.Delta?.Content;
+                        var choice = response.Choices?.FirstOrDefault();
 
-                        if (!string.IsNullOrEmpty(content))
+                        if (choice?.Delta is not null)
                         {
-                            if (contentBuilder.Length == 0)
+                            choice.Delta.Role = ChatGptRoles.Assistant;
+                            var content = choice.Delta.Content;
+
+                            if (choice.FinishReason == ChatGptFinishReasons.ContentFilter)
                             {
-                                // If this is the first response, trims all the initial special characters.
-                                content = content.TrimStart('\n');
-                                response.Choices!.First().Delta!.Content = content;
-                            }
-
-                            // Yields the response only if there is an actual content.
-                            if (content != string.Empty)
-                            {
-                                contentBuilder.Append(content);
-
-                                response.ConversationId = conversationId;
-                                response.Usage = usage;
-                                response.PromptAnnotations = promptAnnotations;
-
+                                // The response has been filtered by the content filtering system. Returns the response as is.
                                 yield return response;
+                            }
+                            else if (!string.IsNullOrEmpty(content))
+                            {
+                                // It is a normal assistant response.
+                                if (contentBuilder.Length == 0)
+                                {
+                                    // If this is the first response, trims all the initial special characters.
+                                    content = content.TrimStart('\n');
+                                    choice.Delta.Content = content;
+                                }
+
+                                // Yields the response only if there is an actual content.
+                                if (content != string.Empty)
+                                {
+                                    contentBuilder.Append(content);
+                                    yield return response;
+                                }
                             }
                         }
                     }
@@ -320,7 +327,7 @@ internal class ChatGptClient : IChatGptClient
         Input = message != null ? new string[] { message } : messages
     };
 
-    private ChatGptRequest CreateRequest(IEnumerable<ChatGptMessage> messages, ChatGptFunctionParameters? functionParameters, bool stream, ChatGptParameters? parameters = null, string? model = null)
+    private ChatGptRequest CreateRequest(IEnumerable<ChatGptMessage> messages, ChatGptFunctionParameters? functionParameters, bool stream, ChatGptParameters? parameters, string? model)
         => new()
         {
             Model = model ?? options.DefaultModel,
@@ -341,9 +348,9 @@ internal class ChatGptClient : IChatGptClient
             User = options.User,
         };
 
-    private async Task AddAssistantResponseAsync(Guid conversationId, IList<ChatGptMessage> messages, ChatGptMessage message, CancellationToken cancellationToken = default)
+    private async Task AddAssistantResponseAsync(Guid conversationId, IList<ChatGptMessage> messages, ChatGptMessage? message, CancellationToken cancellationToken = default)
     {
-        if (!string.IsNullOrWhiteSpace(message.Content?.Trim()))
+        if (!string.IsNullOrWhiteSpace(message?.Content?.Trim()) || message?.FunctionCall is not null)
         {
             // Adds the message to the cache only if it has a content.
             messages.Add(message);

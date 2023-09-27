@@ -8,7 +8,7 @@ namespace ChatGptNet.Models;
 /// <remarks>
 /// See <see href="https://learn.microsoft.com/en-us/azure/ai-services/openai/concepts/content-filter">Content filtering</see> for more information.
 /// </remarks>
-public class ChatGptPromptAnnotations
+public class ChatGptPromptFilterResults
 {
     /// <summary>
     /// Gets or sets the index of the prompt to which the annotation refers.

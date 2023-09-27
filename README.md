@@ -50,7 +50,8 @@ builder.Services.AddChatGpt(options =>
   - 2023-03-15-preview
   - 2023-05-15
   - 2023-06-01-preview
-  - 2023-07-01-preview (default)
+  - 2023-07-01-preview
+  - 2023-08-01-preview (default)
 - _AuthenticationType_: it specifies if the key is an actual API Key or an [Azure Active Directory token](https://learn.microsoft.com/azure/cognitive-services/openai/how-to/managed-identity) (optional, default: "ApiKey").
 
 ### DefaultModel
@@ -59,7 +60,7 @@ ChatGPT can be used with different models for chat completion, both on OpenAI an
 
 ##### OpenAI
 
-Currently available models are: _gpt-3.5-turbo_, _gpt-3.5-turbo-16k_, _gpt-4_ and _gpt-4-32k_. They have fixed names, available in the [OpenAIChatGptModels.cs file](https://github.com/marcominerva/ChatGptNet/blob/master/src/ChatGptNet/Models/ChatGptModels.cs).
+Currently available models are: _gpt-3.5-turbo_, _gpt-3.5-turbo-16k_, _gpt-4_ and _gpt-4-32k_. They have fixed names, available in the [OpenAIChatGptModels.cs file](https://github.com/marcominerva/ChatGptNet/blob/master/src/ChatGptNet/Models/OpenAIChatGptModels.cs).
 
 ##### Azure OpenAI Service
 
@@ -123,7 +124,7 @@ The configuration can be automatically read from [IConfiguration](https://learn.
     "ApiKey": "",                       // Required
     //"Organization": "",               // Optional, used only by OpenAI
     "ResourceName": "",                 // Required when using Azure OpenAI Service
-    "ApiVersion": "2023-07-01-preview", // Optional, used only by Azure OpenAI Service (default: 2023-07-01-preview)
+    "ApiVersion": "2023-08-01-preview", // Optional, used only by Azure OpenAI Service (default: 2023-08-01-preview)
     "AuthenticationType": "ApiKey",     // Optional, used only by Azure OpenAI Service. Allowed values: ApiKey (default) or ActiveDirectory
 
     "DefaultModel": "my-model",
@@ -200,11 +201,14 @@ app.MapPost("/api/chat/ask", async (Request request, IChatGptClient chatGptClien
 public record class Request(Guid ConversationId, string Message);
 ```
 
-If we just want to retrieve the response message, we can call the **GetMessage** method:
+If we just want to retrieve the response message, we can call the **GetContent** method:
 
 ```csharp
-var message = response.GetMessage();
+var content = response.GetContent();
 ```
+
+> **Note**
+If the response has been filtered by the content filtering system, **GetContent** will return *null*. So, you should always check the `response.IsContentFiltered` property before trying to access to the actual content.
 
 ### Handling a conversation
 
@@ -238,19 +242,22 @@ var responseStream = chatGptClient.AskStreamAsync(conversationId, message);
 
 await foreach (var response in responseStream)
 {
-    Console.Write(response.GetMessage());
+    Console.Write(response.GetContent());
     await Task.Delay(80);
 }
 ```
 
 ![](https://raw.githubusercontent.com/marcominerva/ChatGptNet/master/assets/ChatGptConsoleStreaming.gif)
 
+> **Note**
+If the response has been filtered by the content filtering system, the **GetContent** method in the _foreach_ will return *null* strings. So, you should always check the `response.IsContentFiltered` property before trying to access to the actual content.
+
 Response streaming works by returning an [IAsyncEnumerable](https://learn.microsoft.com/en-us/dotnet/api/system.collections.generic.iasyncenumerable-1), so it can be used even in a Web API project:
 
 ```csharp
 app.MapGet("/api/chat/stream", (Guid? conversationId, string message, IChatGptClient chatGptClient) =>
 {
-    async IAsyncEnumerable<string> Stream()
+    async IAsyncEnumerable<string?> Stream()
     {
         // Requests a streaming response.
         var responseStream = chatGptClient.AskStreamAsync(conversationId.GetValueOrDefault(), message);
@@ -269,6 +276,10 @@ app.MapGet("/api/chat/stream", (Guid? conversationId, string message, IChatGptCl
 ```
 
 ![](https://raw.githubusercontent.com/marcominerva/ChatGptNet/master/assets/ChatGptApiStreaming.gif)
+
+> **Note**
+If the response has been filtered by the content filtering system, the **AsDeltas** method in the _foreach_ will return *nulls* string.
+
 
 The library is 100% compatible also with Blazor WebAssembly applications:
 
@@ -421,6 +432,10 @@ Check out the [Function calling sample](https://github.com/marcominerva/ChatGptN
 ## Content filtering
 
 When using Azure OpenAI Service, we automatically get content filtering for free. For details about how it works, check out the [documentation](https://learn.microsoft.com/azure/ai-services/openai/concepts/content-filter). This information is returned for all scenarios when using API version `2023-06-01-preview` or later. **ChatGptNet** fully supports this object model by providing the corresponding properties in the [ChatGptResponse](https://github.com/marcominerva/ChatGptNet/blob/master/src/ChatGptNet/Models/ChatGptResponse.cs#L57) and [ChatGptChoice](https://github.com/marcominerva/ChatGptNet/blob/master/src/ChatGptNet/Models/ChatGptChoice.cs#L26) classes.
+
+## Documentation
+
+The full technical documentation is available [here](https://github.com/marcominerva/ChatGptNet/tree/master/docs).
 
 ## Contribute
 

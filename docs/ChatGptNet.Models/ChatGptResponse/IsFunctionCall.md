@@ -8,6 +8,8 @@ public bool IsFunctionCall { get; }
 
 ## See Also
 
+* method [GetFunctionCall](./GetFunctionCall.md)
+* class [ChatGptFunctionCall](../ChatGptFunctionCall.md)
 * class [ChatGptResponse](../ChatGptResponse.md)
 * namespace [ChatGptNet.Models](../../ChatGptNet.md)
 

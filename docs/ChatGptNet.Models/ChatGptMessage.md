@@ -14,7 +14,7 @@ public class ChatGptMessage
 | [Content](ChatGptMessage/Content.md) { get; set; } | Gets or sets the content of the message. |
 | [FunctionCall](ChatGptMessage/FunctionCall.md) { get; set; } | Gets or sets the function call for the message, if any. |
 | [Name](ChatGptMessage/Name.md) { get; set; } | Gets or sets the name of the author of this message. |
-| [Role](ChatGptMessage/Role.md) { get; set; } | Gets or sets the role (source) of the messages author. |
+| [Role](ChatGptMessage/Role.md) { get; set; } | Gets or sets the role (source) of the message author. |
 
 ## See Also
 

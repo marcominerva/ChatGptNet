@@ -111,7 +111,7 @@ internal class Application
                     }
                     else
                     {
-                        Console.WriteLine(response.GetMessage());
+                        Console.WriteLine(response.GetContent());
                     }
 
                     Console.WriteLine();
