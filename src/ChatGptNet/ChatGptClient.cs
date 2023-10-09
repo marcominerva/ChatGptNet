@@ -6,6 +6,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using ChatGptNet.Exceptions;
 using ChatGptNet.Models;
+using ChatGptNet.Models.Common;
 using ChatGptNet.Models.Embeddings;
 
 namespace ChatGptNet;
@@ -296,10 +297,8 @@ internal class ChatGptClient : IChatGptClient
         var requestUri = options.ServiceConfiguration.GetEmbeddingsEndpoint(model ?? options.DefaultEmbeddingModel);
         using var httpResponse = await httpClient.PostAsJsonAsync(requestUri, request, jsonSerializerOptions, cancellationToken);
 
-        var content = await httpResponse.Content.ReadAsStringAsync(cancellationToken);
-
         var response = await httpResponse.Content.ReadFromJsonAsync<EmbeddingResponse>(jsonSerializerOptions, cancellationToken: cancellationToken);
-        NormalizeEmbeddingResponse(httpResponse, response!, model ?? options.DefaultEmbeddingModel);
+        NormalizeResponse(httpResponse, response!, model ?? options.DefaultEmbeddingModel);
 
         if (!response!.IsSuccessful && options.ThrowExceptionOnError)
         {
@@ -389,28 +388,10 @@ internal class ChatGptClient : IChatGptClient
     private static void NormalizeResponse(HttpResponseMessage httpResponse, ChatGptResponse response, Guid conversationId, string? model)
     {
         response.ConversationId = conversationId;
-
-        if (string.IsNullOrWhiteSpace(response.Model) && model is not null)
-        {
-            response.Model = model;
-        }
-
-        if (!httpResponse.IsSuccessStatusCode && response.Error is null)
-        {
-            response.Error = new ChatGptError
-            {
-                Message = httpResponse.ReasonPhrase ?? httpResponse.StatusCode.ToString(),
-                Code = ((int)httpResponse.StatusCode).ToString()
-            };
-        }
-
-        if (response.Error is not null)
-        {
-            response.Error.StatusCode = (int)httpResponse.StatusCode;
-        }
+        NormalizeResponse(httpResponse, response, model);
     }
 
-    private static void NormalizeEmbeddingResponse(HttpResponseMessage httpResponse, EmbeddingResponse response, string? model)
+    private static void NormalizeResponse(HttpResponseMessage httpResponse, Response response, string? model)
     {
         if (string.IsNullOrWhiteSpace(response.Model) && model is not null)
         {
