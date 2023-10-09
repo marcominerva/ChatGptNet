@@ -1,17 +1,12 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 
-namespace ChatGptNet.Models;
+namespace ChatGptNet.Models.Embeddings;
 
 /// <summary>
 /// Represents an embedding response.
 /// </summary>
-public class ChatGptEmbeddingResponse
+public class EmbeddingResponse
 {
-    /// <summary>
-    /// Gets or sets the Id of the response.
-    /// </summary>
-    public string Id { get; set; } = string.Empty;
-
     /// <summary>
     /// Gets or sets the source object for this response.
     /// </summary>
@@ -42,7 +37,13 @@ public class ChatGptEmbeddingResponse
     public bool IsSuccessful => Error is null;
 
     /// <summary>
-    /// Array of Embedding objects created by ChatGpt
+    /// Array of embedding objects.
     /// </summary>
-    public ChatGptEmbedding[] Data { get; set; } = Array.Empty<ChatGptEmbedding>();
+    public EmbeddingData[]? Data { get; set; } = Array.Empty<EmbeddingData>();
+
+    /// <summary>
+    /// Gets the first embedding data, if availably.
+    /// </summary>
+    /// <returns>The first embedding data, if available.</returns>
+    public float[]? GetEmbeddings() => Data?.FirstOrDefault()?.Embeddings;
 }

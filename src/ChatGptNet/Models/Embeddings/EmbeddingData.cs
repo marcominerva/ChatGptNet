@@ -1,14 +1,16 @@
-﻿namespace ChatGptNet.Models;
+﻿using System.Text.Json.Serialization;
+
+namespace ChatGptNet.Models.Embeddings;
 
 /// <summary>
 /// Represents an embedding.
 /// </summary>
-public class ChatGptEmbedding
+public class EmbeddingData
 {
     /// <summary>
     /// Gets or sets the index of the embedding.
     /// </summary>
-    public int Index { get; set; } = 0;
+    public int Index { get; set; }
 
     /// <summary>
     /// Gets or sets the source object for this response.
@@ -16,7 +18,8 @@ public class ChatGptEmbedding
     public string Object { get; set; } = string.Empty;
 
     /// <summary>
-    /// Gets or sets the embedding data
+    /// Gets or sets the embedding data.
     /// </summary>
-    public float[] Embedding { get; set; } = Array.Empty<float>();
+    [JsonPropertyName("embedding")]
+    public float[] Embeddings { get; set; } = Array.Empty<float>();
 }

@@ -116,6 +116,7 @@ public static class ChatGptServiceCollectionExtensions
         if (options.ServiceConfiguration is OpenAIChatGptServiceConfiguration && string.IsNullOrWhiteSpace(options.DefaultModel))
         {
             options.DefaultModel = OpenAIChatGptModels.Gpt35Turbo;
+            options.DefaultEmbeddingModel = OpenAIEmbeddingModels.TextEmbeddingAda002;
         }
     }
 }

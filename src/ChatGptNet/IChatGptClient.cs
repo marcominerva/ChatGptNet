@@ -1,5 +1,6 @@
 ﻿using ChatGptNet.Exceptions;
 using ChatGptNet.Models;
+using ChatGptNet.Models.Embeddings;
 
 namespace ChatGptNet;
 
@@ -235,4 +236,25 @@ public interface IChatGptClient
     /// <seealso cref="AskStreamAsync(Guid, string, ChatGptParameters?, string?, bool, CancellationToken)"/>
     /// <seealso cref="ChatGptFunctionCall"/>
     Task AddFunctionResponseAsync(Guid conversationId, string functionName, string content, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Creates embeddings for a message.
+    /// </summary>
+    /// <param name="message">The message to use for creating embeddings.</param>
+    /// <param name="model">The name of the embedding model. If not provided, the default model will be used.</param>
+    /// <param name="cancellationToken">The token to monitor for cancellation requests.</param>
+    /// <returns>The embeddings for the provided message.</returns>
+    /// <exception cref="EmbeddingException">An error occurred while calling the API and the <see cref="ChatGptOptions.ThrowExceptionOnError"/> is <see langword="true"/>.</exception>
+    Task<EmbeddingResponse> GenerateEmbeddingAsync(string message, string? model = null, CancellationToken cancellationToken = default)
+        => GenerateEmbeddingAsync(new[] { message }, model, cancellationToken);
+
+    /// <summary>
+    /// Creates embeddings for a list of messages.
+    /// </summary>
+    /// <param name="messages">The messages to use for creating embeddings.</param>
+    /// <param name="model">The name of the embedding model. If not provided, the default model will be used.</param>
+    /// <param name="cancellationToken">The token to monitor for cancellation requests.</param>
+    /// <returns>The embeddings for the provided messages.</returns>
+    /// <exception cref="EmbeddingException">An error occurred while calling the API and the <see cref="ChatGptOptions.ThrowExceptionOnError"/> is <see langword="true"/>.</exception>
+    Task<EmbeddingResponse> GenerateEmbeddingAsync(IEnumerable<string> messages, string? model = null, CancellationToken cancellationToken = default);
 }

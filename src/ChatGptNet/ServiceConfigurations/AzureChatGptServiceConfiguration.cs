@@ -85,7 +85,13 @@ internal class AzureChatGptServiceConfiguration : ChatGptServiceConfiguration
     }
 
     /// <inheritdoc />
-    public override Uri GetEmbeddingsEndpoint(string? modelName = null) => throw new NotImplementedException();
+    public override Uri GetEmbeddingsEndpoint(string? modelName = null)
+    {
+        ArgumentNullException.ThrowIfNull(nameof(modelName));
+
+        var endpoint = new Uri($"https://{ResourceName}.openai.azure.com/openai/deployments/{modelName}/embeddings?api-version={ApiVersion}");
+        return endpoint;
+    }
 
     /// <inheritdoc />
     public override IDictionary<string, string?> GetRequestHeaders()
