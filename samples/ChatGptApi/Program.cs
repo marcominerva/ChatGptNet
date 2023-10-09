@@ -132,6 +132,15 @@ app.MapGet("/api/chat/{conversationId:guid}", async (Guid conversationId, IChatG
 })
 .WithOpenApi();
 
+app.MapPost("/api/embeddings", async (EmbeddingRequest request, IChatGptClient chatGptClient) =>
+{
+    var embeddingResponse = await chatGptClient.GenerateEmbeddingAsync(request.Message);
+    return TypedResults.Ok(embeddingResponse);
+})
+.WithOpenApi();
+
 app.Run();
 
 public record class Request(Guid ConversationId, string Message);
+
+public record class EmbeddingRequest(string Message);
