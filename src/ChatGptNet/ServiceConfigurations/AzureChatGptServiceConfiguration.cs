@@ -85,6 +85,9 @@ internal class AzureChatGptServiceConfiguration : ChatGptServiceConfiguration
     }
 
     /// <inheritdoc />
+    public override Uri GetEmbeddingsEndpoint(string? modelName = null) => throw new NotImplementedException();
+
+    /// <inheritdoc />
     public override IDictionary<string, string?> GetRequestHeaders()
     {
         var headers = new Dictionary<string, string?>();
