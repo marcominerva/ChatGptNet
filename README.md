@@ -443,10 +443,12 @@ When using Azure OpenAI Service, we automatically get content filtering for free
 
 ```csharp
 var response = await chatGptClient.GenerateEmbeddingAsync(message);
-var embeddings = response.GetEmbeddings();
+var embeddings = response.GetEmbedding();
 ```
 
 This code will give you a float array containing all the embeddings for the specified message. The length of the array depends on the model used. For example, if we use the _text-embedding-ada-002_ model, the array will contain 1536 elements.
+
+If you need to calculate the [cosine similarity](https://en.wikipedia.org/wiki/Cosine_similarity) between two embeddings, you can use the **EmbeddingUtility.CosineSimilarity** method.
 
 ## Documentation
 

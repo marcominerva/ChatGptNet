@@ -16,5 +16,5 @@ public class EmbeddingResponse : Response
     /// Gets the first embedding data, if availably.
     /// </summary>
     /// <returns>The first embedding data, if available.</returns>
-    public float[]? GetEmbeddings() => Data?.FirstOrDefault()?.Embeddings;
+    public float[]? GetEmbedding() => Data?.FirstOrDefault()?.Embedding;
 }

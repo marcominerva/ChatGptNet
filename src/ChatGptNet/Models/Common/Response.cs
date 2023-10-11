@@ -5,7 +5,7 @@ namespace ChatGptNet.Models.Common;
 /// <summary>
 /// Contains common properties for all response types.
 /// </summary>
-public class Response
+public abstract class Response
 {
     /// <summary>
     /// Gets or sets the source object for this response.

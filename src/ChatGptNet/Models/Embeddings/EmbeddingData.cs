@@ -1,6 +1,4 @@
-﻿using System.Text.Json.Serialization;
-
-namespace ChatGptNet.Models.Embeddings;
+﻿namespace ChatGptNet.Models.Embeddings;
 
 /// <summary>
 /// Represents an embedding.
@@ -20,6 +18,5 @@ public class EmbeddingData
     /// <summary>
     /// Gets or sets the embedding data.
     /// </summary>
-    [JsonPropertyName("embedding")]
-    public float[] Embeddings { get; set; } = Array.Empty<float>();
+    public float[] Embedding { get; set; } = Array.Empty<float>();
 }
