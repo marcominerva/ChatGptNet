@@ -322,7 +322,7 @@ The _preserveSetup_ argument allows to decide whether mantain also the _system_ 
 With function calling, we can describe functions and have the model intelligently choose to output a JSON object containing arguments to call those functions. This is a new way to more reliably connect GPT's capabilities with external tools and APIs.
 
 > **Note**
-Currently, on Azure OpenAI Service, function calling is supported  in the following models in API version `2023-07-01-preview`:
+Currently, on Azure OpenAI Service, function calling is supported  in the following models in API version `2023-07-01-preview` or later:
 >- gpt-35-turbo-0613
 >- gpt-35-turbo-16k-0613
 >- gpt-4-0613
