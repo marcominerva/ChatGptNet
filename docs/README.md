@@ -18,13 +18,15 @@
 
 | public type | description |
 | --- | --- |
-| class [ChatGptException](./ChatGptNet.Exceptions/ChatGptException.md) | Represents errors that occur during API invocation. |
+| class [ChatGptException](./ChatGptNet.Exceptions/ChatGptException.md) | Represents errors that occur during ChatGPT API invocation. |
+| class [EmbeddingException](./ChatGptNet.Exceptions/EmbeddingException.md) | Represents errors that occur during Embeddings API invocation. |
 
 ## ChatGptNet.Extensions namespace
 
 | public type | description |
 | --- | --- |
 | static class [ChatGptResponseExtensions](./ChatGptNet.Extensions/ChatGptResponseExtensions.md) | Provides extension methods for the [`ChatGptResponse`](./ChatGptNet.Models/ChatGptResponse.md) class. |
+| static class [EmbeddingUtility](./ChatGptNet.Extensions/EmbeddingUtility.md) | Provides utility methods to work with embeddings. |
 
 ## ChatGptNet.Models namespace
 
@@ -49,6 +51,20 @@
 | class [ChatGptRoles](./ChatGptNet.Models/ChatGptRoles.md) | Contains constants for all the possible roles. |
 | class [ChatGptUsage](./ChatGptNet.Models/ChatGptUsage.md) | Contains information about the API usage. |
 | static class [OpenAIChatGptModels](./ChatGptNet.Models/OpenAIChatGptModels.md) | Contains all the chat completion models that are currently supported by OpenAI. |
+
+## ChatGptNet.Models.Common namespace
+
+| public type | description |
+| --- | --- |
+| abstract class [Response](./ChatGptNet.Models.Common/Response.md) | Contains common properties for all response types. |
+
+## ChatGptNet.Models.Embeddings namespace
+
+| public type | description |
+| --- | --- |
+| class [EmbeddingData](./ChatGptNet.Models.Embeddings/EmbeddingData.md) | Represents an embedding. |
+| class [EmbeddingResponse](./ChatGptNet.Models.Embeddings/EmbeddingResponse.md) | Represents an embedding response. |
+| static class [OpenAIEmbeddingModels](./ChatGptNet.Models.Embeddings/OpenAIEmbeddingModels.md) | Contains all the embedding models that are currently supported by OpenAI. |
 
 ## ChatGptNet.ServiceConfigurations namespace
 

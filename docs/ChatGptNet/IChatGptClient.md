@@ -14,8 +14,9 @@ public interface IChatGptClient
 | [AddInteractionAsync](IChatGptClient/AddInteractionAsync.md)(…) | Explicitly adds a new interaction (a question and the corresponding answer) to the conversation history. |
 | [AskAsync](IChatGptClient/AskAsync.md)(…) | Requests a new chat interaction. (4 methods) |
 | [AskStreamAsync](IChatGptClient/AskStreamAsync.md)(…) | Requests a new chat interaction with streaming response, like in ChatGPT. (2 methods) |
-| [ConversationExistsAsync](IChatGptClient/ConversationExistsAsync.md)(…) | Determines if a chat conversation exists. |
+| [ConversationExistsAsync](IChatGptClient/ConversationExistsAsync.md)(…) | Checks if a chat conversation exists. |
 | [DeleteConversationAsync](IChatGptClient/DeleteConversationAsync.md)(…) | Deletes a chat conversation, clearing all the history. |
+| [GenerateEmbeddingAsync](IChatGptClient/GenerateEmbeddingAsync.md)(…) | Generates embeddings for a message. (2 methods) |
 | [GetConversationAsync](IChatGptClient/GetConversationAsync.md)(…) | Retrieves a chat conversation from the cache. |
 | [LoadConversationAsync](IChatGptClient/LoadConversationAsync.md)(…) | Loads messages into a new conversation. (2 methods) |
 | [SetupAsync](IChatGptClient/SetupAsync.md)(…) | Setups a new conversation with a system message, that is used to influence assistant behavior. (2 methods) |
