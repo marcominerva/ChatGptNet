@@ -76,7 +76,7 @@ internal class AzureChatGptServiceConfiguration : ChatGptServiceConfiguration
     }
 
     /// <inheritdoc />
-    public override Uri GetServiceEndpoint(string? modelName)
+    public override Uri GetChatCompletionEndpoint(string? modelName)
     {
         ArgumentNullException.ThrowIfNull(nameof(modelName));
 
@@ -85,7 +85,7 @@ internal class AzureChatGptServiceConfiguration : ChatGptServiceConfiguration
     }
 
     /// <inheritdoc />
-    public override Uri GetEmbeddingsEndpoint(string? modelName = null)
+    public override Uri GetEmbeddingEndpoint(string? modelName = null)
     {
         ArgumentNullException.ThrowIfNull(nameof(modelName));
 

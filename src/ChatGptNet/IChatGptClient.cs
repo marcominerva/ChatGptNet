@@ -37,7 +37,7 @@ public interface IChatGptClient
     /// </summary>
     /// <param name="message">The message.</param>
     /// <param name="parameters">A <see cref="ChatGptParameters"/> object used to override the default completion parameters in the <see cref="ChatGptOptions.DefaultParameters"/> property.</param>
-    /// <param name="model">The chat completion model to use. If model is <see langword="null"/>, then the one specified in the <see cref="ChatGptOptions.DefaultModel"/> property will be used.</param>
+    /// <param name="model">The chat completion model to use. If <paramref name="model"/> is <see langword="null"/>, then the one specified in the <see cref="ChatGptOptions.DefaultModel"/> property will be used.</param>
     /// <param name="addToConversationHistory">Set to <see langword="true"/> to add the current chat interaction to the conversation history.</param>
     /// <param name="cancellationToken">The token to monitor for cancellation requests.</param>
     /// <returns>The chat completion response.</returns>
@@ -57,7 +57,7 @@ public interface IChatGptClient
     /// <param name="message">The message.</param>
     /// <param name="functionParameters">A <see cref="ChatGptFunctionParameters"/> object that contains the list of available functions for calling.</param>
     /// <param name="parameters">A <see cref="ChatGptParameters"/> object used to override the default completion parameters in the <see cref="ChatGptOptions.DefaultParameters"/> property.</param>
-    /// <param name="model">The chat completion model to use. If model is <see langword="null"/>, then the one specified in the <see cref="ChatGptOptions.DefaultModel"/> property will be used.</param>
+    /// <param name="model">The chat completion model to use. If <paramref name="model"/> is <see langword="null"/>, then the one specified in the <see cref="ChatGptOptions.DefaultModel"/> property will be used.</param>
     /// <param name="addToConversationHistory">Set to <see langword="true"/> to add the current chat interaction to the conversation history.</param>
     /// <param name="cancellationToken">The token to monitor for cancellation requests.</param>
     /// <returns>The chat completion response.</returns>
@@ -81,7 +81,7 @@ public interface IChatGptClient
     /// <param name="conversationId">The unique identifier of the conversation, used to automatically retrieve previous messages in the chat history.</param>
     /// <param name="message">The message.</param>
     /// <param name="parameters">A <seealso cref="ChatGptParameters"/> object used to override the default completion parameters in the <see cref="ChatGptOptions.DefaultParameters"/> property.</param>
-    /// <param name="model">The chat completion model to use. If model is <see langword="null"/>, then the one specified in the <see cref="ChatGptOptions.DefaultModel"/> property will be used.</param>
+    /// <param name="model">The chat completion model to use. If <paramref name="model"/> is <see langword="null"/>, then the one specified in the <see cref="ChatGptOptions.DefaultModel"/> property will be used.</param>
     /// <param name="addToConversationHistory">Set to <see langword="true"/> to add the current chat interaction to the conversation history.</param>
     /// <param name="cancellationToken">The token to monitor for cancellation requests.</param>
     /// <returns>The chat completion response.</returns>
@@ -100,7 +100,7 @@ public interface IChatGptClient
     /// <param name="message">The message.</param>
     /// <param name="functionParameters">A <see cref="ChatGptFunctionParameters"/> object that contains the list of available functions for calling.</param>
     /// <param name="parameters">A <seealso cref="ChatGptParameters"/> object used to override the default completion parameters in the <see cref="ChatGptOptions.DefaultParameters"/> property.</param>
-    /// <param name="model">The chat completion model to use. If model is <see langword="null"/>, then the one specified in the <see cref="ChatGptOptions.DefaultModel"/> property will be used.</param>
+    /// <param name="model">The chat completion model to use. If <paramref name="model"/> is <see langword="null"/>, then the one specified in the <see cref="ChatGptOptions.DefaultModel"/> property will be used.</param>
     /// <param name="addToConversationHistory">Set to <see langword="true"/> to add the current chat interaction to the conversation history.</param>
     /// <param name="cancellationToken">The token to monitor for cancellation requests.</param>
     /// <returns>The chat completion response.</returns>
@@ -120,7 +120,7 @@ public interface IChatGptClient
     /// </summary>
     /// <param name="message">The message.</param>
     /// <param name="parameters">A <see cref="ChatGptParameters"/> object used to override the default completion parameters in the <see cref="ChatGptOptions.DefaultParameters"/> property.</param>
-    /// <param name="model">The chat completion model to use. If model is <see langword="null"/>, then the one specified in the <see cref="ChatGptOptions.DefaultModel"/> property will be used.</param>
+    /// <param name="model">The chat completion model to use. If <paramref name="model"/> is <see langword="null"/>, then the one specified in the <see cref="ChatGptOptions.DefaultModel"/> property will be used.</param>
     /// <param name="addToConversationHistory">Set to <see langword="true"/> to add the current chat interaction to the conversation history.</param>
     /// <param name="cancellationToken">The token to monitor for cancellation requests.</param>
     /// <returns>An <see cref="IAsyncEnumerable{ChatGptResponse}"/> that allows to enumerate all the streaming responses, each of them containing a partial message delta.</returns>
@@ -142,7 +142,7 @@ public interface IChatGptClient
     /// <param name="conversationId">The unique identifier of the conversation, used to automatically retrieve previous messages in the chat history.</param>
     /// <param name="message">The message.</param>
     /// <param name="parameters">A <see cref="ChatGptParameters"/> object used to override the default completion parameters in the <see cref="ChatGptOptions.DefaultParameters"/> property.</param>
-    /// <param name="model">The chat completion model to use. If model is <see langword="null"/>, then the one specified in the <see cref="ChatGptOptions.DefaultModel"/> property will be used.</param>
+    /// <param name="model">The chat completion model to use. If <paramref name="model"/> is <see langword="null"/>, then the one specified in the <see cref="ChatGptOptions.DefaultModel"/> property will be used.</param>
     /// <param name="addToConversationHistory">Set to <see langword="true"/> to add the current chat interaction to the conversation history.</param>
     /// <param name="cancellationToken">The token to monitor for cancellation requests.</param>
     /// <returns>An <see cref="IAsyncEnumerable{ChatGptResponse}"/> that allows to enumerate all the streaming responses, each of them containing a partial message delta.</returns>
@@ -205,7 +205,7 @@ public interface IChatGptClient
     Task<Guid> LoadConversationAsync(Guid conversationId, IEnumerable<ChatGptMessage> messages, bool replaceHistory = true, CancellationToken cancellationToken = default);
 
     /// <summary>
-    /// Determines if a chat conversation exists.
+    /// Checks if a chat conversation exists.
     /// </summary>
     /// <param name="conversationId">The unique identifier of the conversation.</param>
     /// <param name="cancellationToken">The token to monitor for cancellation requests.</param>
@@ -238,10 +238,10 @@ public interface IChatGptClient
     Task AddFunctionResponseAsync(Guid conversationId, string functionName, string content, CancellationToken cancellationToken = default);
 
     /// <summary>
-    /// Creates embeddings for a message.
+    /// Generates embeddings for a message.
     /// </summary>
-    /// <param name="message">The message to use for creating embeddings.</param>
-    /// <param name="model">The name of the embedding model. If not provided, the default model will be used.</param>
+    /// <param name="message">The message to use for generating embeddings.</param>
+    /// <param name="model">The name of the embedding model. If <paramref name="model"/> is <see langword="null"/>, then the one specified in the <see cref="ChatGptOptions.DefaultEmbeddingModel"/> property will be used.</param>
     /// <param name="cancellationToken">The token to monitor for cancellation requests.</param>
     /// <returns>The embeddings for the provided message.</returns>
     /// <exception cref="EmbeddingException">An error occurred while calling the API and the <see cref="ChatGptOptions.ThrowExceptionOnError"/> is <see langword="true"/>.</exception>
@@ -249,10 +249,10 @@ public interface IChatGptClient
         => GenerateEmbeddingAsync(new[] { message }, model, cancellationToken);
 
     /// <summary>
-    /// Creates embeddings for a list of messages.
+    /// Generates embeddings for a list of messages.
     /// </summary>
-    /// <param name="messages">The messages to use for creating embeddings.</param>
-    /// <param name="model">The name of the embedding model. If not provided, the default model will be used.</param>
+    /// <param name="messages">The messages to use for generating embeddings.</param>
+    /// <param name="model">The name of the embedding model. If <paramref name="model"/> is <see langword="null"/>, then the one specified in the <see cref="ChatGptOptions.DefaultEmbeddingModel"/> property will be used.</param>
     /// <param name="cancellationToken">The token to monitor for cancellation requests.</param>
     /// <returns>The embeddings for the provided messages.</returns>
     /// <exception cref="EmbeddingException">An error occurred while calling the API and the <see cref="ChatGptOptions.ThrowExceptionOnError"/> is <see langword="true"/>.</exception>

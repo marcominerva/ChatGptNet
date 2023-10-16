@@ -65,7 +65,7 @@ internal class ChatGptClient : IChatGptClient
         var messages = await CreateMessageListAsync(conversationId, message, cancellationToken);
         var request = CreateChatGptRequest(messages, functionParameters, false, parameters, model);
 
-        var requestUri = options.ServiceConfiguration.GetServiceEndpoint(model ?? options.DefaultModel);
+        var requestUri = options.ServiceConfiguration.GetChatCompletionEndpoint(model ?? options.DefaultModel);
         using var httpResponse = await httpClient.PostAsJsonAsync(requestUri, request, jsonSerializerOptions, cancellationToken);
 
         var response = await httpResponse.Content.ReadFromJsonAsync<ChatGptResponse>(jsonSerializerOptions, cancellationToken: cancellationToken);
@@ -97,7 +97,7 @@ internal class ChatGptClient : IChatGptClient
         var messages = await CreateMessageListAsync(conversationId, message, cancellationToken);
         var request = CreateChatGptRequest(messages, null, true, parameters, model);
 
-        var requestUri = options.ServiceConfiguration.GetServiceEndpoint(model ?? options.DefaultModel);
+        var requestUri = options.ServiceConfiguration.GetChatCompletionEndpoint(model ?? options.DefaultModel);
         using var requestMessage = new HttpRequestMessage(HttpMethod.Post, requestUri)
         {
             Content = new StringContent(JsonSerializer.Serialize(request, jsonSerializerOptions), Encoding.UTF8, MediaTypeNames.Application.Json)
@@ -294,7 +294,7 @@ internal class ChatGptClient : IChatGptClient
 
         var request = CreateEmbeddingRequest(messages, model);
 
-        var requestUri = options.ServiceConfiguration.GetEmbeddingsEndpoint(model ?? options.DefaultEmbeddingModel);
+        var requestUri = options.ServiceConfiguration.GetEmbeddingEndpoint(model ?? options.DefaultEmbeddingModel);
         using var httpResponse = await httpClient.PostAsJsonAsync(requestUri, request, jsonSerializerOptions, cancellationToken);
 
         var response = await httpResponse.Content.ReadFromJsonAsync<EmbeddingResponse>(jsonSerializerOptions, cancellationToken: cancellationToken);
