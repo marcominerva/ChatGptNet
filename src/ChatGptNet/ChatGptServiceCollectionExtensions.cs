@@ -112,11 +112,18 @@ public static class ChatGptServiceCollectionExtensions
 
     private static void SetMissingDefaults(ChatGptOptionsBuilder options)
     {
-        // If the provider is OpenAI and no default model has been specified, uses gpt-3.5-turbo by default.
-        if (options.ServiceConfiguration is OpenAIChatGptServiceConfiguration && string.IsNullOrWhiteSpace(options.DefaultModel))
+        if (options.ServiceConfiguration is OpenAIChatGptServiceConfiguration)
         {
-            options.DefaultModel = OpenAIChatGptModels.Gpt35Turbo;
-            options.DefaultEmbeddingModel = OpenAIEmbeddingModels.TextEmbeddingAda002;
+            // If the provider is OpenAI and some default models are not specified, use the default ones.
+            if (string.IsNullOrWhiteSpace(options.DefaultModel))
+            {
+                options.DefaultModel = OpenAIChatGptModels.Gpt35Turbo;
+            }
+
+            if (string.IsNullOrWhiteSpace(options.DefaultEmbeddingModel))
+            {
+                options.DefaultEmbeddingModel = OpenAIEmbeddingModels.TextEmbeddingAda002;
+            }
         }
     }
 }
