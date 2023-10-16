@@ -12,7 +12,7 @@ public Task<ChatGptResponse> AskAsync(string message, ChatGptParameters? paramet
 | --- | --- |
 | message | The message. |
 | parameters | A [`ChatGptParameters`](../../ChatGptNet.Models/ChatGptParameters.md) object used to override the default completion parameters in the [`DefaultParameters`](../ChatGptOptions/DefaultParameters.md) property. |
-| model | The chat completion model to use. If model is `null`, then the one specified in the [`DefaultModel`](../ChatGptOptions/DefaultModel.md) property will be used. |
+| model | The chat completion model to use. If *model* is `null`, then the one specified in the [`DefaultModel`](../ChatGptOptions/DefaultModel.md) property will be used. |
 | addToConversationHistory | Set to `true` to add the current chat interaction to the conversation history. |
 | cancellationToken | The token to monitor for cancellation requests. |
 
@@ -56,7 +56,7 @@ public Task<ChatGptResponse> AskAsync(Guid conversationId, string message,
 | conversationId | The unique identifier of the conversation, used to automatically retrieve previous messages in the chat history. |
 | message | The message. |
 | parameters | A  object used to override the default completion parameters in the [`DefaultParameters`](../ChatGptOptions/DefaultParameters.md) property. |
-| model | The chat completion model to use. If model is `null`, then the one specified in the [`DefaultModel`](../ChatGptOptions/DefaultModel.md) property will be used. |
+| model | The chat completion model to use. If *model* is `null`, then the one specified in the [`DefaultModel`](../ChatGptOptions/DefaultModel.md) property will be used. |
 | addToConversationHistory | Set to `true` to add the current chat interaction to the conversation history. |
 | cancellationToken | The token to monitor for cancellation requests. |
 
@@ -96,7 +96,7 @@ public Task<ChatGptResponse> AskAsync(string message,
 | message | The message. |
 | functionParameters | A [`ChatGptFunctionParameters`](../../ChatGptNet.Models/ChatGptFunctionParameters.md) object that contains the list of available functions for calling. |
 | parameters | A [`ChatGptParameters`](../../ChatGptNet.Models/ChatGptParameters.md) object used to override the default completion parameters in the [`DefaultParameters`](../ChatGptOptions/DefaultParameters.md) property. |
-| model | The chat completion model to use. If model is `null`, then the one specified in the [`DefaultModel`](../ChatGptOptions/DefaultModel.md) property will be used. |
+| model | The chat completion model to use. If *model* is `null`, then the one specified in the [`DefaultModel`](../ChatGptOptions/DefaultModel.md) property will be used. |
 | addToConversationHistory | Set to `true` to add the current chat interaction to the conversation history. |
 | cancellationToken | The token to monitor for cancellation requests. |
 
@@ -145,7 +145,7 @@ public Task<ChatGptResponse> AskAsync(Guid conversationId, string message,
 | message | The message. |
 | functionParameters | A [`ChatGptFunctionParameters`](../../ChatGptNet.Models/ChatGptFunctionParameters.md) object that contains the list of available functions for calling. |
 | parameters | A  object used to override the default completion parameters in the [`DefaultParameters`](../ChatGptOptions/DefaultParameters.md) property. |
-| model | The chat completion model to use. If model is `null`, then the one specified in the [`DefaultModel`](../ChatGptOptions/DefaultModel.md) property will be used. |
+| model | The chat completion model to use. If *model* is `null`, then the one specified in the [`DefaultModel`](../ChatGptOptions/DefaultModel.md) property will be used. |
 | addToConversationHistory | Set to `true` to add the current chat interaction to the conversation history. |
 | cancellationToken | The token to monitor for cancellation requests. |
 

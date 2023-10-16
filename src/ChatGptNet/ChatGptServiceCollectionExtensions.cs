@@ -1,4 +1,5 @@
 ﻿using ChatGptNet.Models;
+using ChatGptNet.Models.Embeddings;
 using ChatGptNet.ServiceConfigurations;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;

@@ -1,5 +1,6 @@
 ﻿using ChatGptNet.Exceptions;
 using ChatGptNet.Models;
+using ChatGptNet.Models.Embeddings;
 using ChatGptNet.ServiceConfigurations;
 
 namespace ChatGptNet;

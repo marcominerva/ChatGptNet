@@ -1,6 +1,6 @@
 # ChatGptException class
 
-Represents errors that occur during API invocation.
+Represents errors that occur during ChatGPT API invocation.
 
 ```csharp
 public class ChatGptException : HttpRequestException

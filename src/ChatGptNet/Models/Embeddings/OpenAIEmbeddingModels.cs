@@ -1,6 +1,6 @@
 ﻿using ChatGptNet.ServiceConfigurations;
 
-namespace ChatGptNet.Models;
+namespace ChatGptNet.Models.Embeddings;
 
 /// <summary>
 /// Contains all the embedding models that are currently supported by OpenAI.
