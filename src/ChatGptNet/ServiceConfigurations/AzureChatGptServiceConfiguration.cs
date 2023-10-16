@@ -64,7 +64,7 @@ internal class AzureChatGptServiceConfiguration : ChatGptServiceConfiguration
         ArgumentNullException.ThrowIfNull(configuration);
 
         ResourceName = configuration.GetValue<string>("ResourceName");
-        ArgumentNullException.ThrowIfNull(nameof(ResourceName));
+        ArgumentNullException.ThrowIfNull(ResourceName);
 
         ApiVersion = configuration.GetValue<string>("ApiVersion") ?? DefaultApiVersion;
 
@@ -78,7 +78,7 @@ internal class AzureChatGptServiceConfiguration : ChatGptServiceConfiguration
     /// <inheritdoc />
     public override Uri GetServiceEndpoint(string? modelName)
     {
-        ArgumentNullException.ThrowIfNull(nameof(modelName));
+        ArgumentNullException.ThrowIfNull(modelName);
 
         var endpoint = new Uri($"https://{ResourceName}.openai.azure.com/openai/deployments/{modelName}/chat/completions?api-version={ApiVersion}");
         return endpoint;
