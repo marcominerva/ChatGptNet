@@ -48,5 +48,4 @@ public static class EmbeddingUtility
     /// <seealso cref="EmbeddingResponse"/>
     public static float CosineSimilarity(this EmbeddingResponse embeddingResponse, EmbeddingResponse otherResponse)
         => CosineSimilarity(embeddingResponse.GetEmbedding() ?? Array.Empty<float>(), otherResponse.GetEmbedding() ?? Array.Empty<float>());
-
 }
