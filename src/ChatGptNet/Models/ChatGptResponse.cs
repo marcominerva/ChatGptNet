@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Text.Json.Serialization;
+using ChatGptNet.Models.Common;
 using ChatGptNet.Models.Converters;
 
 namespace ChatGptNet.Models;
@@ -7,17 +8,12 @@ namespace ChatGptNet.Models;
 /// <summary>
 /// Represents a chat completion response.
 /// </summary>
-public class ChatGptResponse
+public class ChatGptResponse : Response
 {
     /// <summary>
     /// Gets or sets the Id of the response.
     /// </summary>
     public string Id { get; set; } = string.Empty;
-
-    /// <summary>
-    /// Gets or sets the source object for this response.
-    /// </summary>
-    public string Object { get; set; } = string.Empty;
 
     /// <summary>
     /// Gets or sets the Conversation Id, that is used to group messages of the same conversation.
@@ -30,24 +26,6 @@ public class ChatGptResponse
     [JsonPropertyName("created")]
     [JsonConverter(typeof(UnixToDateTimeConverter))]
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-
-    /// <summary>
-    /// Gets or sets the model name that has been used to generate the response.
-    /// </summary>
-    public string Model { get; set; } = string.Empty;
-
-    /// <summary>
-    /// Gets or sets information about token usage.
-    /// </summary>
-    /// <remarks>
-    /// The <see cref="Usage"/> property is always <see langword="null"/> when requesting response streaming with <see cref="ChatGptClient.AskStreamAsync(Guid, string, ChatGptParameters?, string?, bool, CancellationToken)"/>.
-    /// </remarks>
-    public ChatGptUsage? Usage { get; set; }
-
-    /// <summary>
-    /// Gets or sets the error occurred during the chat completion execution, if any.
-    /// </summary>
-    public ChatGptError? Error { get; set; }
 
     /// <summary>
     /// Gets or sets the list of choices that has been provided by chat completion.
@@ -67,12 +45,6 @@ public class ChatGptResponse
     public bool IsPromptFiltered => PromptFilterResults?.Any(
         p => p.ContentFilterResults.Hate.Filtered || p.ContentFilterResults.SelfHarm.Filtered || p.ContentFilterResults.Violence.Filtered
             || p.ContentFilterResults.Sexual.Filtered) ?? false;
-
-    /// <summary>
-    /// Gets a value that determines if the response was successful.
-    /// </summary>
-    [MemberNotNullWhen(false, nameof(Error))]
-    public bool IsSuccessful => Error is null;
 
     /// <summary>
     /// Gets the content of the first choice, if available.

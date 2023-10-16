@@ -30,6 +30,7 @@ builder.Services.AddChatGpt(options =>
     //options.UseAzure(resourceName: "", apiKey: "", authenticationType: AzureAuthenticationType.ApiKey);
 
     options.DefaultModel = "my-model";
+    options.DefaultEmbeddingModel = "text-embedding-ada-002",
     options.MessageLimit = 16;  // Default: 10
     options.MessageExpiration = TimeSpan.FromMinutes(5);    // Default: 1 hour
 });
@@ -54,9 +55,11 @@ builder.Services.AddChatGpt(options =>
   - 2023-08-01-preview (default)
 - _AuthenticationType_: it specifies if the key is an actual API Key or an [Azure Active Directory token](https://learn.microsoft.com/azure/cognitive-services/openai/how-to/managed-identity) (optional, default: "ApiKey").
 
-### DefaultModel
+### DefaultModel and DefaultEmbeddingModel
 
-ChatGPT can be used with different models for chat completion, both on OpenAI and Azure OpenAI service. With the *DefaultModel* property, you can specify the default model that will be used, unless you pass an explicit value in the **AskAsync** method.
+ChatGPT can be used with different models for chat completion, both on OpenAI and Azure OpenAI service. With the *DefaultModel* property, you can specify the default model that will be used, unless you pass an explicit value in the **AskAsync** or **AsyStreamAsync** methods.
+
+Even if it is not a strictly necessary for chat conversation, the library supports also the Embedding API, on both [OpenAI](https://platform.openai.com/docs/guides/embeddings/what-are-embeddings) and [Azure OpenAI](https://learn.microsoft.com/en-us/azure/ai-services/openai/reference#embeddings).  As for chat completion, embeddings can be done with different models. With the *DefaultEmbeddingModel* property, you can specify the default model that will be used, unless you pass an explicit value in the **GetEmbeddingAsync** method.
 
 ##### OpenAI
 
@@ -128,6 +131,7 @@ The configuration can be automatically read from [IConfiguration](https://learn.
     "AuthenticationType": "ApiKey",     // Optional, used only by Azure OpenAI Service. Allowed values: ApiKey (default) or ActiveDirectory
 
     "DefaultModel": "my-model",
+    "DefaultEmbeddingModel": "text-embedding-ada-002", // Optional, set it if you want to use embedding
     "MessageLimit": 20,
     "MessageExpiration": "00:30:00",
     "ThrowExceptionOnError": true
@@ -432,6 +436,19 @@ Check out the [Function calling sample](https://github.com/marcominerva/ChatGptN
 ## Content filtering
 
 When using Azure OpenAI Service, we automatically get content filtering for free. For details about how it works, check out the [documentation](https://learn.microsoft.com/azure/ai-services/openai/concepts/content-filter). This information is returned for all scenarios when using API version `2023-06-01-preview` or later. **ChatGptNet** fully supports this object model by providing the corresponding properties in the [ChatGptResponse](https://github.com/marcominerva/ChatGptNet/blob/master/src/ChatGptNet/Models/ChatGptResponse.cs#L57) and [ChatGptChoice](https://github.com/marcominerva/ChatGptNet/blob/master/src/ChatGptNet/Models/ChatGptChoice.cs#L26) classes.
+
+## Embeddings
+
+[Embeddings](https://platform.openai.com/docs/guides/embeddings) allows to transform text into a vector space. This can be useful to compare the similarity of two sentences, for example. **ChatGptNet** fully supports this feature by providing the **GetEmbeddingAsync** method:
+
+```csharp
+var response = await chatGptClient.GenerateEmbeddingAsync(message);
+var embeddings = response.GetEmbedding();
+```
+
+This code will give you a float array containing all the embeddings for the specified message. The length of the array depends on the model used. For example, if we use the _text-embedding-ada-002_ model, the array will contain 1536 elements.
+
+If you need to calculate the [cosine similarity](https://en.wikipedia.org/wiki/Cosine_similarity) between two embeddings, you can use the **EmbeddingUtility.CosineSimilarity** method.
 
 ## Documentation
 
