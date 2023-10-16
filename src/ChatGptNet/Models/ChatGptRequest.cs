@@ -87,7 +87,7 @@ internal class ChatGptRequest
     public double? FrequencyPenalty { get; set; }
 
     /// <summary>
-    /// Gets or sets the user identification for chat completion, which can help OpenAI to monitor and detect abuse.
+    /// Gets or sets the user identification for chat completion, which can help to monitor and detect abuse.
     /// </summary>
     /// <remarks>
     /// See <see href="https://platform.openai.com/docs/guides/safety-best-practices/end-user-ids">Safety best practices</see> for more information.
