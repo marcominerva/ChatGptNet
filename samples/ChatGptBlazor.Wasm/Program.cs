@@ -20,7 +20,7 @@ builder.Services.AddChatGpt(options =>
 
     options.DefaultModel = "my-model";
     options.MessageLimit = 16;  // Default: 10
-    options.MessageExpiration = TimeSpan.FromMinutes(5);    // Default: 1 hour
+    options.MessageExpiration = TimeSpan.FromMinutes(5);    // Default: 1 hour   
 });
 
 await builder.Build().RunAsync();

@@ -132,6 +132,27 @@ app.MapGet("/api/chat/{conversationId:guid}", async (Guid conversationId, IChatG
 })
 .WithOpenApi();
 
+app.MapPost("/api/embeddings", async (EmbeddingRequest request, IChatGptClient chatGptClient) =>
+{
+    var embeddingResponse = await chatGptClient.GenerateEmbeddingAsync(request.Message);
+    return TypedResults.Ok(embeddingResponse);
+})
+.WithOpenApi();
+
+app.MapPost("/api/embeddings/CosineSimilarity", async (CosineSimilarityRequest request, IChatGptClient chatGptClient) =>
+{
+    var firstEmbeddingResponse = await chatGptClient.GenerateEmbeddingAsync(request.FirstMessage);
+    var secondEmbeddingResponse = await chatGptClient.GenerateEmbeddingAsync(request.SecondMessage);
+
+    var similarity = firstEmbeddingResponse.CosineSimilarity(secondEmbeddingResponse);
+    return TypedResults.Ok(new { CosineSimilarity = similarity });
+})
+.WithOpenApi();
+
 app.Run();
 
 public record class Request(Guid ConversationId, string Message);
+
+public record class EmbeddingRequest(string Message);
+
+public record class CosineSimilarityRequest(string FirstMessage, string SecondMessage);

@@ -6,6 +6,8 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using ChatGptNet.Exceptions;
 using ChatGptNet.Models;
+using ChatGptNet.Models.Common;
+using ChatGptNet.Models.Embeddings;
 
 namespace ChatGptNet;
 
@@ -61,9 +63,9 @@ internal class ChatGptClient : IChatGptClient
         conversationId = (conversationId == Guid.Empty) ? Guid.NewGuid() : conversationId;
 
         var messages = await CreateMessageListAsync(conversationId, message, cancellationToken);
-        var request = CreateRequest(messages, functionParameters, false, parameters, model);
+        var request = CreateChatGptRequest(messages, functionParameters, false, parameters, model);
 
-        var requestUri = options.ServiceConfiguration.GetServiceEndpoint(model ?? options.DefaultModel);
+        var requestUri = options.ServiceConfiguration.GetChatCompletionEndpoint(model ?? options.DefaultModel);
         using var httpResponse = await httpClient.PostAsJsonAsync(requestUri, request, jsonSerializerOptions, cancellationToken);
 
         var response = await httpResponse.Content.ReadFromJsonAsync<ChatGptResponse>(jsonSerializerOptions, cancellationToken: cancellationToken);
@@ -93,9 +95,9 @@ internal class ChatGptClient : IChatGptClient
         conversationId = (conversationId == Guid.Empty) ? Guid.NewGuid() : conversationId;
 
         var messages = await CreateMessageListAsync(conversationId, message, cancellationToken);
-        var request = CreateRequest(messages, null, true, parameters, model);
+        var request = CreateChatGptRequest(messages, null, true, parameters, model);
 
-        var requestUri = options.ServiceConfiguration.GetServiceEndpoint(model ?? options.DefaultModel);
+        var requestUri = options.ServiceConfiguration.GetChatCompletionEndpoint(model ?? options.DefaultModel);
         using var requestMessage = new HttpRequestMessage(HttpMethod.Post, requestUri)
         {
             Content = new StringContent(JsonSerializer.Serialize(request, jsonSerializerOptions), Encoding.UTF8, MediaTypeNames.Application.Json)
@@ -286,6 +288,26 @@ internal class ChatGptClient : IChatGptClient
         await UpdateCacheAsync(conversationId, messages, cancellationToken);
     }
 
+    public async Task<EmbeddingResponse> GenerateEmbeddingAsync(IEnumerable<string> messages, string? model = null, CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(messages);
+
+        var request = CreateEmbeddingRequest(messages, model);
+
+        var requestUri = options.ServiceConfiguration.GetEmbeddingEndpoint(model ?? options.DefaultEmbeddingModel);
+        using var httpResponse = await httpClient.PostAsJsonAsync(requestUri, request, jsonSerializerOptions, cancellationToken);
+
+        var response = await httpResponse.Content.ReadFromJsonAsync<EmbeddingResponse>(jsonSerializerOptions, cancellationToken: cancellationToken);
+        NormalizeResponse(httpResponse, response!, model ?? options.DefaultEmbeddingModel);
+
+        if (!response!.IsSuccessful && options.ThrowExceptionOnError)
+        {
+            throw new EmbeddingException(response.Error, httpResponse.StatusCode);
+        }
+
+        return response;
+    }
+
     private async Task<IList<ChatGptMessage>> CreateMessageListAsync(Guid conversationId, string message, CancellationToken cancellationToken = default)
     {
         // Checks whether a list of messages for the given conversationId already exists.
@@ -301,7 +323,7 @@ internal class ChatGptClient : IChatGptClient
         return messages;
     }
 
-    private ChatGptRequest CreateRequest(IEnumerable<ChatGptMessage> messages, ChatGptFunctionParameters? functionParameters, bool stream, ChatGptParameters? parameters, string? model)
+    private ChatGptRequest CreateChatGptRequest(IEnumerable<ChatGptMessage> messages, ChatGptFunctionParameters? functionParameters, bool stream, ChatGptParameters? parameters, string? model)
         => new()
         {
             Model = model ?? options.DefaultModel,
@@ -320,6 +342,13 @@ internal class ChatGptClient : IChatGptClient
             PresencePenalty = parameters?.PresencePenalty ?? options.DefaultParameters.PresencePenalty,
             FrequencyPenalty = parameters?.FrequencyPenalty ?? options.DefaultParameters.FrequencyPenalty,
             User = options.User,
+        };
+
+    private EmbeddingRequest CreateEmbeddingRequest(IEnumerable<string> messages, string? model = null)
+        => new()
+        {
+            Model = model ?? options.DefaultEmbeddingModel,
+            Input = messages
         };
 
     private async Task AddAssistantResponseAsync(Guid conversationId, IList<ChatGptMessage> messages, ChatGptMessage? message, CancellationToken cancellationToken = default)
@@ -359,7 +388,11 @@ internal class ChatGptClient : IChatGptClient
     private static void NormalizeResponse(HttpResponseMessage httpResponse, ChatGptResponse response, Guid conversationId, string? model)
     {
         response.ConversationId = conversationId;
+        NormalizeResponse(httpResponse, response, model);
+    }
 
+    private static void NormalizeResponse(HttpResponseMessage httpResponse, Response response, string? model)
+    {
         if (string.IsNullOrWhiteSpace(response.Model) && model is not null)
         {
             response.Model = model;

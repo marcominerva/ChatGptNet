@@ -42,6 +42,13 @@ public class ChatGptOptionsBuilder
     public string? DefaultModel { get; set; }
 
     /// <summary>
+    /// Gets or sets the default model for embedding. (default: <see cref="OpenAIEmbeddingModels.TextEmbeddingAda002"/> when the provider is <see cref="OpenAIChatGptServiceConfiguration"> OpenAI</see>).
+    /// </summary>
+    /// <seealso cref="OpenAIEmbeddingModels"/>
+    /// <seealso cref="OpenAIChatGptServiceConfiguration"/>
+    public string? DefaultEmbeddingModel { get; set; }
+
+    /// <summary>
     ///  Gets or sets the default parameters for chat completion.
     /// </summary>
     /// <see cref="ChatGptParameters"/>
@@ -60,6 +67,7 @@ public class ChatGptOptionsBuilder
         {
             MessageLimit = MessageLimit,
             DefaultModel = DefaultModel,
+            DefaultEmbeddingModel = DefaultEmbeddingModel,
             DefaultParameters = DefaultParameters ?? new(),
             MessageExpiration = MessageExpiration,
             ThrowExceptionOnError = ThrowExceptionOnError,
