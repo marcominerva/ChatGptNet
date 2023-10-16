@@ -19,5 +19,11 @@ internal class EmbeddingRequest
     /// <seealso cref="Input"/>
     public IEnumerable<string> Input { get; set; } = Enumerable.Empty<string>();
 
+    /// <summary>
+    /// Gets or sets the user identification for embedding request, which can help to monitor and detect abuse.
+    /// </summary>
+    /// <remarks>
+    /// See <see href="https://platform.openai.com/docs/guides/safety-best-practices/end-user-ids">Safety best practices</see> for more information.
+    /// </remarks>
     public string? User { get; set; }
 }
