@@ -3,7 +3,7 @@
 /// <summary>
 /// Contains constants for ChatGPT function call types.
 /// </summary>
-public static class ChatGptFunctionCalls
+public static class ChatGptToolChoices
 {
     /// <summary>
     /// The model does not call a function, and responds to the end-user.

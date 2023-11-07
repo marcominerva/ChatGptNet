@@ -3,7 +3,7 @@
 /// <summary>
 /// Contains constants for all the possible roles.
 /// </summary>
-public class ChatGptRoles
+public static class ChatGptRoles
 {
     /// <summary>
     /// The system role.

@@ -55,7 +55,7 @@ internal class ChatGptClient : IChatGptClient
         return conversationId;
     }
 
-    public async Task<ChatGptResponse> AskAsync(Guid conversationId, string message, ChatGptFunctionParameters? functionParameters = null, ChatGptParameters? parameters = null, string? model = null, bool addToConversationHistory = true, CancellationToken cancellationToken = default)
+    public async Task<ChatGptResponse> AskAsync(Guid conversationId, string message, ChatGptToolParameters? toolParameters = null, ChatGptParameters? parameters = null, string? model = null, bool addToConversationHistory = true, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(message);
 
@@ -63,7 +63,7 @@ internal class ChatGptClient : IChatGptClient
         conversationId = (conversationId == Guid.Empty) ? Guid.NewGuid() : conversationId;
 
         var messages = await CreateMessageListAsync(conversationId, message, cancellationToken);
-        var request = CreateChatGptRequest(messages, functionParameters, false, parameters, model);
+        var request = CreateChatGptRequest(messages, toolParameters, false, parameters, model);
 
         var requestUri = options.ServiceConfiguration.GetChatCompletionEndpoint(model ?? options.DefaultModel);
         using var httpResponse = await httpClient.PostAsJsonAsync(requestUri, request, jsonSerializerOptions, cancellationToken);
@@ -323,25 +323,27 @@ internal class ChatGptClient : IChatGptClient
         return messages;
     }
 
-    private ChatGptRequest CreateChatGptRequest(IEnumerable<ChatGptMessage> messages, ChatGptFunctionParameters? functionParameters, bool stream, ChatGptParameters? parameters, string? model)
+    private ChatGptRequest CreateChatGptRequest(IEnumerable<ChatGptMessage> messages, ChatGptToolParameters? toolParameters, bool stream, ChatGptParameters? parameters, string? model)
         => new()
         {
             Model = model ?? options.DefaultModel,
             Messages = messages,
-            Functions = functionParameters?.Functions,
-            FunctionCall = functionParameters?.FunctionCall switch
+            Tools = toolParameters?.Tools,
+            ToolChoice = toolParameters?.ToolChoice switch
             {
-                ChatGptFunctionCalls.None or ChatGptFunctionCalls.Auto => functionParameters.FunctionCall,
-                { } => JsonDocument.Parse($$"""{ "name": "{{functionParameters.FunctionCall}}" }"""),
+                ChatGptToolChoices.None or ChatGptToolChoices.Auto => toolParameters.ToolChoice,
+                { } => JsonDocument.Parse($$"""{ "name": "{{toolParameters.ToolChoice}}" }"""),
                 _ => null
             },
             Stream = stream,
+            Seed = parameters?.Seed ?? options.DefaultParameters.Seed,
             Temperature = parameters?.Temperature ?? options.DefaultParameters.Temperature,
             TopP = parameters?.TopP ?? options.DefaultParameters.TopP,
             MaxTokens = parameters?.MaxTokens ?? options.DefaultParameters.MaxTokens,
             PresencePenalty = parameters?.PresencePenalty ?? options.DefaultParameters.PresencePenalty,
             FrequencyPenalty = parameters?.FrequencyPenalty ?? options.DefaultParameters.FrequencyPenalty,
             User = options.User,
+            ResponseFormat = parameters?.ResponseFormat ?? options.DefaultParameters.ResponseFormat
         };
 
     private EmbeddingRequest CreateEmbeddingRequest(IEnumerable<string> messages, string? model = null)
@@ -353,7 +355,7 @@ internal class ChatGptClient : IChatGptClient
 
     private async Task AddAssistantResponseAsync(Guid conversationId, IList<ChatGptMessage> messages, ChatGptMessage? message, CancellationToken cancellationToken = default)
     {
-        if (!string.IsNullOrWhiteSpace(message?.Content?.Trim()) || message?.FunctionCall is not null)
+        if (!string.IsNullOrWhiteSpace(message?.Content?.Trim()) || (message?.ToolCalls?.Any() ?? false))
         {
             // Adds the message to the cache only if it has a content.
             messages.Add(message);

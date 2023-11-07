@@ -29,7 +29,7 @@ public interface IChatGptClient
     /// <param name="cancellationToken">The token to monitor for cancellation requests.</param>
     /// <remarks>This method creates a new conversation, with a system message and the given <paramref name="conversationId"/>. If a conversation with this Id already exists, it will be automatically cleared. Then, call <see cref="AskAsync(Guid, string, ChatGptParameters, string, bool, CancellationToken)"/> to start the actual conversation.</remarks>
     /// <exception cref="ArgumentNullException"><paramref name="message"/> is <see langword="null"/>.</exception>
-    /// <seealso cref="AskAsync(Guid, string, ChatGptFunctionParameters, ChatGptParameters, string, bool, CancellationToken)"/>
+    /// <seealso cref="AskAsync(Guid, string, ChatGptToolParameters, ChatGptParameters, string, bool, CancellationToken)"/>
     Task<Guid> SetupAsync(Guid conversationId, string message, CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -55,7 +55,7 @@ public interface IChatGptClient
     /// Requests a new chat interaction.
     /// </summary>
     /// <param name="message">The message.</param>
-    /// <param name="functionParameters">A <see cref="ChatGptFunctionParameters"/> object that contains the list of available functions for calling.</param>
+    /// <param name="toolParameters">A <see cref="ChatGptToolParameters"/> object that contains the list of available functions for calling.</param>
     /// <param name="parameters">A <see cref="ChatGptParameters"/> object used to override the default completion parameters in the <see cref="ChatGptOptions.DefaultParameters"/> property.</param>
     /// <param name="model">The chat completion model to use. If <paramref name="model"/> is <see langword="null"/>, then the one specified in the <see cref="ChatGptOptions.DefaultModel"/> property will be used.</param>
     /// <param name="addToConversationHistory">Set to <see langword="true"/> to add the current chat interaction to the conversation history.</param>
@@ -70,10 +70,10 @@ public interface IChatGptClient
     /// <seealso cref="ChatGptRequest"/>
     /// <seealso cref="ChatGptResponse"/>
     /// <seealso cref="ChatGptOptions"/>
-    /// <seealso cref="ChatGptFunctionParameters"/>
+    /// <seealso cref="ChatGptToolParameters"/>
     /// <seealso cref="ChatGptParameters"/>
-    Task<ChatGptResponse> AskAsync(string message, ChatGptFunctionParameters? functionParameters, ChatGptParameters? parameters = null, string? model = null, bool addToConversationHistory = true, CancellationToken cancellationToken = default) =>
-        AskAsync(Guid.NewGuid(), message, functionParameters, parameters, model, addToConversationHistory, cancellationToken);
+    Task<ChatGptResponse> AskAsync(string message, ChatGptToolParameters? toolParameters, ChatGptParameters? parameters = null, string? model = null, bool addToConversationHistory = true, CancellationToken cancellationToken = default) =>
+        AskAsync(Guid.NewGuid(), message, toolParameters, parameters, model, addToConversationHistory, cancellationToken);
 
     /// <summary>
     /// Requests a chat interaction.
@@ -98,7 +98,7 @@ public interface IChatGptClient
     /// </summary>
     /// <param name="conversationId">The unique identifier of the conversation, used to automatically retrieve previous messages in the chat history.</param>
     /// <param name="message">The message.</param>
-    /// <param name="functionParameters">A <see cref="ChatGptFunctionParameters"/> object that contains the list of available functions for calling.</param>
+    /// <param name="toolParameters">A <see cref="ChatGptToolParameters"/> object that contains the list of available functions for calling.</param>
     /// <param name="parameters">A <seealso cref="ChatGptParameters"/> object used to override the default completion parameters in the <see cref="ChatGptOptions.DefaultParameters"/> property.</param>
     /// <param name="model">The chat completion model to use. If <paramref name="model"/> is <see langword="null"/>, then the one specified in the <see cref="ChatGptOptions.DefaultModel"/> property will be used.</param>
     /// <param name="addToConversationHistory">Set to <see langword="true"/> to add the current chat interaction to the conversation history.</param>
@@ -111,9 +111,9 @@ public interface IChatGptClient
     /// <exception cref="ChatGptException">An error occurred while calling the API and the <see cref="ChatGptOptions.ThrowExceptionOnError"/> is <see langword="true"/>.</exception>
     /// <seealso cref="ChatGptRequest"/>
     /// <seealso cref="ChatGptResponse"/>
-    /// <seealso cref="ChatGptFunctionParameters"/>
+    /// <seealso cref="ChatGptToolParameters"/>
     /// <seealso cref="ChatGptParameters"/>
-    Task<ChatGptResponse> AskAsync(Guid conversationId, string message, ChatGptFunctionParameters? functionParameters, ChatGptParameters? parameters = null, string? model = null, bool addToConversationHistory = true, CancellationToken cancellationToken = default);
+    Task<ChatGptResponse> AskAsync(Guid conversationId, string message, ChatGptToolParameters? toolParameters, ChatGptParameters? parameters = null, string? model = null, bool addToConversationHistory = true, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Requests a new chat interaction with streaming response, like in ChatGPT.
@@ -234,7 +234,7 @@ public interface IChatGptClient
     /// <exception cref="InvalidOperationException">The conversation history is empty.</exception>
     /// <seealso  cref="AskAsync(Guid, string, ChatGptParameters?, string?, bool, CancellationToken)"/>
     /// <seealso cref="AskStreamAsync(Guid, string, ChatGptParameters?, string?, bool, CancellationToken)"/>
-    /// <seealso cref="ChatGptFunctionCall"/>
+    /// <seealso cref="ChatGptToolCall"/>
     Task AddFunctionResponseAsync(Guid conversationId, string functionName, string content, CancellationToken cancellationToken = default);
 
     /// <summary>

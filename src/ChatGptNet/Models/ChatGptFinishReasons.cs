@@ -3,7 +3,7 @@
 /// <summary>
 /// Contains constants for all the possible chat completion finish reasons.
 /// </summary>
-public class ChatGptFinishReasons
+public static class ChatGptFinishReasons
 {
     /// <summary>
     /// API returned complete model output.

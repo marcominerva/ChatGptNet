@@ -56,9 +56,4 @@ public class ChatGptChoice
     /// </remarks>
     [JsonPropertyName("finish_reason")]
     public string FinishReason { get; set; } = string.Empty;
-
-    /// <summary>
-    /// Gets a value indicating whether this choice contains a function call. 
-    /// </summary>
-    public bool IsFunctionCall => Message?.FunctionCall is not null;
 }

@@ -134,14 +134,16 @@ The configuration can be automatically read from [IConfiguration](https://learn.
     "DefaultEmbeddingModel": "text-embedding-ada-002", // Optional, set it if you want to use embedding
     "MessageLimit": 20,
     "MessageExpiration": "00:30:00",
-    "ThrowExceptionOnError": true
+    "ThrowExceptionOnError": true       // Optional, default: true
     //"User": "UserName",
     //"DefaultParameters": {
+    //    "Seed": null,
     //    "Temperature": 0.8,
     //    "TopP": 1,
     //    "MaxTokens": 500,
     //    "PresencePenalty": 0,
-    //    "FrequencyPenalty": 0
+    //    "FrequencyPenalty": 0,
+    //    "ResponseFormat": { "Type": "text" }  // Allowed values for Type: text (default) or json_object
     //}
 }
 ```

@@ -1,5 +1,6 @@
 ﻿using System.Text.Json;
 using ChatGptNet;
+using ChatGptNet.Extensions;
 using ChatGptNet.Models;
 
 namespace ChatGptConsole;
@@ -71,10 +72,10 @@ internal class Application
             }
         };
 
-        var functionParameters = new ChatGptFunctionParameters
+        var functionParameters = new ChatGptToolParameters
         {
-            FunctionCall = ChatGptFunctionCalls.Auto,   // This is the default if functions are present.
-            Functions = functions
+            ToolChoice = ChatGptToolChoices.Auto,   // This is the default if functions are present.
+            Tools = functions.ToTools()
         };
 
         string? message = null;
@@ -91,7 +92,7 @@ internal class Application
 
                     var response = await chatGptClient.AskAsync(conversationId, message, functionParameters);
 
-                    if (response.IsFunctionCall)
+                    if (response.ContainsFunctionCalls())
                     {
                         Console.WriteLine("I have identified a function to call:");
 
