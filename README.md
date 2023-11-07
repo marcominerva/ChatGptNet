@@ -389,10 +389,10 @@ var functions = new List<ChatGptFunction>
     }
 };
 
-var functionParameters = new ChatGptFunctionParameters
+var functionParameters = new ChatGptToolParameters
 {
-    FunctionCall = ChatGptFunctionCalls.Auto,   // This is the default if functions are present.
-    Functions = functions
+    ToolChoice = ChatGptToolChoices.Auto,   // This is the default if functions are present.
+    Tools = functions.ToTools()
 };
 
 var response = await chatGptClient.AskAsync("What is the weather like in Taggia?", functionParameters);
@@ -403,7 +403,7 @@ We can pass an arbitrary number of functions, each one with a name, a descriptio
 The response object returned by the **AskAsync** method provides a property to check if the model has selected a function call:
 
 ```csharp
-if (response.IsFunctionCall)
+if (response.ContainsFunctionCalls())
 {
     Console.WriteLine("I have identified a function to call:");
 
