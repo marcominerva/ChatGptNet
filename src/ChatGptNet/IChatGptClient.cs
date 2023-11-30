@@ -257,4 +257,17 @@ public interface IChatGptClient
     /// <returns>The embeddings for the provided messages.</returns>
     /// <exception cref="EmbeddingException">An error occurred while calling the API and the <see cref="ChatGptOptions.ThrowExceptionOnError"/> is <see langword="true"/>.</exception>
     Task<EmbeddingResponse> GenerateEmbeddingAsync(IEnumerable<string> messages, string? model = null, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Resends an existing conversation to the ChatGPT service for reprocessing.
+    /// This method is used when the conversation context has been updated, such as after handling a function call.
+    /// Returns a ChatGptResponse reflecting the updated conversation.
+    /// </summary>
+    /// <param name="conversationId">The unique identifier of the conversation to be resent.</param>
+    /// <param name="functionParameters">Optional parameters specific to ChatGPT functions.</param>
+    /// <param name="parameters">Optional general parameters for the ChatGPT request.</param>
+    /// <param name="model">Optional model name to use for reprocessing. Defaults to configured model if not provided.</param>
+    /// <param name="cancellationToken">Token for operation cancellation.</param>
+    /// <returns>The updated ChatGptResponse after reprocessing the conversation.</returns>
+    Task<ChatGptResponse> ResendConversationAsync(Guid conversationId, ChatGptFunctionParameters? functionParameters = null, ChatGptParameters? parameters = null, string? model = null, CancellationToken cancellationToken = default);
 }

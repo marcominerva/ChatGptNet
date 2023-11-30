@@ -55,6 +55,32 @@ internal class ChatGptClient : IChatGptClient
         return conversationId;
     }
 
+    public async Task<ChatGptResponse> ResendConversationAsync(Guid conversationId, ChatGptFunctionParameters? functionParameters = null, ChatGptParameters? parameters = null, string? model = null, CancellationToken cancellationToken = default)
+    {
+        var messages = await cache.GetAsync(conversationId, cancellationToken);
+        if (messages == null || !messages.Any())
+        {
+            throw new InvalidOperationException("Cannot resend conversation because it is empty");
+        }        
+
+        // Create a new request with the updated conversation history
+        var request = CreateChatGptRequest(messages, null, false, null, null);
+        var requestUri = options.ServiceConfiguration.GetChatCompletionEndpoint(options.DefaultModel);
+        using var httpResponse = await httpClient.PostAsJsonAsync(requestUri, request, jsonSerializerOptions, cancellationToken);
+
+        var response = await httpResponse.Content.ReadFromJsonAsync<ChatGptResponse>(jsonSerializerOptions, cancellationToken: cancellationToken);
+        NormalizeResponse(httpResponse, response!, conversationId, options.DefaultModel);
+
+        // Handle response errors
+        if (!response!.IsSuccessful && options.ThrowExceptionOnError)
+        {
+            throw new ChatGptException(response.Error, httpResponse.StatusCode);
+        }
+
+        return response;
+    }
+
+
     public async Task<ChatGptResponse> AskAsync(Guid conversationId, string message, ChatGptFunctionParameters? functionParameters = null, ChatGptParameters? parameters = null, string? model = null, bool addToConversationHistory = true, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(message);
@@ -334,7 +360,7 @@ internal class ChatGptClient : IChatGptClient
                 ChatGptFunctionCalls.None or ChatGptFunctionCalls.Auto => functionParameters.FunctionCall,
                 { } => JsonDocument.Parse($$"""{ "name": "{{functionParameters.FunctionCall}}" }"""),
                 _ => null
-            },
+            },            
             Stream = stream,
             Temperature = parameters?.Temperature ?? options.DefaultParameters.Temperature,
             TopP = parameters?.TopP ?? options.DefaultParameters.TopP,

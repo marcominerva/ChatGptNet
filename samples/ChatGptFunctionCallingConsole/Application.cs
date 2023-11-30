@@ -91,7 +91,7 @@ internal class Application
 
                     var response = await chatGptClient.AskAsync(conversationId, message, functionParameters);
 
-                    if (response.IsFunctionCall)
+                    while (response.IsFunctionCall)
                     {
                         Console.WriteLine("I have identified a function to call:");
 
@@ -108,11 +108,10 @@ internal class Application
                         var functionResponse = await GetWeatherAsync(functionCall.GetArgumentsAsJson());
                         Console.WriteLine(functionResponse);
                         await chatGptClient.AddFunctionResponseAsync(conversationId, functionCall.Name, functionResponse);
+                        response = await chatGptClient.ResendConversationAsync(conversationId, functionParameters); // if in case there is a follow up function call involved
                     }
-                    else
-                    {
-                        Console.WriteLine(response.GetContent());
-                    }
+
+                    Console.WriteLine(response.GetContent());                    
 
                     Console.WriteLine();
                 }
@@ -138,7 +137,7 @@ internal class Application
 
         var location = arguments?.RootElement.GetProperty("location").GetString();
 
-        var response = $"It is {summaries[Random.Shared.Next(summaries.Length)]} in {location}, with {Random.Shared.Next(-20, 35)}° degrees";
-        return Task.FromResult(response);
+        var response = new[] { new { location = location, weather = "Freezing" } };
+        return Task.FromResult( JsonSerializer.Serialize(response));
     }
 }
