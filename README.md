@@ -52,7 +52,9 @@ builder.Services.AddChatGpt(options =>
   - 2023-05-15
   - 2023-06-01-preview
   - 2023-07-01-preview
-  - 2023-08-01-preview (default)
+  - 2023-08-01-preview
+  - 2023-09-01-preview
+  - 2023-12-01-preview (default)
 - _AuthenticationType_: it specifies if the key is an actual API Key or an [Azure Active Directory token](https://learn.microsoft.com/azure/cognitive-services/openai/how-to/managed-identity) (optional, default: "ApiKey").
 
 ### DefaultModel and DefaultEmbeddingModel
@@ -325,13 +327,6 @@ The _preserveSetup_ argument allows to decide whether mantain also the _system_ 
 
 With function calling, we can describe functions and have the model intelligently choose to output a JSON object containing arguments to call those functions. This is a new way to more reliably connect GPT's capabilities with external tools and APIs.
 
-> **Note**
-Currently, on Azure OpenAI Service, function calling is supported  in the following models in API version `2023-07-01-preview` or later:
->- gpt-35-turbo-0613
->- gpt-35-turbo-16k-0613
->- gpt-4-0613
->- gpt-4-32k-0613
-
 **ChatGptNet** fully supports function calling by providing an overload of the **AskAsync** method that allows to specify function definitions. If this parameter is supplied, then the model will decide when it is appropiate to use one the functions. For example:
 
 ```csharp
@@ -352,7 +347,7 @@ var functions = new List<ChatGptFunction>
                 "format": {
                     "type": "string",
                     "enum": ["celsius", "fahrenheit"],
-                    "description": "The temperature unit to use. Infer this from the users location."
+                    "description": "The temperature unit to use. Infer this from the user's location."
                 }
             },
             "required": ["location", "format"]
@@ -374,7 +369,7 @@ var functions = new List<ChatGptFunction>
                 "format": {
                     "type": "string",
                     "enum": ["celsius", "fahrenheit"],
-                    "description": "The temperature unit to use. Infer this from the users location."
+                    "description": "The temperature unit to use. Infer this from the user's location."
                 },
                 "daysNumber": {
                     "type": "integer",

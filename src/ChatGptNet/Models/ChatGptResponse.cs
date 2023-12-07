@@ -47,38 +47,9 @@ public class ChatGptResponse : Response
             || p.ContentFilterResults.Sexual.Filtered) ?? false;
 
     /// <summary>
-    /// Gets the content of the first choice, if available.
-    /// </summary>
-    /// <returns>The content of the first choice, if available.</returns>
-    /// <remarks>When using streaming responses, this method returns a partial message delta.</remarks>
-    /// <seealso cref="ChatGptRequest.Stream"/>
-    public string? GetContent() => Choices.FirstOrDefault()?.Delta?.Content ?? Choices.FirstOrDefault()?.Message?.Content?.Trim();
-
-    /// <summary>
-    /// Gets the content of the first choice, if available.
-    /// </summary>
-    /// <returns>The content of the first choice, if available.</returns>
-    /// <remarks>When using streaming responses, this method returns a partial message delta.</remarks>
-    /// <seealso cref="ChatGptRequest.Stream"/>
-    [Obsolete("This method will be removed in the next version. Use GetContent() instead.")]
-    public string? GetMessage() => GetContent();
-
-    /// <summary>
     /// Gets a value indicating whether the first choice, if available, has been filtered by the content filtering system.
     /// </summary>
     /// <seealso cref="ChatGptChoice"/>
     /// <seealso cref="ChatGptChoice.IsFiltered"/>
     public bool IsContentFiltered => Choices.FirstOrDefault()?.IsFiltered ?? false;
-
-    /// <summary>
-    /// Gets a value indicating whether the first choice, if available, contains a function call. 
-    /// </summary>
-    /// <seealso cref="GetFunctionCall"/>
-    /// <seealso cref="ChatGptFunctionCall"/>
-    public bool IsFunctionCall => Choices.FirstOrDefault()?.IsFunctionCall ?? false;
-
-    /// <summary>
-    /// Gets or sets the function call for the message of the first choice, if available.
-    /// </summary>
-    public ChatGptFunctionCall? GetFunctionCall() => Choices.FirstOrDefault()?.Message?.FunctionCall;
 }

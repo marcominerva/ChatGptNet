@@ -1,5 +1,6 @@
 ﻿using System.Text.Json;
 using ChatGptNet;
+using ChatGptNet.Extensions;
 using ChatGptNet.Models;
 
 namespace ChatGptConsole;
@@ -36,7 +37,7 @@ internal class Application
                         "format": {
                             "type": "string",
                             "enum": ["celsius", "fahrenheit"],
-                            "description": "The temperature unit to use. Infer this from the users location."
+                            "description": "The temperature unit to use. Infer this from the user's location."
                         }
                     },
                     "required": ["location", "format"]
@@ -58,7 +59,7 @@ internal class Application
                         "format": {
                             "type": "string",
                             "enum": ["celsius", "fahrenheit"],
-                            "description": "The temperature unit to use. Infer this from the users location."
+                            "description": "The temperature unit to use. Infer this from the user's location."
                         },
                         "daysNumber": {
                             "type": "integer",
@@ -91,7 +92,7 @@ internal class Application
 
                     var response = await chatGptClient.AskAsync(conversationId, message, functionParameters);
 
-                    if (response.IsFunctionCall)
+                    if (response.ContainsFunctionCalls())
                     {
                         Console.WriteLine("I have identified a function to call:");
 
