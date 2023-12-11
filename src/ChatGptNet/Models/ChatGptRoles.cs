@@ -3,7 +3,7 @@
 /// <summary>
 /// Contains constants for all the possible roles.
 /// </summary>
-public class ChatGptRoles
+public static class ChatGptRoles
 {
     /// <summary>
     /// The system role.
@@ -24,4 +24,9 @@ public class ChatGptRoles
     /// The function role.
     /// </summary>
     public const string Function = "function";
+
+    /// <summary>
+    /// The tool role.
+    /// </summary>
+    public const string Tool = "tool";
 }

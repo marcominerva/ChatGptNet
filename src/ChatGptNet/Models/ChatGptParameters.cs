@@ -1,4 +1,6 @@
-﻿namespace ChatGptNet.Models;
+﻿using System.Text.Json.Serialization;
+
+namespace ChatGptNet.Models;
 
 /// <summary>
 /// Represents chat completion parameters.
@@ -8,6 +10,15 @@
 /// </remarks>
 public class ChatGptParameters
 {
+    /// <summary>
+    /// If specified, the system will make a best effort to sample deterministically, such that repeated requests with the same seed and parameters should return the same result.
+    /// </summary>
+    /// <remarks>
+    /// Determinism is not guaranteed, and you should refer to the <see cref="ChatGptResponse.SystemFingerprint"/> response parameter to monitor changes in the backend.
+    /// </remarks>
+    /// <seealso cref="ChatGptResponse.SystemFingerprint"/>
+    public int? Seed { get; set; }
+
     /// <summary>
     /// Gets or sets what sampling temperature to use, between 0 and 2. Higher values like 0.8 will make the output more random, while lower values like 0.2 will make it more focused and deterministic (default: 1).
     /// </summary>
@@ -46,4 +57,11 @@ public class ChatGptParameters
     /// See <see href="https://platform.openai.com/docs/api-reference/parameter-details">Parameter details</see> for more information.
     /// </remarks>
     public double? FrequencyPenalty { get; set; }
+
+    /// <summary>
+    /// An object specifying the format that the model must output. Used to enable JSON mode.
+    /// </summary>
+    /// <seealso cref="ChatGptResponseFormat"/>
+    [JsonPropertyName("response_format")]
+    public ChatGptResponseFormat? ResponseFormat { get; set; }
 }

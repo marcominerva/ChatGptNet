@@ -1,5 +1,6 @@
 ﻿using ChatGptNet;
 using ChatGptNet.Extensions;
+using ChatGptNet.Models;
 
 namespace ChatGptConsole;
 
@@ -39,7 +40,11 @@ internal class Application
                 {
                     Console.WriteLine("I'm thinking...");
 
-                    var response = await chatGptClient.AskAsync(conversationId, message);
+                    var response = await chatGptClient.AskAsync(conversationId, message, new ChatGptParameters
+                    {
+                        MaxTokens = 150,
+                        Temperature = 0.7
+                    });
 
                     Console.WriteLine(response.GetContent());
                     Console.WriteLine();

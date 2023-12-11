@@ -33,6 +33,13 @@ public class ChatGptResponse : Response
     public IEnumerable<ChatGptChoice> Choices { get; set; } = Enumerable.Empty<ChatGptChoice>();
 
     /// <summary>
+    /// This fingerprint represents the backend configuration that the model runs with.
+    /// Can be used in conjunction with the <see cref="ChatGptParameters.Seed"/> request parameter to understand when backend changes have been made that might impact determinism.
+    /// </summary>
+    [JsonPropertyName("system_fingerprint")]
+    public string? SystemFingerprint { get; set; }
+
+    /// <summary>
     /// Gets or sets the list of prompt filter results determined by the content filtering system.
     /// </summary>
     [JsonPropertyName("prompt_filter_results")]

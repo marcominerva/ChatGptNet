@@ -19,6 +19,20 @@ public static class ChatGptResponseExtensions
         => response.Choices.FirstOrDefault()?.Delta?.Content ?? response.Choices.FirstOrDefault()?.Message?.Content?.Trim();
 
     /// <summary>
+    /// Gets a value indicating whether the first choice, if available, contains a tool call. 
+    /// </summary>
+    /// <seealso cref="GetFunctionCall"/>
+    /// <seealso cref="ChatGptToolCall"/>
+    public static bool ContainsToolCalls(this ChatGptResponse response)
+        => response.Choices.FirstOrDefault()?.ContainsToolCalls() ?? false;
+
+    /// <summary>
+    /// Gets the tool calls for the message of the first choice, if available.
+    /// </summary>
+    public static IEnumerable<ChatGptToolCall>? GetToolCalls(this ChatGptResponse response)
+        => response.Choices.FirstOrDefault()?.Message?.ToolCalls;
+
+    /// <summary>
     /// Gets a value indicating whether the first choice, if available, contains a function call. 
     /// </summary>
     /// <seealso cref="GetFunctionCall"/>

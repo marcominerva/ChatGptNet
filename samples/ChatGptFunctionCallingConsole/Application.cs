@@ -72,11 +72,19 @@ internal class Application
             }
         };
 
-        var functionParameters = new ChatGptFunctionParameters
+        var toolParameters = new ChatGptToolParameters
         {
-            FunctionCall = ChatGptFunctionCalls.Auto,   // This is the default if functions are present.
+            FunctionCall = ChatGptToolChoices.Auto,   // This is the default if functions are present.
             Functions = functions
         };
+
+        // If the you're using a recent model that supports tool calls (a more generic approach to function calling),
+        // for example the gpt-4 1106-preview model, you can use the following code instead:
+        //var toolParameters = new ChatGptToolParameters
+        //{
+        //    ToolChoice = ChatGptToolChoices.Auto,   // This is the default if functions are present.
+        //    Tools = functions.ToTools()
+        //};
 
         string? message = null;
         do
@@ -90,7 +98,7 @@ internal class Application
                 {
                     Console.WriteLine("I'm thinking...");
 
-                    var response = await chatGptClient.AskAsync(conversationId, message, functionParameters);
+                    var response = await chatGptClient.AskAsync(conversationId, message, toolParameters);
 
                     if (response.ContainsFunctionCalls())
                     {
@@ -108,7 +116,17 @@ internal class Application
                         // Simulate the calling to the function.
                         var functionResponse = await GetWeatherAsync(functionCall.GetArgumentsAsJson());
                         Console.WriteLine(functionResponse);
-                        await chatGptClient.AddFunctionResponseAsync(conversationId, functionCall.Name, functionResponse);
+
+                        // After the function has been called, it is necessary to add the response to the conversation.
+
+                        // If you're using the legacy function calling approach, or if you're using a model that doesn't support tool calls,
+                        // you need to use the following code:
+                        await chatGptClient.AddToolResponseAsync(conversationId, functionCall, functionResponse);
+
+                        // If, instead, you're using a recent model that supports tool calls (a more generic approach to function calling),
+                        // for example the gpt-4 1106-preview model, you need the following code:
+                        //var tool = response.GetToolCalls()!.First();
+                        //await chatGptClient.AddToolResponseAsync(conversationId, tool, functionResponse);
                     }
                     else
                     {

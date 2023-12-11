@@ -36,14 +36,14 @@ public class ChatGptOptions
     public bool ThrowExceptionOnError { get; set; } = true;
 
     /// <summary>
-    /// Gets or sets the default model for chat completion. (default: <see cref="OpenAIChatGptModels.Gpt35Turbo"/> when the provider is <see cref="OpenAIChatGptServiceConfiguration"> OpenAI</see>).
+    /// Gets or sets the default model for chat completion. (default: <see cref="OpenAIChatGptModels.Gpt35Turbo"/> when the provider is <see cref="OpenAIChatGptServiceConfiguration">OpenAI</see>).
     /// </summary>
     /// <seealso cref="OpenAIChatGptModels"/>
     /// <seealso cref="OpenAIChatGptServiceConfiguration"/>
     public string? DefaultModel { get; set; }
 
     /// <summary>
-    /// Gets or sets the default model for embedding. (default: <see cref="OpenAIEmbeddingModels.TextEmbeddingAda002"/> when the provider is <see cref="OpenAIChatGptServiceConfiguration"> OpenAI</see>).
+    /// Gets or sets the default model for embedding. (default: <see cref="OpenAIEmbeddingModels.TextEmbeddingAda002"/> when the provider is <see cref="OpenAIChatGptServiceConfiguration">OpenAI</see>).
     /// </summary>
     /// <seealso cref="OpenAIEmbeddingModels"/>
     /// <seealso cref="OpenAIChatGptServiceConfiguration"/>

@@ -11,12 +11,18 @@ public static class ChatGptChoiceExtensions
     /// Gets a value indicating whether this choice contains a function call. 
     /// </summary>
     public static bool ContainsFunctionCalls(this ChatGptChoice choice)
-        => choice.Message?.FunctionCall is not null;
+        => choice.Message?.FunctionCall is not null || (choice.Message?.ToolCalls?.Any(call => call.Type == ChatGptToolTypes.Function) ?? false);
 
     /// <summary>
     /// Gets the first function call of the message, if any.
     /// </summary>
     /// <returns>The first function call of the message, if any.</returns>
     public static ChatGptFunctionCall? GetFunctionCall(this ChatGptChoice choice)
-        => choice.Message?.FunctionCall;
+        => choice.Message?.FunctionCall ?? choice.Message?.ToolCalls?.FirstOrDefault(call => call.Type == ChatGptToolTypes.Function)?.Function;
+
+    /// <summary>
+    /// Gets a value indicating whether this choice contains at least one tool call. 
+    /// </summary>
+    public static bool ContainsToolCalls(this ChatGptChoice choice)
+        => choice.Message?.ToolCalls?.Any() ?? false;
 }
