@@ -1,7 +1,7 @@
 ﻿namespace ChatGptNet.Models;
 
 /// <summary>
-/// Contains parameters about the function calls that are available for ChatGPT.
+/// Contains parameters about the tools calls that are available for ChatGPT.
 /// </summary>
 public class ChatGptToolParameters
 {
