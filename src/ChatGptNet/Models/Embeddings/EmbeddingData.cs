@@ -18,5 +18,5 @@ public class EmbeddingData
     /// <summary>
     /// Gets or sets the embedding data.
     /// </summary>
-    public float[] Embedding { get; set; } = Array.Empty<float>();
+    public float[] Embedding { get; set; } = [];
 }

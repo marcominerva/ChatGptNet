@@ -16,11 +16,9 @@ public class ChatGptResponse : Response
 | [CreatedAt](ChatGptResponse/CreatedAt.md) { get; set; } | Gets or sets the UTC date and time at which the response has been generated. |
 | [Id](ChatGptResponse/Id.md) { get; set; } | Gets or sets the Id of the response. |
 | [IsContentFiltered](ChatGptResponse/IsContentFiltered.md) { get; } | Gets a value indicating whether the first choice, if available, has been filtered by the content filtering system. |
-| [IsFunctionCall](ChatGptResponse/IsFunctionCall.md) { get; } | Gets a value indicating whether the first choice, if available, contains a function call. |
 | [IsPromptFiltered](ChatGptResponse/IsPromptFiltered.md) { get; } | Gets or sets a value indicating whether any prompt has been filtered by the content filtering system. |
 | [PromptFilterResults](ChatGptResponse/PromptFilterResults.md) { get; set; } | Gets or sets the list of prompt filter results determined by the content filtering system. |
-| [GetContent](ChatGptResponse/GetContent.md)() | Gets the content of the first choice, if available. |
-| [GetFunctionCall](ChatGptResponse/GetFunctionCall.md)() | Gets or sets the function call for the message of the first choice, if available. |
+| [SystemFingerprint](ChatGptResponse/SystemFingerprint.md) { get; set; } | This fingerprint represents the backend configuration that the model runs with. Can be used in conjunction with the [`Seed`](./ChatGptParameters/Seed.md) request parameter to understand when backend changes have been made that might impact determinism. |
 
 ## See Also
 

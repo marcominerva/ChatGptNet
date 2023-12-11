@@ -24,4 +24,9 @@ public static class ChatGptRoles
     /// The function role.
     /// </summary>
     public const string Function = "function";
+
+    /// <summary>
+    /// The tool role.
+    /// </summary>
+    public const string Tool = "tool";
 }

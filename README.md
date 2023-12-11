@@ -33,6 +33,11 @@ builder.Services.AddChatGpt(options =>
     options.DefaultEmbeddingModel = "text-embedding-ada-002",
     options.MessageLimit = 16;  // Default: 10
     options.MessageExpiration = TimeSpan.FromMinutes(5);    // Default: 1 hour
+    options.DefaultParameters = new ChatGptParameters
+    {
+        MaxTokens = 800,
+        Temperature = 0.7
+    };
 });
 ```
 
@@ -52,7 +57,9 @@ builder.Services.AddChatGpt(options =>
   - 2023-05-15
   - 2023-06-01-preview
   - 2023-07-01-preview
-  - 2023-08-01-preview (default)
+  - 2023-08-01-preview
+  - 2023-09-01-preview
+  - 2023-12-01-preview (default)
 - _AuthenticationType_: it specifies if the key is an actual API Key or an [Azure Active Directory token](https://learn.microsoft.com/azure/cognitive-services/openai/how-to/managed-identity) (optional, default: "ApiKey").
 
 ### DefaultModel and DefaultEmbeddingModel
@@ -63,7 +70,15 @@ Even if it is not a strictly necessary for chat conversation, the library suppor
 
 ##### OpenAI
 
-Currently available models are: _gpt-3.5-turbo_, _gpt-3.5-turbo-16k_, _gpt-4_ and _gpt-4-32k_. They have fixed names, available in the [OpenAIChatGptModels.cs file](https://github.com/marcominerva/ChatGptNet/blob/master/src/ChatGptNet/Models/OpenAIChatGptModels.cs).
+Currently available models are:
+- gpt-3.5-turbo,
+- gpt-3.5-turbo-16k,
+- gpt-4,
+- gpt-4-32k
+- gpt-4-1106-preview
+- gpt-4-vision-preview
+
+They have fixed names, available in the [OpenAIChatGptModels.cs file](https://github.com/marcominerva/ChatGptNet/blob/master/src/ChatGptNet/Models/OpenAIChatGptModels.cs).
 
 ##### Azure OpenAI Service
 
@@ -137,13 +152,13 @@ The configuration can be automatically read from [IConfiguration](https://learn.
     "ThrowExceptionOnError": true       // Optional, default: true
     //"User": "UserName",
     //"DefaultParameters": {
-    //    "Seed": null,
     //    "Temperature": 0.8,
     //    "TopP": 1,
     //    "MaxTokens": 500,
     //    "PresencePenalty": 0,
     //    "FrequencyPenalty": 0,
-    //    "ResponseFormat": { "Type": "text" }  // Allowed values for Type: text (default) or json_object
+    //    "ResponseFormat": { "Type": "text" }, // Allowed values for Type: text (default) or json_object
+    //    "Seed": 42                            // Optional (any integer value)
     //}
 }
 ```
@@ -216,6 +231,49 @@ var content = response.GetContent();
 > **Note**
 If the response has been filtered by the content filtering system, **GetContent** will return *null*. So, you should always check the `response.IsContentFiltered` property before trying to access to the actual content.
 
+#### Using parameters
+
+Using configuration, it is possible to set default parameters for chat completion. However, we can also specify parameters for each request, using the **AskAsync** or **AskStreamAsync** overloads that accepts a [ChatGptParameters](https://github.com/marcominerva/ChatGptNet/blob/master/src/ChatGptNet/Models/ChatGptParameters.cs) object:
+
+```csharp
+var response = await chatGptClient.AskAsync(conversationId, message, new ChatGptParameters
+{
+    MaxTokens = 150,
+    Temperature = 0.7
+});
+```
+
+We don't need to specify all the parameters, only the ones we want to override. The other ones will be taken from the default configuration.
+
+##### Seed and system fingerprint
+
+ChatGPT is known to be non deterministic. This means that the same input can produce different outputs. To try to control this behavior, we can use the _Temperature_ and _TopP_ parameters. For example, setting the _Temperature_ to values near to 0 makes the model more deterministic, while setting it to values near to 1 makes the model more creative.
+However, this is not always enough to get the same output for the same input. To address this issue, OpenAI introduced the **Seed** parameter. If specified, the model should sample deterministically, such that repeated requests with the same seed and parameters should return the same result. Nevertheless, determinism is not guaranteed neither in this case, and you should refer to the _SystemFingerprint_ response parameter to monitor changes in the backend. Changes in this values mean that the backend configuration has changed, and this might impact determinism.
+
+As always, the _Seed_ property can be specified in the default configuration or in the **AskAsync** or **AskStreamAsync** overloads that accepts a [ChatGptParameters](https://github.com/marcominerva/ChatGptNet/blob/master/src/ChatGptNet/Models/ChatGptParameters.cs).
+
+> **Note**
+_Seed_ and _SystemFingerprint_ are only supported by the most recent models, such as _gpt-4-1106-preview_.
+
+##### Response format
+
+If you want to forse the response in JSON format, you can use the _ResponseFormat_ parameter:
+
+```csharp
+var response = await chatGptClient.AskAsync(conversationId, message, new ChatGptParameters
+{
+    ResponseFormat = ChatGptResponseFormat.Json,
+});
+```
+
+In this way, the response will always be a valid JSON. Note that must also instruct the model to produce JSON via a system or user message. If you don't do this, the model will return an error.
+
+
+As always, the _ResponseFormat_ property can be specified in the default configuration or in the **AskAsync** or **AskStreamAsync** overloads that accepts a [ChatGptParameters](https://github.com/marcominerva/ChatGptNet/blob/master/src/ChatGptNet/Models/ChatGptParameters.cs).
+
+> **Note**
+_ResponseFormat_ is only supported by the most recent models, such as _gpt-4-1106-preview_.
+
 ### Handling a conversation
 
 The **AskAsync** and **AskStreamAsync** (see below) methods provides overloads that require a *conversationId* parameter. If we pass an empty value, a random one is generated and returned.
@@ -286,7 +344,6 @@ app.MapGet("/api/chat/stream", (Guid? conversationId, string message, IChatGptCl
 > **Note**
 If the response has been filtered by the content filtering system, the **AsDeltas** method in the _foreach_ will return *nulls* string.
 
-
 The library is 100% compatible also with Blazor WebAssembly applications:
 
 ![](https://raw.githubusercontent.com/marcominerva/ChatGptNet/master/assets/ChatGptBlazor.WasmStreaming.gif)
@@ -323,16 +380,9 @@ await chatGptClient.DeleteConversationAsync(conversationId, preserveSetup: false
 
 The _preserveSetup_ argument allows to decide whether mantain also the _system_ message that has been set with the **SetupAsync** method (default: _false_).
 
-## Function calling
+## Tool and Function calling
 
 With function calling, we can describe functions and have the model intelligently choose to output a JSON object containing arguments to call those functions. This is a new way to more reliably connect GPT's capabilities with external tools and APIs.
-
-> **Note**
-Currently, on Azure OpenAI Service, function calling is supported  in the following models in API version `2023-07-01-preview` or later:
->- gpt-35-turbo-0613
->- gpt-35-turbo-16k-0613
->- gpt-4-0613
->- gpt-4-32k-0613
 
 **ChatGptNet** fully supports function calling by providing an overload of the **AskAsync** method that allows to specify function definitions. If this parameter is supplied, then the model will decide when it is appropiate to use one the functions. For example:
 
@@ -354,7 +404,7 @@ var functions = new List<ChatGptFunction>
                 "format": {
                     "type": "string",
                     "enum": ["celsius", "fahrenheit"],
-                    "description": "The temperature unit to use. Infer this from the users location."
+                    "description": "The temperature unit to use. Infer this from the user's location."
                 }
             },
             "required": ["location", "format"]
@@ -376,7 +426,7 @@ var functions = new List<ChatGptFunction>
                 "format": {
                     "type": "string",
                     "enum": ["celsius", "fahrenheit"],
-                    "description": "The temperature unit to use. Infer this from the users location."
+                    "description": "The temperature unit to use. Infer this from the user's location."
                 },
                 "daysNumber": {
                     "type": "integer",
@@ -389,13 +439,13 @@ var functions = new List<ChatGptFunction>
     }
 };
 
-var functionParameters = new ChatGptToolParameters
+var toolParameters = new ChatGptToolParameters
 {
-    ToolChoice = ChatGptToolChoices.Auto,   // This is the default if functions are present.
-    Tools = functions.ToTools()
+    FunctionCall = ChatGptToolChoices.Auto,   // This is the default if functions are present.
+    Functions = functions
 };
 
-var response = await chatGptClient.AskAsync("What is the weather like in Taggia?", functionParameters);
+var response = await chatGptClient.AskAsync("What is the weather like in Taggia?", toolParameters);
 ```
 
 We can pass an arbitrary number of functions, each one with a name, a description and a JSON schema describing the function parameters, following the [JSON Schema references](https://json-schema.org/understanding-json-schema). Under the hood, functions are injected into the system message in a syntax the model has been trained on. This means functions count against the model's context limit and are billed as input tokens. 
@@ -416,21 +466,50 @@ if (response.ContainsFunctionCalls())
 
 This code will print something like this:
 
-    I have identified a function to call:
-    GetCurrentWeather
-    {
-        "location": "Taggia",
-        "format": "celsius"
-    }
+```
+I have identified a function to call:
+GetCurrentWeather
+{
+    "location": "Taggia",
+    "format": "celsius"
+}
+```
 
 Note that the API will not actually execute any function calls. It is up to developers to execute function calls using model outputs.
 
-After the actual execution, we need to call the **AddFunctionResponseAsync** method on the **ChatGptClient** to add the response to the conversation history, just like a standard message, so that it will be automatically used for chat completion:
+After the actual execution, we need to call the **AddToolResponseAsync** method on the **ChatGptClient** to add the response to the conversation history, just like a standard message, so that it will be automatically used for chat completion:
 
 ```csharp
 // Calls the remote function API.
 var functionResponse = await GetWeatherAsync(functionCall.Arguments);
-await chatGptClient.AddFunctionResponseAsync(conversationId, functionCall.Name, functionResponse);
+await chatGptClient.AddToolResponseAsync(conversationId, functionCall, functionResponse);
+```
+
+Newer models like _gpt-4-1106-preview_ support a more general approach to functions, the **Tool calling**. When you send a request, you can specify a list of tools the model may call. Currently, only functions are supported, but in future release other types of tools will be available.
+
+To use Tool calling instead of direct Function calling, you need to set the _ToolChoice_ and _Tools_ properties in the **ChatGptToolParameters** object (instead of _FunctionCall_ and _Function_, as in previous example):
+
+```csharp
+var toolParameters = new ChatGptToolParameters
+{
+    ToolChoice = ChatGptToolChoices.Auto,   // This is the default if functions are present.
+    Tools = functions.ToTools()
+};
+```
+
+The **ToTools** extension method is used to convert a list of [ChatGptFunction](https://github.com/marcominerva/ChatGptNet/blob/master/src/ChatGptNet/Models/ChatGptFunction.cs) to a list of tools.
+
+If you use this new approach, of course you still need to check if the model has selected a tool call, using the same approach shown before.
+Then, after the actual execution of the function, you have to call the **AddToolResponseAsync** method, but in this case you need to specify the tool (not the function) to which the response refers:
+
+```csharp
+var tool = response.GetToolCalls()!.First();
+var functionCall = response.GetFunctionCall()!;
+
+// Calls the remote function API.
+var functionResponse = await GetWeatherAsync(functionCall.Arguments);
+
+await chatGptClient.AddToolResponseAsync(conversationId, tool, functionResponse);
 ```
 
 Check out the [Function calling sample](https://github.com/marcominerva/ChatGptNet/blob/master/samples/ChatGptFunctionCallingConsole/Application.cs#L18) for a complete implementation of this workflow.

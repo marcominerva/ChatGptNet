@@ -21,6 +21,11 @@ public static class ChatGptFinishReasons
     public const string FunctionCall = "function_call";
 
     /// <summary>
+    /// The model decided to call a tool.
+    /// </summary>
+    public const string ToolCalls = "tool_calls";
+
+    /// <summary>
     /// Omitted content due to a flag from content filters.
     /// </summary>
     public const string ContentFilter = "content_filter";

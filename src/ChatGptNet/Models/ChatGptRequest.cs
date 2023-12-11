@@ -19,7 +19,38 @@ internal class ChatGptRequest
     /// Gets or sets the messages to generate chat completions for.
     /// </summary>
     /// <seealso cref="ChatGptMessage"/>
-    public IEnumerable<ChatGptMessage> Messages { get; set; } = Enumerable.Empty<ChatGptMessage>();
+    public IEnumerable<ChatGptMessage> Messages { get; set; } = [];
+
+    /// <summary>
+    /// Gets or sets a list of functions the model may generate JSON inputs for.
+    /// </summary>
+    /// <seealso cref="ChatGptFunction"/>
+    /// <seealso cref="FunctionCall"/>
+    public IEnumerable<ChatGptFunction>? Functions { get; set; }
+
+    /// <summary>
+    /// Controls which (if any) function is called by the model.
+    /// </summary>
+    /// <remarks>
+    /// <list type = "bullet" >
+    ///   <item>
+    ///     <term><see cref="ChatGptToolChoices.None"/></term>
+    ///     <description>Model will not call a function and instead generates a message.</description>
+    ///   </item>
+    ///   <item>
+    ///     <term><see cref="ChatGptToolChoices.Auto"/></term>
+    ///     <description>The model can pick between generating a message or calling a function.</description>
+    ///   </item>
+    ///   <item>
+    ///     <term><em>function_name</em></term>
+    ///     <description>Specifying a particular function name forces the model to call that function.</description>
+    ///   </item>
+    /// </list>
+    /// <see cref="ChatGptToolChoices.None"/> is the default when no functions are present. <see cref="ChatGptToolChoices.None"/> is the default if functions are present.
+    /// </remarks>
+    /// <seealso cref="ChatGptFunction"/>
+    [JsonPropertyName("function_call")]
+    public object? FunctionCall { get; set; }
 
     /// <summary>
     /// Gets or sets a list of tools the model may call.
@@ -40,7 +71,7 @@ internal class ChatGptRequest
     ///   </item>
     ///   <item>
     ///     <term><see cref="ChatGptToolChoices.Auto"/></term>
-    ///     <description>The model can pick between generating a message or calling a function</description>
+    ///     <description>The model can pick between generating a message or calling a function.</description>
     ///   </item>
     ///   <item>
     ///     <term><em>function_name</em></term>

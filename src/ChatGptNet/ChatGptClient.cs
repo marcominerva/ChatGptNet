@@ -267,9 +267,9 @@ internal class ChatGptClient : IChatGptClient
         await UpdateCacheAsync(conversationId, messages, cancellationToken);
     }
 
-    public async Task AddFunctionResponseAsync(Guid conversationId, string functionName, string content, CancellationToken cancellationToken = default)
+    public async Task AddToolResponseAsync(Guid conversationId, string? toolId, string name, string content, CancellationToken cancellationToken = default)
     {
-        ArgumentNullException.ThrowIfNull(functionName);
+        ArgumentNullException.ThrowIfNull(name);
         ArgumentNullException.ThrowIfNull(content);
 
         var messages = await cache.GetAsync(conversationId, cancellationToken);
@@ -280,8 +280,9 @@ internal class ChatGptClient : IChatGptClient
 
         messages = messages!.Append(new()
         {
-            Role = ChatGptRoles.Function,
-            Name = functionName,
+            ToolCallId = toolId,
+            Role = toolId is not null ? ChatGptRoles.Tool : ChatGptRoles.Function,
+            Name = name,
             Content = content
         });
 
@@ -312,7 +313,7 @@ internal class ChatGptClient : IChatGptClient
     {
         // Checks whether a list of messages for the given conversationId already exists.
         var conversationHistory = await cache.GetAsync(conversationId, cancellationToken);
-        var messages = conversationHistory?.ToList() ?? new List<ChatGptMessage>();
+        var messages = conversationHistory?.ToList() ?? [];
 
         messages.Add(new()
         {
@@ -328,13 +329,24 @@ internal class ChatGptClient : IChatGptClient
         {
             Model = model ?? options.DefaultModel,
             Messages = messages,
+
+            // If the tool parameters uses the new Tools and ToolChoice properties, that are available only with the latest models.
             Tools = toolParameters?.Tools,
             ToolChoice = toolParameters?.ToolChoice switch
             {
                 ChatGptToolChoices.None or ChatGptToolChoices.Auto => toolParameters.ToolChoice,
-                { } => JsonDocument.Parse($$"""{ "name": "{{toolParameters.ToolChoice}}" }"""),
+                { } => JsonDocument.Parse($$"""{ "type": "{{ChatGptToolTypes.Function}}", "{{ChatGptToolTypes.Function}}": {  "name": "{{toolParameters.ToolChoice}}" } }"""),
                 _ => null
             },
+            // If the tool paramters uses the legacy function properties.
+            Functions = toolParameters?.Functions,
+            FunctionCall = toolParameters?.FunctionCall switch
+            {
+                ChatGptToolChoices.None or ChatGptToolChoices.Auto => toolParameters.FunctionCall,
+                { } => JsonDocument.Parse($$"""{ "name": "{{toolParameters.FunctionCall}}" }"""),
+                _ => null
+            },
+
             Stream = stream,
             Seed = parameters?.Seed ?? options.DefaultParameters.Seed,
             Temperature = parameters?.Temperature ?? options.DefaultParameters.Temperature,
@@ -355,7 +367,7 @@ internal class ChatGptClient : IChatGptClient
 
     private async Task AddAssistantResponseAsync(Guid conversationId, IList<ChatGptMessage> messages, ChatGptMessage? message, CancellationToken cancellationToken = default)
     {
-        if (!string.IsNullOrWhiteSpace(message?.Content?.Trim()) || (message?.ToolCalls?.Any() ?? false))
+        if (!string.IsNullOrWhiteSpace(message?.Content?.Trim()) || message?.FunctionCall is not null || (message?.ToolCalls?.Any() ?? false))
         {
             // Adds the message to the cache only if it has a content.
             messages.Add(message);

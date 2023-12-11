@@ -226,6 +226,22 @@ public interface IChatGptClient
     /// Adds a function response to the conversation history.
     /// </summary>
     /// <param name="conversationId">The unique identifier of the conversation.</param>
+    /// <param name="function">The <see cref="ChatGptFunction"/> to which this response refers..</param>
+    /// <param name="content">The content of the function response.</param>
+    /// <param name="cancellationToken">The token to monitor for cancellation requests.</param>
+    /// <returns>The <see cref="Task"/> corresponding to the asynchronous operation.</returns>
+    /// <exception cref="ArgumentNullException"><see cref="ChatGptFunction.Name"/> or <paramref name="content"/> are <see langword="null"/>.</exception>
+    /// <exception cref="InvalidOperationException">The conversation history is empty.</exception>
+    /// <seealso  cref="AskAsync(Guid, string, ChatGptParameters?, string?, bool, CancellationToken)"/>
+    /// <seealso cref="AskStreamAsync(Guid, string, ChatGptParameters?, string?, bool, CancellationToken)"/>
+    /// <seealso cref="ChatGptFunctionCall"/>
+    Task AddToolResponseAsync(Guid conversationId, ChatGptFunctionCall function, string content, CancellationToken cancellationToken = default)
+        => AddToolResponseAsync(conversationId, null, function.Name, content, cancellationToken);
+
+    /// <summary>
+    /// Adds a function response to the conversation history.
+    /// </summary>
+    /// <param name="conversationId">The unique identifier of the conversation.</param>
     /// <param name="functionName">The name of the function.</param>
     /// <param name="content">The content of the function response.</param>
     /// <param name="cancellationToken">The token to monitor for cancellation requests.</param>
@@ -234,8 +250,41 @@ public interface IChatGptClient
     /// <exception cref="InvalidOperationException">The conversation history is empty.</exception>
     /// <seealso  cref="AskAsync(Guid, string, ChatGptParameters?, string?, bool, CancellationToken)"/>
     /// <seealso cref="AskStreamAsync(Guid, string, ChatGptParameters?, string?, bool, CancellationToken)"/>
+    /// <seealso cref="ChatGptFunctionCall"/>
+    Task AddToolResponseAsync(Guid conversationId, string functionName, string content, CancellationToken cancellationToken = default)
+        => AddToolResponseAsync(conversationId, null, functionName, content, cancellationToken);
+
+    /// <summary>
+    /// Adds a tool response to the conversation history.
+    /// </summary>
+    /// <param name="conversationId">The unique identifier of the conversation.</param>
+    /// <param name="tool">The <see cref="ChatGptToolCall"/> to which this response refers.</param>
+    /// <param name="content">The content of the function response.</param>
+    /// <param name="cancellationToken">The token to monitor for cancellation requests.</param>
+    /// <returns>The <see cref="Task"/> corresponding to the asynchronous operation.</returns>
+    /// <exception cref="ArgumentNullException"><see cref="ChatGptToolCall.Function"/> or <paramref name="content"/> are <see langword="null"/>.</exception>
+    /// <exception cref="InvalidOperationException">The conversation history is empty.</exception>
+    /// <seealso  cref="AskAsync(Guid, string, ChatGptParameters?, string?, bool, CancellationToken)"/>
+    /// <seealso cref="AskStreamAsync(Guid, string, ChatGptParameters?, string?, bool, CancellationToken)"/>
     /// <seealso cref="ChatGptToolCall"/>
-    Task AddFunctionResponseAsync(Guid conversationId, string functionName, string content, CancellationToken cancellationToken = default);
+    Task AddToolResponseAsync(Guid conversationId, ChatGptToolCall tool, string content, CancellationToken cancellationToken = default)
+        => AddToolResponseAsync(conversationId, tool.Id, tool.Function!.Name, content, cancellationToken);
+
+    /// <summary>
+    /// Adds a tool response to the conversation history.
+    /// </summary>
+    /// <param name="conversationId">The unique identifier of the conversation.</param>
+    /// <param name="toolId">The Id of the tool to which this answer refers.</param>
+    /// <param name="name">The name of the tool.</param>
+    /// <param name="content">The content of the function response.</param>
+    /// <param name="cancellationToken">The token to monitor for cancellation requests.</param>
+    /// <returns>The <see cref="Task"/> corresponding to the asynchronous operation.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="name"/> or <paramref name="content"/> are <see langword="null"/>.</exception>
+    /// <exception cref="InvalidOperationException">The conversation history is empty.</exception>
+    /// <seealso  cref="AskAsync(Guid, string, ChatGptParameters?, string?, bool, CancellationToken)"/>
+    /// <seealso cref="AskStreamAsync(Guid, string, ChatGptParameters?, string?, bool, CancellationToken)"/>
+    /// <seealso cref="ChatGptToolCall"/>
+    Task AddToolResponseAsync(Guid conversationId, string? toolId, string name, string content, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Generates embeddings for a message.
@@ -246,7 +295,7 @@ public interface IChatGptClient
     /// <returns>The embeddings for the provided message.</returns>
     /// <exception cref="EmbeddingException">An error occurred while calling the API and the <see cref="ChatGptOptions.ThrowExceptionOnError"/> is <see langword="true"/>.</exception>
     Task<EmbeddingResponse> GenerateEmbeddingAsync(string message, string? model = null, CancellationToken cancellationToken = default)
-        => GenerateEmbeddingAsync(new[] { message }, model, cancellationToken);
+        => GenerateEmbeddingAsync([message], model, cancellationToken);
 
     /// <summary>
     /// Generates embeddings for a list of messages.

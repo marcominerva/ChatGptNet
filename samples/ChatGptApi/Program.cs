@@ -2,8 +2,6 @@ using System.Diagnostics;
 using System.Text.Json.Serialization;
 using ChatGptNet;
 using ChatGptNet.Extensions;
-using Microsoft.AspNetCore.Diagnostics;
-using MinimalHelpers.OpenApi;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -30,10 +28,7 @@ builder.Services.ConfigureHttpJsonOptions(options =>
 builder.Services.AddChatGpt(builder.Configuration);
 
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(options =>
-{
-    options.AddMissingSchemas();
-});
+builder.Services.AddSwaggerGen();
 
 builder.Services.AddProblemDetails(options =>
 {
@@ -48,34 +43,7 @@ var app = builder.Build();
 // Configures the HTTP request pipeline.
 app.UseHttpsRedirection();
 
-if (!app.Environment.IsDevelopment())
-{
-    // Error handling
-    app.UseExceptionHandler(new ExceptionHandlerOptions
-    {
-        AllowStatusCode404Response = true,
-        ExceptionHandler = async (HttpContext context) =>
-        {
-            var problemDetailsService = context.RequestServices.GetRequiredService<IProblemDetailsService>();
-            var exceptionHandlerFeature = context.Features.Get<IExceptionHandlerFeature>();
-            var error = exceptionHandlerFeature?.Error;
-
-            // Writes as JSON problem details
-            await problemDetailsService.WriteAsync(new()
-            {
-                HttpContext = context,
-                AdditionalMetadata = exceptionHandlerFeature?.Endpoint?.Metadata,
-                ProblemDetails =
-                {
-                    Status = context.Response.StatusCode,
-                    Title = error?.GetType().FullName ?? "An error occurred while processing your request",
-                    Detail = error?.Message
-                }
-            });
-        }
-    });
-}
-
+app.UseExceptionHandler();
 app.UseStatusCodePages();
 
 app.UseSwagger();
