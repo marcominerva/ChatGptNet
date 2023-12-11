@@ -3,18 +3,18 @@
 Contains constants for all the possible chat completion finish reasons.
 
 ```csharp
-public class ChatGptFinishReasons
+public static class ChatGptFinishReasons
 ```
 
 ## Public Members
 
 | name | description |
 | --- | --- |
-| [ChatGptFinishReasons](ChatGptFinishReasons/ChatGptFinishReasons.md)() | The default constructor. |
 | const [ContentFilter](ChatGptFinishReasons/ContentFilter.md) | Omitted content due to a flag from content filters. |
 | const [FunctionCall](ChatGptFinishReasons/FunctionCall.md) | The model decided to call a function. |
 | const [Length](ChatGptFinishReasons/Length.md) | Incomplete model output due to max_tokens parameter or token limit. |
 | const [Stop](ChatGptFinishReasons/Stop.md) | API returned complete model output. |
+| const [ToolCalls](ChatGptFinishReasons/ToolCalls.md) | The model decided to call a tool. |
 
 ## See Also
 

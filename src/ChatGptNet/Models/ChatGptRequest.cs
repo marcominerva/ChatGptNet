@@ -19,7 +19,7 @@ internal class ChatGptRequest
     /// Gets or sets the messages to generate chat completions for.
     /// </summary>
     /// <seealso cref="ChatGptMessage"/>
-    public IEnumerable<ChatGptMessage> Messages { get; set; } = Enumerable.Empty<ChatGptMessage>();
+    public IEnumerable<ChatGptMessage> Messages { get; set; } = [];
 
     /// <summary>
     /// Gets or sets a list of functions the model may generate JSON inputs for.
@@ -29,19 +29,74 @@ internal class ChatGptRequest
     public IEnumerable<ChatGptFunction>? Functions { get; set; }
 
     /// <summary>
-    /// Controls how the model responds to function calls. <em>none</em> means the model does not call a function, and responds to the end-user. <em>auto</em> means the model can pick between an end-user or calling a function. Specifying a particular function name forces the model to call that function.
+    /// Controls which (if any) function is called by the model.
     /// </summary>
     /// <remarks>
-    /// <em>none</em> is the default when no functions are present. <em>auto</em> is the default if functions are present.
+    /// <list type = "bullet" >
+    ///   <item>
+    ///     <term><see cref="ChatGptToolChoices.None"/></term>
+    ///     <description>Model will not call a function and instead generates a message.</description>
+    ///   </item>
+    ///   <item>
+    ///     <term><see cref="ChatGptToolChoices.Auto"/></term>
+    ///     <description>The model can pick between generating a message or calling a function.</description>
+    ///   </item>
+    ///   <item>
+    ///     <term><em>function_name</em></term>
+    ///     <description>Specifying a particular function name forces the model to call that function.</description>
+    ///   </item>
+    /// </list>
+    /// <see cref="ChatGptToolChoices.None"/> is the default when no functions are present. <see cref="ChatGptToolChoices.None"/> is the default if functions are present.
     /// </remarks>
     /// <seealso cref="ChatGptFunction"/>
     [JsonPropertyName("function_call")]
     public object? FunctionCall { get; set; }
 
     /// <summary>
+    /// Gets or sets a list of tools the model may call.
+    /// </summary>
+    /// <seealso cref="ChatGptTool"/>
+    /// <seealso cref="ChatGptFunction"/>
+    /// <seealso cref="ToolChoice"/>
+    public IEnumerable<ChatGptTool>? Tools { get; set; }
+
+    /// <summary>
+    /// Controls which (if any) function is called by the model.
+    /// </summary>
+    /// <remarks>
+    /// <list type = "bullet" >
+    ///   <item>
+    ///     <term><see cref="ChatGptToolChoices.None"/></term>
+    ///     <description>Model will not call a function and instead generates a message.</description>
+    ///   </item>
+    ///   <item>
+    ///     <term><see cref="ChatGptToolChoices.Auto"/></term>
+    ///     <description>The model can pick between generating a message or calling a function.</description>
+    ///   </item>
+    ///   <item>
+    ///     <term><em>function_name</em></term>
+    ///     <description>Specifying a particular function name forces the model to call that function.</description>
+    ///   </item>
+    /// </list>
+    /// <see cref="ChatGptToolChoices.None"/> is the default when no functions are present. <see cref="ChatGptToolChoices.None"/> is the default if functions are present.
+    /// </remarks>
+    /// <seealso cref="ChatGptFunction"/>
+    [JsonPropertyName("tool_choice")]
+    public object? ToolChoice { get; set; }
+
+    /// <summary>
     /// Gets or sets a value that specify if response will be sent in streaming as partial message deltas.
     /// </summary>
     public bool Stream { get; set; }
+
+    /// <summary>
+    /// If specified, the system will make a best effort to sample deterministically, such that repeated requests with the same seed and parameters should return the same result.
+    /// </summary>
+    /// <remarks>
+    /// Determinism is not guaranteed, and you should refer to the <see cref="ChatGptResponse.SystemFingerprint"/> response parameter to monitor changes in the backend.
+    /// </remarks>
+    /// <seealso cref="ChatGptResponse.SystemFingerprint"/>
+    public int? Seed { get; set; }
 
     /// <summary>
     /// Gets or sets what sampling temperature to use, between 0 and 2. Higher values like 0.8 will make the output more random, while lower values like 0.2 will make it more focused and deterministic (default: 1).
@@ -93,4 +148,11 @@ internal class ChatGptRequest
     /// See <see href="https://platform.openai.com/docs/guides/safety-best-practices/end-user-ids">Safety best practices</see> for more information.
     /// </remarks>
     public string? User { get; set; }
+
+    /// <summary>
+    /// An object specifying the format that the model must output. Used to enable JSON mode.
+    /// </summary>
+    /// <seealso cref="ChatGptResponseFormat"/>
+    [JsonPropertyName("response_format")]
+    public ChatGptResponseFormat? ResponseFormat { get; set; }
 }

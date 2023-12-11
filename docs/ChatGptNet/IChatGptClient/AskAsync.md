@@ -85,16 +85,15 @@ The chat completion response.
 Requests a new chat interaction.
 
 ```csharp
-public Task<ChatGptResponse> AskAsync(string message, 
-    ChatGptFunctionParameters? functionParameters, ChatGptParameters? parameters = null, 
-    string? model = null, bool addToConversationHistory = true, 
-    CancellationToken cancellationToken = default)
+public Task<ChatGptResponse> AskAsync(string message, ChatGptToolParameters? toolParameters, 
+    ChatGptParameters? parameters = null, string? model = null, 
+    bool addToConversationHistory = true, CancellationToken cancellationToken = default)
 ```
 
 | parameter | description |
 | --- | --- |
 | message | The message. |
-| functionParameters | A [`ChatGptFunctionParameters`](../../ChatGptNet.Models/ChatGptFunctionParameters.md) object that contains the list of available functions for calling. |
+| toolParameters | A [`ChatGptToolParameters`](../../ChatGptNet.Models/ChatGptToolParameters.md) object that contains the list of available functions for calling. |
 | parameters | A [`ChatGptParameters`](../../ChatGptNet.Models/ChatGptParameters.md) object used to override the default completion parameters in the [`DefaultParameters`](../ChatGptOptions/DefaultParameters.md) property. |
 | model | The chat completion model to use. If *model* is `null`, then the one specified in the [`DefaultModel`](../ChatGptOptions/DefaultModel.md) property will be used. |
 | addToConversationHistory | Set to `true` to add the current chat interaction to the conversation history. |
@@ -121,7 +120,7 @@ The Chat Completions API does not call the function; instead, the model generate
 
 * class [ChatGptResponse](../../ChatGptNet.Models/ChatGptResponse.md)
 * class [ChatGptOptions](../ChatGptOptions.md)
-* class [ChatGptFunctionParameters](../../ChatGptNet.Models/ChatGptFunctionParameters.md)
+* class [ChatGptToolParameters](../../ChatGptNet.Models/ChatGptToolParameters.md)
 * class [ChatGptParameters](../../ChatGptNet.Models/ChatGptParameters.md)
 * interface [IChatGptClient](../IChatGptClient.md)
 * namespace [ChatGptNet](../../ChatGptNet.md)
@@ -134,7 +133,7 @@ Requests a chat interaction.
 
 ```csharp
 public Task<ChatGptResponse> AskAsync(Guid conversationId, string message, 
-    ChatGptFunctionParameters? functionParameters, ChatGptParameters? parameters = null, 
+    ChatGptToolParameters? toolParameters, ChatGptParameters? parameters = null, 
     string? model = null, bool addToConversationHistory = true, 
     CancellationToken cancellationToken = default)
 ```
@@ -143,7 +142,7 @@ public Task<ChatGptResponse> AskAsync(Guid conversationId, string message,
 | --- | --- |
 | conversationId | The unique identifier of the conversation, used to automatically retrieve previous messages in the chat history. |
 | message | The message. |
-| functionParameters | A [`ChatGptFunctionParameters`](../../ChatGptNet.Models/ChatGptFunctionParameters.md) object that contains the list of available functions for calling. |
+| toolParameters | A [`ChatGptToolParameters`](../../ChatGptNet.Models/ChatGptToolParameters.md) object that contains the list of available functions for calling. |
 | parameters | A  object used to override the default completion parameters in the [`DefaultParameters`](../ChatGptOptions/DefaultParameters.md) property. |
 | model | The chat completion model to use. If *model* is `null`, then the one specified in the [`DefaultModel`](../ChatGptOptions/DefaultModel.md) property will be used. |
 | addToConversationHistory | Set to `true` to add the current chat interaction to the conversation history. |
@@ -167,7 +166,7 @@ The Chat Completions API does not call the function; instead, the model generate
 ## See Also
 
 * class [ChatGptResponse](../../ChatGptNet.Models/ChatGptResponse.md)
-* class [ChatGptFunctionParameters](../../ChatGptNet.Models/ChatGptFunctionParameters.md)
+* class [ChatGptToolParameters](../../ChatGptNet.Models/ChatGptToolParameters.md)
 * class [ChatGptParameters](../../ChatGptNet.Models/ChatGptParameters.md)
 * interface [IChatGptClient](../IChatGptClient.md)
 * namespace [ChatGptNet](../../ChatGptNet.md)

@@ -17,7 +17,7 @@ internal class EmbeddingRequest
     /// Gets or sets the messages array to generate embeddings for.
     /// </summary>
     /// <seealso cref="Input"/>
-    public IEnumerable<string> Input { get; set; } = Enumerable.Empty<string>();
+    public IEnumerable<string> Input { get; set; } = [];
 
     /// <summary>
     /// Gets or sets the user identification for embedding request, which can help to monitor and detect abuse.

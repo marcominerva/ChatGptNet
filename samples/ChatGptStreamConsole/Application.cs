@@ -1,4 +1,5 @@
 ﻿using ChatGptNet;
+using ChatGptNet.Extensions;
 
 namespace ChatGptStreamConsole;
 

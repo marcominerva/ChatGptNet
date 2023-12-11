@@ -11,6 +11,11 @@ public static class ChatGptResponseExtensions
 | name | description |
 | --- | --- |
 | static [AsDeltas](ChatGptResponseExtensions/AsDeltas.md)(…) | Returns an IAsyncEnumerable that allows to enumerate all the partial message deltas. |
+| static [ContainsFunctionCalls](ChatGptResponseExtensions/ContainsFunctionCalls.md)(…) | Gets a value indicating whether the first choice, if available, contains a function call. |
+| static [ContainsToolCalls](ChatGptResponseExtensions/ContainsToolCalls.md)(…) | Gets a value indicating whether the first choice, if available, contains a tool call. |
+| static [GetContent](ChatGptResponseExtensions/GetContent.md)(…) | Gets the content of the first choice, if available. |
+| static [GetFunctionCall](ChatGptResponseExtensions/GetFunctionCall.md)(…) | Gets or sets the function call for the message of the first choice, if available. |
+| static [GetToolCalls](ChatGptResponseExtensions/GetToolCalls.md)(…) | Gets the tool calls for the message of the first choice, if available. |
 
 ## See Also
 

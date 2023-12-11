@@ -3,7 +3,7 @@
 /// <summary>
 /// Contains constants for all the possible chat completion finish reasons.
 /// </summary>
-public class ChatGptFinishReasons
+public static class ChatGptFinishReasons
 {
     /// <summary>
     /// API returned complete model output.
@@ -19,6 +19,11 @@ public class ChatGptFinishReasons
     /// The model decided to call a function.
     /// </summary>
     public const string FunctionCall = "function_call";
+
+    /// <summary>
+    /// The model decided to call a tool.
+    /// </summary>
+    public const string ToolCalls = "tool_calls";
 
     /// <summary>
     /// Omitted content due to a flag from content filters.

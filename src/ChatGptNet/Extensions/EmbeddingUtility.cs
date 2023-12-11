@@ -36,7 +36,7 @@ public static class EmbeddingUtility
     /// <seealso cref="IChatGptClient.GenerateEmbeddingAsync(string, string?, CancellationToken)"/>
     /// <seealso cref="EmbeddingResponse"/>
     public static float CosineSimilarity(this EmbeddingResponse embeddingResponse, ReadOnlySpan<float> y)
-        => CosineSimilarity(embeddingResponse.GetEmbedding() ?? Array.Empty<float>(), y);
+        => CosineSimilarity(embeddingResponse.GetEmbedding() ?? [], y);
 
     /// <summary>
     /// Computes the cosine similarity between the results of two embedding requests.
@@ -47,5 +47,5 @@ public static class EmbeddingUtility
     /// <seealso cref="IChatGptClient.GenerateEmbeddingAsync(string, string?, CancellationToken)"/>
     /// <seealso cref="EmbeddingResponse"/>
     public static float CosineSimilarity(this EmbeddingResponse embeddingResponse, EmbeddingResponse otherResponse)
-        => CosineSimilarity(embeddingResponse.GetEmbedding() ?? Array.Empty<float>(), otherResponse.GetEmbedding() ?? Array.Empty<float>());
+        => CosineSimilarity(embeddingResponse.GetEmbedding() ?? [], otherResponse.GetEmbedding() ?? []);
 }

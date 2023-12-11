@@ -1,6 +1,6 @@
 # ChatGptOptions.DefaultEmbeddingModel property
 
-Gets or sets the default model for embedding. (default: [`TextEmbeddingAda002`](../../ChatGptNet.Models.Embeddings/OpenAIEmbeddingModels/TextEmbeddingAda002.md) when the provider is  OpenAI).
+Gets or sets the default model for embedding. (default: [`TextEmbeddingAda002`](../../ChatGptNet.Models.Embeddings/OpenAIEmbeddingModels/TextEmbeddingAda002.md) when the provider is OpenAI).
 
 ```csharp
 public string? DefaultEmbeddingModel { get; set; }

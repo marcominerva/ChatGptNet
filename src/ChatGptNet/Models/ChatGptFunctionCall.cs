@@ -3,7 +3,7 @@
 namespace ChatGptNet.Models;
 
 /// <summary>
-/// Represents a function call.
+/// Represents a response function call.
 /// </summary>
 public class ChatGptFunctionCall
 {
