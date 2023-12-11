@@ -10,8 +10,8 @@ public interface IChatGptClient
 
 | name | description |
 | --- | --- |
-| [AddFunctionResponseAsync](IChatGptClient/AddFunctionResponseAsync.md)(…) | Adds a function response to the conversation history. |
 | [AddInteractionAsync](IChatGptClient/AddInteractionAsync.md)(…) | Explicitly adds a new interaction (a question and the corresponding answer) to the conversation history. |
+| [AddToolResponseAsync](IChatGptClient/AddToolResponseAsync.md)(…) | Adds a function response to the conversation history. (4 methods) |
 | [AskAsync](IChatGptClient/AskAsync.md)(…) | Requests a new chat interaction. (4 methods) |
 | [AskStreamAsync](IChatGptClient/AskStreamAsync.md)(…) | Requests a new chat interaction with streaming response, like in ChatGPT. (2 methods) |
 | [ConversationExistsAsync](IChatGptClient/ConversationExistsAsync.md)(…) | Checks if a chat conversation exists. |

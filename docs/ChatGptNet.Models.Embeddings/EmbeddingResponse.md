@@ -12,7 +12,6 @@ public class EmbeddingResponse : Response
 | --- | --- |
 | [EmbeddingResponse](EmbeddingResponse/EmbeddingResponse.md)() | The default constructor. |
 | [Data](EmbeddingResponse/Data.md) { get; set; } | Gets or sets the array of embedding objects. |
-| [GetEmbedding](EmbeddingResponse/GetEmbedding.md)() | Gets the first embedding data, if availably. |
 
 ## See Also
 

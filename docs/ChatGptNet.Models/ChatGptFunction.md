@@ -14,6 +14,7 @@ public class ChatGptFunction
 | [Description](ChatGptFunction/Description.md) { get; set; } | Gets or sets The description of what the function does. |
 | [Name](ChatGptFunction/Name.md) { get; set; } | Gets or sets the name of the function to be called. Must be a-z, A-Z, 0-9, or contain underscores and dashes, with a maximum length of 64. |
 | [Parameters](ChatGptFunction/Parameters.md) { get; set; } | Gets or sets a JsonDocument containing the parameters the function accepts. |
+| static [EmptyParameters](ChatGptFunction/EmptyParameters.md) { get; } | Gets a JsonDocument that represents an empty set of parameters. |
 
 ## See Also
 

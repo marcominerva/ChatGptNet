@@ -1,6 +1,6 @@
 # ChatGptFunctionCall class
 
-Represents a function call.
+Represents a response function call.
 
 ```csharp
 public class ChatGptFunctionCall
