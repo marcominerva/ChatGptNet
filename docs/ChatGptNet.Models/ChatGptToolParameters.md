@@ -1,6 +1,6 @@
 # ChatGptToolParameters class
 
-Contains parameters about the tools that are available for ChatGPT.
+Contains parameters about the tool calls that are available for ChatGPT.
 
 ```csharp
 public class ChatGptToolParameters

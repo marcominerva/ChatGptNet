@@ -512,7 +512,7 @@ var functionResponse = await GetWeatherAsync(functionCall.Arguments);
 await chatGptClient.AddToolResponseAsync(conversationId, tool, functionResponse);
 ```
 
-Check out the [Function calling sample](https://github.com/marcominerva/ChatGptNet/blob/master/samples/ChatGptFunctionCallingConsole/Application.cs#L18) for a complete implementation of this workflow.
+Finally, you need to resend the original message to the chat completion API, so that the model can continue the conversation taking into account the function call response. Check out the [Function calling sample](https://github.com/marcominerva/ChatGptNet/blob/master/samples/ChatGptFunctionCallingConsole/Application.cs#L18) for a complete implementation of this workflow.
 
 ## Content filtering
 

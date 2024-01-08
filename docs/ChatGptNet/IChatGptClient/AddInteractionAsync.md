@@ -1,6 +1,6 @@
 # IChatGptClient.AddInteractionAsync method
 
-Explicitly adds a new interaction (a question and the corresponding answer) to the conversation history.
+Explicitly adds a new interaction (a question and the corresponding answer) to an existing conversation history.
 
 ```csharp
 public Task AddInteractionAsync(Guid conversationId, string question, string answer, 
@@ -22,6 +22,7 @@ The Task corresponding to the asynchronous operation.
 
 | exception | condition |
 | --- | --- |
+| ArgumentException | *conversationId* is Empty. |
 | ArgumentNullException | *question* or *answer* are `null`. |
 
 ## See Also

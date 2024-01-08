@@ -22,6 +22,7 @@ The Task corresponding to the asynchronous operation.
 
 | exception | condition |
 | --- | --- |
+| ArgumentException | *conversationId* is Empty. |
 | ArgumentNullException | [`Name`](../../ChatGptNet.Models/ChatGptFunction/Name.md) or *content* are `null`. |
 | InvalidOperationException | The conversation history is empty. |
 
