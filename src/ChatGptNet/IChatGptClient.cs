@@ -155,13 +155,14 @@ public interface IChatGptClient
     IAsyncEnumerable<ChatGptResponse> AskStreamAsync(Guid conversationId, string message, ChatGptParameters? parameters = null, string? model = null, bool addToConversationHistory = true, CancellationToken cancellationToken = default);
 
     /// <summary>
-    /// Explicitly adds a new interaction (a question and the corresponding answer) to the conversation history.
+    /// Explicitly adds a new interaction (a question and the corresponding answer) to an existing conversation history.
     /// </summary>
     /// <param name="conversationId">The unique identifier of the conversation.</param>
     /// <param name="question">The question.</param>
     /// <param name="answer">The answer.</param>
     /// <param name="cancellationToken">The token to monitor for cancellation requests.</param>
     /// <returns>The <see cref="Task"/> corresponding to the asynchronous operation.</returns>
+    /// <exception cref="ArgumentException"><paramref name="conversationId"/> is <see cref="Guid.Empty"/>.</exception>
     /// <exception cref="ArgumentNullException"><paramref name="question"/> or <paramref name="answer"/> are <see langword="null"/>.</exception>
     Task AddInteractionAsync(Guid conversationId, string question, string answer, CancellationToken cancellationToken = default);
 
@@ -230,6 +231,7 @@ public interface IChatGptClient
     /// <param name="content">The content of the function response.</param>
     /// <param name="cancellationToken">The token to monitor for cancellation requests.</param>
     /// <returns>The <see cref="Task"/> corresponding to the asynchronous operation.</returns>
+    /// <exception cref="ArgumentException"><paramref name="conversationId"/> is <see cref="Guid.Empty"/>.</exception>
     /// <exception cref="ArgumentNullException"><see cref="ChatGptFunction.Name"/> or <paramref name="content"/> are <see langword="null"/>.</exception>
     /// <exception cref="InvalidOperationException">The conversation history is empty.</exception>
     /// <seealso  cref="AskAsync(Guid, string, ChatGptParameters?, string?, bool, CancellationToken)"/>

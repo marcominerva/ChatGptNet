@@ -5,15 +5,8 @@ using ChatGptNet.Models;
 
 namespace ChatGptConsole;
 
-internal class Application
+internal class Application(IChatGptClient chatGptClient)
 {
-    private readonly IChatGptClient chatGptClient;
-
-    public Application(IChatGptClient chatGptClient)
-    {
-        this.chatGptClient = chatGptClient;
-    }
-
     public async Task ExecuteAsync()
     {
         Console.WriteLine("Welcome! You can ask me whatever you want, but if you ask me something about the weather, I will probably suggest you to call a function.");
@@ -107,15 +100,12 @@ internal class Application
                         var functionCall = response.GetFunctionCall()!;
 
                         Console.ForegroundColor = ConsoleColor.Green;
-
                         Console.WriteLine(functionCall.Name);
                         Console.WriteLine(functionCall.Arguments);
-
                         Console.ResetColor();
 
-                        // Simulate the calling to the function.
+                        // Simulates the call to the function.
                         var functionResponse = await GetWeatherAsync(functionCall.GetArgumentsAsJson());
-                        Console.WriteLine(functionResponse);
 
                         // After the function has been called, it is necessary to add the response to the conversation.
 
@@ -127,6 +117,17 @@ internal class Application
                         // for example the gpt-4 1106-preview model, you need the following code:
                         //var tool = response.GetToolCalls()!.First();
                         //await chatGptClient.AddToolResponseAsync(conversationId, tool, functionResponse);
+
+                        Console.WriteLine("The function gives the following response:");
+
+                        Console.ForegroundColor = ConsoleColor.Green;
+                        Console.WriteLine(functionResponse);
+                        Console.ResetColor();
+
+                        // Finally, it sends the original message back to the model, to obtain a response that takes into account the function call.
+                        response = await chatGptClient.AskAsync(conversationId, message, toolParameters);
+
+                        Console.WriteLine(response.GetContent());
                     }
                     else
                     {
@@ -150,14 +151,30 @@ internal class Application
 
     private static Task<string> GetWeatherAsync(JsonDocument? arguments)
     {
-        var summaries = new[]
-        {
-            "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-        };
+        string[] summaries =
+        [
+            "Freezing",
+            "Bracing",
+            "Chilly",
+            "Cool",
+            "Mild",
+            "Warm",
+            "Balmy",
+            "Hot",
+            "Sweltering",
+            "Scorching"
+        ];
 
         var location = arguments?.RootElement.GetProperty("location").GetString();
 
-        var response = $"It is {summaries[Random.Shared.Next(summaries.Length)]} in {location}, with {Random.Shared.Next(-20, 35)}° degrees";
+        var response = $$"""
+            {
+                "location": "{{location}}",
+                "temperature": {{Random.Shared.Next(-5, 35)}},
+                "description": "{{summaries[Random.Shared.Next(summaries.Length)]}}"
+            }
+            """;
+
         return Task.FromResult(response);
     }
 }

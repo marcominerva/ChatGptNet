@@ -246,12 +246,12 @@ internal class ChatGptClient : IChatGptClient
 
     public async Task AddInteractionAsync(Guid conversationId, string question, string answer, CancellationToken cancellationToken = default)
     {
+        ThrowIfEmptyConversationId(conversationId, nameof(conversationId));
         ArgumentNullException.ThrowIfNull(question);
         ArgumentNullException.ThrowIfNull(answer);
 
         var messages = await cache.GetAsync(conversationId, cancellationToken) ?? Enumerable.Empty<ChatGptMessage>();
-        messages = messages.Union(new ChatGptMessage[]
-        {
+        messages = messages.Union([
             new()
             {
                 Role = ChatGptRoles.User,
@@ -262,20 +262,21 @@ internal class ChatGptClient : IChatGptClient
                 Role = ChatGptRoles.Assistant,
                 Content = answer
             }
-        });
+        ]);
 
         await UpdateCacheAsync(conversationId, messages, cancellationToken);
     }
 
     public async Task AddToolResponseAsync(Guid conversationId, string? toolId, string name, string content, CancellationToken cancellationToken = default)
     {
+        ThrowIfEmptyConversationId(conversationId, nameof(conversationId));
         ArgumentNullException.ThrowIfNull(name);
         ArgumentNullException.ThrowIfNull(content);
 
         var messages = await cache.GetAsync(conversationId, cancellationToken);
         if (!messages?.Any() ?? true)
         {
-            throw new InvalidOperationException("Cannot add a function response message if the conversation history is empty");
+            throw new InvalidOperationException("Cannot add a tool/function response message if the conversation history is empty");
         }
 
         messages = messages!.Append(new()
@@ -338,7 +339,8 @@ internal class ChatGptClient : IChatGptClient
                 { } => JsonDocument.Parse($$"""{ "type": "{{ChatGptToolTypes.Function}}", "{{ChatGptToolTypes.Function}}": {  "name": "{{toolParameters.ToolChoice}}" } }"""),
                 _ => null
             },
-            // If the tool paramters uses the legacy function properties.
+
+            // If the tool parameters uses the legacy function properties.
             Functions = toolParameters?.Functions,
             FunctionCall = toolParameters?.FunctionCall switch
             {
@@ -424,6 +426,14 @@ internal class ChatGptClient : IChatGptClient
         if (response.Error is not null)
         {
             response.Error.StatusCode = (int)httpResponse.StatusCode;
+        }
+    }
+
+    private static void ThrowIfEmptyConversationId(Guid guid, string parameterName)
+    {
+        if (guid == Guid.Empty)
+        {
+            throw new ArgumentException($"The value {guid} is invalid", parameterName);
         }
     }
 }
