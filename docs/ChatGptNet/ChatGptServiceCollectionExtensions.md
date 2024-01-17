@@ -10,7 +10,7 @@ public static class ChatGptServiceCollectionExtensions
 
 | name | description |
 | --- | --- |
-| static [AddChatGpt](ChatGptServiceCollectionExtensions/AddChatGpt.md)(…) | Registers a ChatGptClient instance with the specified options. (3 methods) |
+| static [AddChatGpt](ChatGptServiceCollectionExtensions/AddChatGpt.md)(…) | Registers a ChatGptClient instance with the specified options. (5 methods) |
 
 ## See Also
 
