@@ -4,15 +4,8 @@ using ChatGptNet.Models;
 
 namespace ChatGptConsole;
 
-internal class Application
+internal class Application(IChatGptClient chatGptClient)
 {
-    private readonly IChatGptClient chatGptClient;
-
-    public Application(IChatGptClient chatGptClient)
-    {
-        this.chatGptClient = chatGptClient;
-    }
-
     public async Task ExecuteAsync()
     {
         string? message = null;
