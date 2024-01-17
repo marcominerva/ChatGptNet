@@ -15,7 +15,17 @@ static void ConfigureServices(HostBuilderContext context, IServiceCollection ser
     services.AddSingleton<Application>();
 
     // Adds ChatGPT service using settings from IConfiguration.
-    services.AddChatGpt(context.Configuration)
+    services.AddChatGpt(context.Configuration,
+        httpClient =>
+        {
+            // Configures retry policy on the inner HttpClient using Polly.
+            httpClient.AddStandardResilienceHandler(options =>
+            {
+                options.AttemptTimeout.Timeout = TimeSpan.FromMinutes(1);
+                options.CircuitBreaker.SamplingDuration = TimeSpan.FromMinutes(3);
+                options.TotalRequestTimeout.Timeout = TimeSpan.FromMinutes(3);
+            });
+        })
     //.WithCache<LocalMessageCache>() // Uncomment this line to use a custom cache implementation instead of the default MemoryCache.
     ;
 

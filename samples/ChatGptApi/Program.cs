@@ -25,7 +25,17 @@ builder.Services.ConfigureHttpJsonOptions(options =>
 //});
 
 // Adds ChatGPT service using settings from IConfiguration.
-builder.Services.AddChatGpt(builder.Configuration);
+builder.Services.AddChatGpt(builder.Configuration,
+    httpClient =>
+    {
+        // Configures retry policy on the inner HttpClient using Polly.
+        httpClient.AddStandardResilienceHandler(options =>
+        {
+            options.AttemptTimeout.Timeout = TimeSpan.FromMinutes(1);
+            options.CircuitBreaker.SamplingDuration = TimeSpan.FromMinutes(3);
+            options.TotalRequestTimeout.Timeout = TimeSpan.FromMinutes(3);
+        });
+    });
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

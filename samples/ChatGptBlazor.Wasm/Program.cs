@@ -21,6 +21,16 @@ builder.Services.AddChatGpt(options =>
     options.DefaultModel = "my-model";
     options.MessageLimit = 16;  // Default: 10
     options.MessageExpiration = TimeSpan.FromMinutes(5);    // Default: 1 hour   
+},
+httpClient =>
+{
+    // Configures retry policy on the inner HttpClient using Polly.
+    httpClient.AddStandardResilienceHandler(options =>
+    {
+        options.AttemptTimeout.Timeout = TimeSpan.FromMinutes(1);
+        options.CircuitBreaker.SamplingDuration = TimeSpan.FromMinutes(3);
+        options.TotalRequestTimeout.Timeout = TimeSpan.FromMinutes(3);
+    });
 });
 
 await builder.Build().RunAsync();
