@@ -205,6 +205,29 @@ builder.Services.AddChatGpt((services, options) =>
 });
 ```
 
+### Configuring HTTP Client
+
+**ChatGptNet** uses an [HttpClient](https://docs.microsoft.com/dotnet/api/system.net.http.httpclient) to call the chat completion and embedding APIs. If you need to customize it, you can use the overload of the **AddChatGpt** method that accepts an [Action&lt;IHttpClientBuiler&gt;](https://learn.microsoft.com/dotnet/api/microsoft.extensions.dependencyinjection.ihttpclientbuilder) as argument. For example, if you want to add resiliency to the HTTP client (let's say a retry policy), you can use [Polly](https://github.com/App-vNext/Polly):
+
+```csharp
+// using Microsoft.Extensions.DependencyInjection;
+// Requires: Microsoft.Extensions.Http.Resilience
+
+builder.Services.AddChatGpt(context.Configuration,
+    httpClient =>
+    {
+        // Configures retry policy on the inner HttpClient using Polly.
+        httpClient.AddStandardResilienceHandler(options =>
+        {
+            options.AttemptTimeout.Timeout = TimeSpan.FromMinutes(1);
+            options.CircuitBreaker.SamplingDuration = TimeSpan.FromMinutes(3);
+            options.TotalRequestTimeout.Timeout = TimeSpan.FromMinutes(3);
+        });
+    })
+```
+
+More information about this topic is available on the [official documentation](https://learn.microsoft.com/dotnet/core/resilience/http-resilience).
+
 ## Usage
 
 The library can be used in any .NET application built with .NET 6.0 or later. For example, we can create a Minimal API in this way:
