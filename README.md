@@ -30,7 +30,7 @@ builder.Services.AddChatGpt(options =>
     //options.UseAzure(resourceName: "", apiKey: "", authenticationType: AzureAuthenticationType.ApiKey);
 
     options.DefaultModel = "my-model";
-    options.DefaultEmbeddingModel = "text-embedding-ada-002",
+    options.DefaultEmbeddingModel = "text-embedding-ada-002";
     options.MessageLimit = 16;  // Default: 10
     options.MessageExpiration = TimeSpan.FromMinutes(5);    // Default: 1 hour
     options.DefaultParameters = new ChatGptParameters
