@@ -20,6 +20,11 @@ internal class EmbeddingRequest
     public IEnumerable<string> Input { get; set; } = [];
 
     /// <summary>
+    /// The number of dimensions the resulting output embeddings should have. Only supported in <c>text-embedding-3</c> and later models.
+    /// </summary>
+    public int? Dimensions { get; set; }
+
+    /// <summary>
     /// Gets or sets the user identification for embedding request, which can help to monitor and detect abuse.
     /// </summary>
     /// <remarks>

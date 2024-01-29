@@ -290,11 +290,11 @@ internal class ChatGptClient : IChatGptClient
         await UpdateCacheAsync(conversationId, messages, cancellationToken);
     }
 
-    public async Task<EmbeddingResponse> GenerateEmbeddingAsync(IEnumerable<string> messages, string? model = null, CancellationToken cancellationToken = default)
+    public async Task<EmbeddingResponse> GenerateEmbeddingAsync(IEnumerable<string> texts, EmbeddingParameters? embeddingParameters = null, string? model = null, CancellationToken cancellationToken = default)
     {
-        ArgumentNullException.ThrowIfNull(messages);
+        ArgumentNullException.ThrowIfNull(texts);
 
-        var request = CreateEmbeddingRequest(messages, model);
+        var request = CreateEmbeddingRequest(texts, embeddingParameters, model);
 
         var requestUri = options.ServiceConfiguration.GetEmbeddingEndpoint(model ?? options.DefaultEmbeddingModel);
         using var httpResponse = await httpClient.PostAsJsonAsync(requestUri, request, jsonSerializerOptions, cancellationToken);
@@ -360,11 +360,12 @@ internal class ChatGptClient : IChatGptClient
             ResponseFormat = parameters?.ResponseFormat ?? options.DefaultParameters.ResponseFormat
         };
 
-    private EmbeddingRequest CreateEmbeddingRequest(IEnumerable<string> messages, string? model = null)
+    private EmbeddingRequest CreateEmbeddingRequest(IEnumerable<string> messages, EmbeddingParameters? parameters, string? model)
         => new()
         {
             Model = model ?? options.DefaultEmbeddingModel,
-            Input = messages
+            Input = messages,
+            Dimensions = parameters?.Dimensions ?? options.DefaultEmbeddingParameters.Dimensions,
         };
 
     private async Task AddAssistantResponseAsync(Guid conversationId, IList<ChatGptMessage> messages, ChatGptMessage? message, CancellationToken cancellationToken = default)

@@ -289,23 +289,25 @@ public interface IChatGptClient
     Task AddToolResponseAsync(Guid conversationId, string? toolId, string name, string content, CancellationToken cancellationToken = default);
 
     /// <summary>
-    /// Generates embeddings for a message.
+    /// Generates embeddings for a text.
     /// </summary>
-    /// <param name="message">The message to use for generating embeddings.</param>
+    /// <param name="text">The text to use for generating embeddings.</param>
+    /// <param name="parameters">An <see cref="EmbeddingParameters"/> object used to override the default embedding parameters in the <see cref="ChatGptOptions.DefaultEmbeddingParameters"/> property.</param>
     /// <param name="model">The name of the embedding model. If <paramref name="model"/> is <see langword="null"/>, then the one specified in the <see cref="ChatGptOptions.DefaultEmbeddingModel"/> property will be used.</param>
     /// <param name="cancellationToken">The token to monitor for cancellation requests.</param>
     /// <returns>The embeddings for the provided message.</returns>
     /// <exception cref="EmbeddingException">An error occurred while calling the API and the <see cref="ChatGptOptions.ThrowExceptionOnError"/> is <see langword="true"/>.</exception>
-    Task<EmbeddingResponse> GenerateEmbeddingAsync(string message, string? model = null, CancellationToken cancellationToken = default)
-        => GenerateEmbeddingAsync([message], model, cancellationToken);
+    Task<EmbeddingResponse> GenerateEmbeddingAsync(string text, EmbeddingParameters? parameters = null, string? model = null, CancellationToken cancellationToken = default)
+        => GenerateEmbeddingAsync([text], parameters, model, cancellationToken);
 
     /// <summary>
-    /// Generates embeddings for a list of messages.
+    /// Generates embeddings for a list of texts.
     /// </summary>
-    /// <param name="messages">The messages to use for generating embeddings.</param>
+    /// <param name="texts">The texts to use for generating embeddings.</param>
+    /// <param name="parameters">An <see cref="EmbeddingParameters"/> object used to override the default embedding parameters in the <see cref="ChatGptOptions.DefaultEmbeddingParameters"/> property.</param>
     /// <param name="model">The name of the embedding model. If <paramref name="model"/> is <see langword="null"/>, then the one specified in the <see cref="ChatGptOptions.DefaultEmbeddingModel"/> property will be used.</param>
     /// <param name="cancellationToken">The token to monitor for cancellation requests.</param>
     /// <returns>The embeddings for the provided messages.</returns>
     /// <exception cref="EmbeddingException">An error occurred while calling the API and the <see cref="ChatGptOptions.ThrowExceptionOnError"/> is <see langword="true"/>.</exception>
-    Task<EmbeddingResponse> GenerateEmbeddingAsync(IEnumerable<string> messages, string? model = null, CancellationToken cancellationToken = default);
+    Task<EmbeddingResponse> GenerateEmbeddingAsync(IEnumerable<string> texts, EmbeddingParameters? parameters = null, string? model = null, CancellationToken cancellationToken = default);
 }

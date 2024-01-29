@@ -117,7 +117,7 @@ app.MapPost("/api/embeddings", async (EmbeddingRequest request, IChatGptClient c
 })
 .WithOpenApi();
 
-app.MapPost("/api/embeddings/CosineSimilarity", async (CosineSimilarityRequest request, IChatGptClient chatGptClient) =>
+app.MapPost("/api/embeddings/cosine-similarity", async (CosineSimilarityRequest request, IChatGptClient chatGptClient) =>
 {
     var firstEmbeddingResponse = await chatGptClient.GenerateEmbeddingAsync(request.FirstMessage);
     var secondEmbeddingResponse = await chatGptClient.GenerateEmbeddingAsync(request.SecondMessage);

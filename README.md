@@ -136,7 +136,7 @@ We can also set ChatGPT parameters for chat completion at startup. Check the [of
 
 The configuration can be automatically read from [IConfiguration](https://learn.microsoft.com/en-us/dotnet/api/microsoft.extensions.configuration.iconfiguration), using for example a _ChatGPT_ section in the _appsettings.json_ file:
 
-```yaml
+```
 "ChatGPT": {
     "Provider": "OpenAI",               // Optional. Allowed values: OpenAI (default) or Azure
     "ApiKey": "",                       // Required
@@ -159,6 +159,9 @@ The configuration can be automatically read from [IConfiguration](https://learn.
     //    "FrequencyPenalty": 0,
     //    "ResponseFormat": { "Type": "text" }, // Allowed values for Type: text (default) or json_object
     //    "Seed": 42                            // Optional (any integer value)
+    //},
+    //"DefaultEmbeddingParameters": {
+    //    "Dimensions": 1536
     //}
 }
 ```
@@ -550,7 +553,52 @@ var response = await chatGptClient.GenerateEmbeddingAsync(message);
 var embeddings = response.GetEmbedding();
 ```
 
-This code will give you a float array containing all the embeddings for the specified message. The length of the array depends on the model used. For example, if we use the _text-embedding-ada-002_ model, the array will contain 1536 elements.
+This code will give you a float array containing all the embeddings for the specified message. The length of the array depends on the model used:
+
+| Model| Output dimension |
+| - | - |
+| text-embedding-ada-002 | 1536 |
+| text-embedding-3-small | 1536 |
+| text-embedding-3-large | 3072 |
+
+Newer models like _text-embedding-3-small_ and _text-embedding-3-large_ allows developers to trade-off performance and cost of using embeddings. Specifically, developers can shorten embeddings without the embedding losing its concept-representing properties.
+
+As for ChatGPT, this settings can be done in various ways:
+
+- Via code:
+
+```csharp
+builder.Services.AddChatGpt(options =>
+{
+    // ...
+
+    options.DefaultEmbeddingParameters = new EmbeddingParameters
+    {
+        Dimensions = 256
+    };
+});
+```
+
+- Using the _appsettings.json_ file:
+
+```
+"ChatGPT": {    
+    "DefaultEmbeddingParameters": {
+        "Dimensions": 256
+    }
+}
+```
+
+Then, if you want to change the dimension for a particular request, you can specify the *EmbeddingParameters* argument in the **GetEmbeddingAsync** invocation:
+
+```csharp
+var response = await chatGptClient.GenerateEmbeddingAsync(request.Message, new EmbeddingParameters
+{
+    Dimensions = 512
+});
+
+var embeddings = response.GetEmbedding();   // The length of the array is 512
+```
 
 If you need to calculate the [cosine similarity](https://en.wikipedia.org/wiki/Cosine_similarity) between two embeddings, you can use the **EmbeddingUtility.CosineSimilarity** method.
 

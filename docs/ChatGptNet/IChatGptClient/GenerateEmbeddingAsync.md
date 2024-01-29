@@ -1,15 +1,17 @@
 # IChatGptClient.GenerateEmbeddingAsync method (1 of 2)
 
-Generates embeddings for a list of messages.
+Generates embeddings for a list of texts.
 
 ```csharp
-public Task<EmbeddingResponse> GenerateEmbeddingAsync(IEnumerable<string> messages, 
-    string? model = null, CancellationToken cancellationToken = default)
+public Task<EmbeddingResponse> GenerateEmbeddingAsync(IEnumerable<string> texts, 
+    EmbeddingParameters? parameters = null, string? model = null, 
+    CancellationToken cancellationToken = default)
 ```
 
 | parameter | description |
 | --- | --- |
-| messages | The messages to use for generating embeddings. |
+| texts | The texts to use for generating embeddings. |
+| parameters | An [`EmbeddingParameters`](../../ChatGptNet.Models.Embeddings/EmbeddingParameters.md) object used to override the default embedding parameters in the [`DefaultEmbeddingParameters`](../ChatGptOptions/DefaultEmbeddingParameters.md) property. |
 | model | The name of the embedding model. If *model* is `null`, then the one specified in the [`DefaultEmbeddingModel`](../ChatGptOptions/DefaultEmbeddingModel.md) property will be used. |
 | cancellationToken | The token to monitor for cancellation requests. |
 
@@ -26,6 +28,7 @@ The embeddings for the provided messages.
 ## See Also
 
 * class [EmbeddingResponse](../../ChatGptNet.Models.Embeddings/EmbeddingResponse.md)
+* class [EmbeddingParameters](../../ChatGptNet.Models.Embeddings/EmbeddingParameters.md)
 * interface [IChatGptClient](../IChatGptClient.md)
 * namespace [ChatGptNet](../../ChatGptNet.md)
 
@@ -33,16 +36,18 @@ The embeddings for the provided messages.
 
 # IChatGptClient.GenerateEmbeddingAsync method (2 of 2)
 
-Generates embeddings for a message.
+Generates embeddings for a text.
 
 ```csharp
-public Task<EmbeddingResponse> GenerateEmbeddingAsync(string message, string? model = null, 
+public Task<EmbeddingResponse> GenerateEmbeddingAsync(string text, 
+    EmbeddingParameters? parameters = null, string? model = null, 
     CancellationToken cancellationToken = default)
 ```
 
 | parameter | description |
 | --- | --- |
-| message | The message to use for generating embeddings. |
+| text | The text to use for generating embeddings. |
+| parameters | An [`EmbeddingParameters`](../../ChatGptNet.Models.Embeddings/EmbeddingParameters.md) object used to override the default embedding parameters in the [`DefaultEmbeddingParameters`](../ChatGptOptions/DefaultEmbeddingParameters.md) property. |
 | model | The name of the embedding model. If *model* is `null`, then the one specified in the [`DefaultEmbeddingModel`](../ChatGptOptions/DefaultEmbeddingModel.md) property will be used. |
 | cancellationToken | The token to monitor for cancellation requests. |
 
@@ -59,6 +64,7 @@ The embeddings for the provided message.
 ## See Also
 
 * class [EmbeddingResponse](../../ChatGptNet.Models.Embeddings/EmbeddingResponse.md)
+* class [EmbeddingParameters](../../ChatGptNet.Models.Embeddings/EmbeddingParameters.md)
 * interface [IChatGptClient](../IChatGptClient.md)
 * namespace [ChatGptNet](../../ChatGptNet.md)
 

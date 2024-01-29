@@ -71,6 +71,7 @@
 | public type | description |
 | --- | --- |
 | class [EmbeddingData](./ChatGptNet.Models.Embeddings/EmbeddingData.md) | Represents an embedding. |
+| class [EmbeddingParameters](./ChatGptNet.Models.Embeddings/EmbeddingParameters.md) | Represents embeddings parameters. |
 | class [EmbeddingResponse](./ChatGptNet.Models.Embeddings/EmbeddingResponse.md) | Represents an embedding response. |
 | static class [OpenAIEmbeddingModels](./ChatGptNet.Models.Embeddings/OpenAIEmbeddingModels.md) | Contains all the embedding models that are currently supported by OpenAI. |
 

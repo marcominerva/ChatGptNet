@@ -43,7 +43,7 @@ public class ChatGptOptionsBuilder
     public string? DefaultModel { get; set; }
 
     /// <summary>
-    /// Gets or sets the default model for embedding. (default: <see cref="OpenAIEmbeddingModels.TextEmbeddingAda002"/> when the provider is <see cref="OpenAIChatGptServiceConfiguration"> OpenAI</see>).
+    /// Gets or sets the default model for embeddings. (default: <see cref="OpenAIEmbeddingModels.TextEmbeddingAda002"/> when the provider is <see cref="OpenAIChatGptServiceConfiguration"> OpenAI</see>).
     /// </summary>
     /// <seealso cref="OpenAIEmbeddingModels"/>
     /// <seealso cref="OpenAIChatGptServiceConfiguration"/>
@@ -54,6 +54,12 @@ public class ChatGptOptionsBuilder
     /// </summary>
     /// <see cref="ChatGptParameters"/>
     public ChatGptParameters? DefaultParameters { get; set; } = new();
+
+    /// <summary>
+    ///  Gets or sets the default parameters for embeddings.
+    /// </summary>
+    /// <see cref="EmbeddingParameters"/>
+    public EmbeddingParameters DefaultEmbeddingParameters { get; set; } = new();
 
     /// <summary>
     /// Gets or sets the user identification for chat completion, which can help OpenAI to monitor and detect abuse.
@@ -70,6 +76,7 @@ public class ChatGptOptionsBuilder
             DefaultModel = DefaultModel,
             DefaultEmbeddingModel = DefaultEmbeddingModel,
             DefaultParameters = DefaultParameters ?? new(),
+            DefaultEmbeddingParameters = DefaultEmbeddingParameters ?? new(),
             MessageExpiration = MessageExpiration,
             ThrowExceptionOnError = ThrowExceptionOnError,
             ServiceConfiguration = ServiceConfiguration,
