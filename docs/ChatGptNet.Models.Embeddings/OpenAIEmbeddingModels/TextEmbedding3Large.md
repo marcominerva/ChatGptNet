@@ -1,9 +1,9 @@
-# OpenAIEmbeddingModels.TextEmbeddingAda002 field
+# OpenAIEmbeddingModels.TextEmbedding3Large field
 
-The second generation embedding model provided by OpenAI. It uses a 1536 output dimension.
+Most capable embedding model for both english and non-english tasks. It uses a 3072 output dimension.
 
 ```csharp
-public const string TextEmbeddingAda002;
+public const string TextEmbedding3Large;
 ```
 
 ## See Also

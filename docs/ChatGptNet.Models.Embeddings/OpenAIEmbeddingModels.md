@@ -10,7 +10,9 @@ public static class OpenAIEmbeddingModels
 
 | name | description |
 | --- | --- |
-| const [TextEmbeddingAda002](OpenAIEmbeddingModels/TextEmbeddingAda002.md) | The second generation embedding model provided by OpenAI. |
+| const [TextEmbedding3Large](OpenAIEmbeddingModels/TextEmbedding3Large.md) | Most capable embedding model for both english and non-english tasks. It uses a 3072 output dimension. |
+| const [TextEmbedding3Small](OpenAIEmbeddingModels/TextEmbedding3Small.md) | Increased performance over 2nd generation ada embedding model. It uses a 1536 output dimension. |
+| const [TextEmbeddingAda002](OpenAIEmbeddingModels/TextEmbeddingAda002.md) | The second generation embedding model provided by OpenAI. It uses a 1536 output dimension. |
 
 ## Remarks
 

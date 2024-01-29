@@ -12,7 +12,17 @@ namespace ChatGptNet.Models.Embeddings;
 public static class OpenAIEmbeddingModels
 {
     /// <summary>
-    /// The second generation embedding model provided by OpenAI.
+    /// The second generation embedding model provided by OpenAI. It uses a 1536 output dimension.
     /// </summary>
     public const string TextEmbeddingAda002 = "text-embedding-ada-002";
+
+    /// <summary>
+    /// Increased performance over 2nd generation ada embedding model. It uses a 1536 output dimension.
+    /// </summary>
+    public const string TextEmbedding3Small = "text-embedding-3-small";
+
+    /// <summary>
+    /// Most capable embedding model for both english and non-english tasks. It uses a 3072 output dimension.
+    /// </summary>
+    public const string TextEmbedding3Large = "text-embedding-3-large";
 }
