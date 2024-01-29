@@ -59,7 +59,7 @@ public class ChatGptOptionsBuilder
     ///  Gets or sets the default parameters for embeddings.
     /// </summary>
     /// <see cref="EmbeddingParameters"/>
-    public EmbeddingParameters DefaultEmbeddingParameters { get; internal set; } = new();
+    public EmbeddingParameters DefaultEmbeddingParameters { get; set; } = new();
 
     /// <summary>
     /// Gets or sets the user identification for chat completion, which can help OpenAI to monitor and detect abuse.
