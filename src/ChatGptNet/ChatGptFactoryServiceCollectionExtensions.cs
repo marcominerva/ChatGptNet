@@ -42,44 +42,20 @@ public static class ChatGptFactoryServiceCollectionExtensions
         return services.AddChatGptClientFactory(null);
     }
 
-    /// <summary>
-    /// Registers a <see cref="ChatGptClientFactory"/> instance reading configuration from the specified <see cref="IConfiguration"/> source.
-    /// </summary>
-    /// <param name="services">The <see cref="IServiceCollection"/> to add services to.</param>
-    /// <param name="configuration">The <see cref="IConfiguration"/> being bound.</param>
-    /// <param name="sectionName">The name of the configuration section that holds ChatGPT settings (default: ChatGPT).</param>
-    /// <returns>A reference to this instance after the operation has completed.</returns>
-    public static IServiceCollection AddChatGptClientFactory(this IServiceCollection services, IConfiguration configuration, string sectionName = "ChatGPT")
-    {
-        ArgumentNullException.ThrowIfNull(services);
-        ArgumentNullException.ThrowIfNull(configuration);
-
-        var options = new ChatGptOptions();
-        var configurationSection = configuration.GetSection(sectionName);
-        configurationSection.Bind(options);
-
-        // Creates the service configuration (OpenAI or Azure) according to the configuration settings.
-        options.ServiceConfiguration = ChatGptServiceConfiguration.Create(configurationSection);
-
-        SetMissingDefaults(options);
-
-        services.AddChatGptClientFactoryCore(options);
-
-        return services;
-    }
-
-    private static void AddChatGptClientFactoryCore(this IServiceCollection services, ChatGptOptionsBuilder options)
+    private static IServiceCollection AddChatGptClientFactoryCore(this IServiceCollection services, ChatGptOptionsBuilder deafultOptions)
     {
         services.AddMemoryCache();
         services.AddSingleton<IChatGptCache, ChatGptMemoryCache>();
 
         var httpClientBuilder = services.AddHttpClient<IChatGptClientFactory, ChatGptClientFactory>();
         services.AddSingleton<IChatGptClientFactory, ChatGptClientFactory>(
-            s => new ChatGptClientFactory(s, s.GetRequiredService<IChatGptCache>(), options)
+            s => new ChatGptClientFactory(s, s.GetRequiredService<IChatGptCache>(), deafultOptions)
         );
+
+        return services;
     }
 
-    private static void SetMissingDefaults(ChatGptOptionsBuilder options)
+    private static void SetMissingDefaults(ChatGptOptions options)
     {
         // If the provider is OpenAI and no default model has been specified, uses gpt-3.5-turbo by default.
         if (options.ServiceConfiguration is OpenAIChatGptServiceConfiguration && string.IsNullOrWhiteSpace(options.DefaultModel))
