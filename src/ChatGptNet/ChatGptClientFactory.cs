@@ -5,13 +5,13 @@ namespace ChatGptNet;
 internal class ChatGptClientFactory : IChatGptClientFactory
 {
     private readonly IServiceProvider services;
-    private readonly IMemoryCache memoryCache;
+    private readonly IChatGptCache chatGptCache;
     private readonly ChatGptOptions defaultOptions;
 
-    public ChatGptClientFactory(IServiceProvider services, IMemoryCache memoryCache, ChatGptOptions defaultOptions)
+    public ChatGptClientFactory(IServiceProvider services, IChatGptCache chatGptCache, ChatGptOptions defaultOptions)
     {
         this.services = services;
-        this.memoryCache = memoryCache;
+        this.chatGptCache = chatGptCache;
         this.defaultOptions = defaultOptions;
     }
 
@@ -22,7 +22,7 @@ internal class ChatGptClientFactory : IChatGptClientFactory
         if (setupAction is not null)
             setupAction(services, options);
 
-        return new ChatGptClient(new HttpClient(), memoryCache, options);
+        return new ChatGptClient(new HttpClient(), chatGptCache, options);
     }
     public IChatGptClient CreateClient(Action<ChatGptOptions>? setupAction)
     {

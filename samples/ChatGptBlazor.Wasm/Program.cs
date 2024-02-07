@@ -10,13 +10,13 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 
 // Adds ChatGPT service and configure options via code.
-builder.Services.AddChatGpt(options =>
+builder.Services.AddChatGptClientFactory(options =>
 {
     // OpenAI.
     //options.UseOpenAI(apiKey: "", organization: "");
 
     // Azure OpenAI Service.
-    //options.UseAzure(resourceName: "", apiKey: "", authenticationType: AzureAuthenticationType.ApiKey);
+    options.UseAzure(resourceName: "", apiKey: "", authenticationType: AzureAuthenticationType.ApiKey);
 
     options.DefaultModel = "my-model";
     options.MessageLimit = 16;  // Default: 10
