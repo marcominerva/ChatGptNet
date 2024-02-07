@@ -11,6 +11,8 @@ public class ChatGptOptionsBuilder
 | name | description |
 | --- | --- |
 | [ChatGptOptionsBuilder](ChatGptOptionsBuilder/ChatGptOptionsBuilder.md)() | The default constructor. |
+| [DefaultEmbeddingModel](ChatGptOptionsBuilder/DefaultEmbeddingModel.md) { get; set; } | Gets or sets the default model for embeddings. (default: [`TextEmbeddingAda002`](../ChatGptNet.Models.Embeddings/OpenAIEmbeddingModels/TextEmbeddingAda002.md) when the provider is  OpenAI). |
+| [DefaultEmbeddingParameters](ChatGptOptionsBuilder/DefaultEmbeddingParameters.md) { get; } | Gets or sets the default parameters for embeddings. |
 | [DefaultModel](ChatGptOptionsBuilder/DefaultModel.md) { get; set; } | Gets or sets the default model for chat completion. (default: [`Gpt35Turbo`](../ChatGptNet.Models/OpenAIChatGptModels/Gpt35Turbo.md) when the provider is  OpenAI). |
 | [DefaultParameters](ChatGptOptionsBuilder/DefaultParameters.md) { get; set; } | Gets or sets the default parameters for chat completion. |
 | [MessageExpiration](ChatGptOptionsBuilder/MessageExpiration.md) { get; set; } | Gets or sets the expiration for cached conversation messages (default: 1 hour). |

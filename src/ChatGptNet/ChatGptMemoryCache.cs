@@ -3,24 +3,17 @@ using Microsoft.Extensions.Caching.Memory;
 
 namespace ChatGptNet;
 
-internal class ChatGptMemoryCache : IChatGptCache
+internal class ChatGptMemoryCache(IMemoryCache cache) : IChatGptCache
 {
-    private readonly IMemoryCache cache;
-
-    public ChatGptMemoryCache(IMemoryCache cache)
-    {
-        this.cache = cache;
-    }
-
     public Task SetAsync(Guid conversationId, IEnumerable<ChatGptMessage> messages, TimeSpan expiration, CancellationToken cancellationToken = default)
     {
         cache.Set(conversationId, messages, expiration);
         return Task.CompletedTask;
     }
 
-    public Task<List<ChatGptMessage>?> GetAsync(Guid conversationId, CancellationToken cancellationToken = default)
+    public Task<IEnumerable<ChatGptMessage>?> GetAsync(Guid conversationId, CancellationToken cancellationToken = default)
     {
-        var messages = cache.Get<List<ChatGptMessage>?>(conversationId);
+        var messages = cache.Get<IEnumerable<ChatGptMessage>?>(conversationId);
         return Task.FromResult(messages);
     }
 

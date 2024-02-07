@@ -2,8 +2,6 @@ using System.Diagnostics;
 using System.Text.Json.Serialization;
 using ChatGptNet;
 using ChatGptNet.Extensions;
-using Microsoft.AspNetCore.Diagnostics;
-using MinimalHelpers.OpenApi;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,13 +25,20 @@ builder.Services.ConfigureHttpJsonOptions(options =>
 //});
 
 // Adds ChatGPT service using settings from IConfiguration.
-builder.Services.AddChatGpt(builder.Configuration);
+builder.Services.AddChatGpt(builder.Configuration,
+    httpClient =>
+    {
+        // Configures retry policy on the inner HttpClient using Polly.
+        httpClient.AddStandardResilienceHandler(options =>
+        {
+            options.AttemptTimeout.Timeout = TimeSpan.FromMinutes(1);
+            options.CircuitBreaker.SamplingDuration = TimeSpan.FromMinutes(3);
+            options.TotalRequestTimeout.Timeout = TimeSpan.FromMinutes(3);
+        });
+    });
 
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(options =>
-{
-    options.AddMissingSchemas();
-});
+builder.Services.AddSwaggerGen();
 
 builder.Services.AddProblemDetails(options =>
 {
@@ -48,34 +53,7 @@ var app = builder.Build();
 // Configures the HTTP request pipeline.
 app.UseHttpsRedirection();
 
-if (!app.Environment.IsDevelopment())
-{
-    // Error handling
-    app.UseExceptionHandler(new ExceptionHandlerOptions
-    {
-        AllowStatusCode404Response = true,
-        ExceptionHandler = async (HttpContext context) =>
-        {
-            var problemDetailsService = context.RequestServices.GetRequiredService<IProblemDetailsService>();
-            var exceptionHandlerFeature = context.Features.Get<IExceptionHandlerFeature>();
-            var error = exceptionHandlerFeature?.Error;
-
-            // Writes as JSON problem details
-            await problemDetailsService.WriteAsync(new()
-            {
-                HttpContext = context,
-                AdditionalMetadata = exceptionHandlerFeature?.Endpoint?.Metadata,
-                ProblemDetails =
-                {
-                    Status = context.Response.StatusCode,
-                    Title = error?.GetType().FullName ?? "An error occurred while processing your request",
-                    Detail = error?.Message
-                }
-            });
-        }
-    });
-}
-
+app.UseExceptionHandler();
 app.UseStatusCodePages();
 
 app.UseSwagger();
@@ -101,7 +79,7 @@ app.MapPost("/api/chat", async (Request request, IChatGptClient chatGptClient) =
 
 app.MapGet("/api/chat/stream", (Guid? conversationId, string message, IChatGptClient chatGptClient) =>
 {
-    async IAsyncEnumerable<string> Stream()
+    async IAsyncEnumerable<string?> Stream()
     {
         // Requests a streaming response.
         var responseStream = chatGptClient.AskStreamAsync(conversationId.GetValueOrDefault(), message);
@@ -118,9 +96,9 @@ app.MapGet("/api/chat/stream", (Guid? conversationId, string message, IChatGptCl
 })
 .WithOpenApi();
 
-app.MapDelete("/api/chat/{conversationId:guid}", async (Guid conversationId, IChatGptClient chatGptClient) =>
+app.MapDelete("/api/chat/{conversationId:guid}", async (Guid conversationId, bool? preserveSetup, IChatGptClient chatGptClient) =>
 {
-    await chatGptClient.DeleteConversationAsync(conversationId);
+    await chatGptClient.DeleteConversationAsync(conversationId, preserveSetup.GetValueOrDefault());
     return TypedResults.NoContent();
 })
 .WithOpenApi();
@@ -132,6 +110,27 @@ app.MapGet("/api/chat/{conversationId:guid}", async (Guid conversationId, IChatG
 })
 .WithOpenApi();
 
+app.MapPost("/api/embeddings", async (EmbeddingRequest request, IChatGptClient chatGptClient) =>
+{
+    var embeddingResponse = await chatGptClient.GenerateEmbeddingAsync(request.Message);
+    return TypedResults.Ok(embeddingResponse);
+})
+.WithOpenApi();
+
+app.MapPost("/api/embeddings/cosine-similarity", async (CosineSimilarityRequest request, IChatGptClient chatGptClient) =>
+{
+    var firstEmbeddingResponse = await chatGptClient.GenerateEmbeddingAsync(request.FirstMessage);
+    var secondEmbeddingResponse = await chatGptClient.GenerateEmbeddingAsync(request.SecondMessage);
+
+    var similarity = firstEmbeddingResponse.CosineSimilarity(secondEmbeddingResponse);
+    return TypedResults.Ok(new { CosineSimilarity = similarity });
+})
+.WithOpenApi();
+
 app.Run();
 
 public record class Request(Guid ConversationId, string Message);
+
+public record class EmbeddingRequest(string Message);
+
+public record class CosineSimilarityRequest(string FirstMessage, string SecondMessage);

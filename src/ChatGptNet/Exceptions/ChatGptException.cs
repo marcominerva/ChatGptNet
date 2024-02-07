@@ -4,7 +4,7 @@ using ChatGptNet.Models;
 namespace ChatGptNet.Exceptions;
 
 /// <summary>
-/// Represents errors that occur during API invocation.
+/// Represents errors that occur during ChatGPT API invocation.
 /// </summary>
 public class ChatGptException : HttpRequestException
 {

@@ -1,9 +1,10 @@
 # IChatGptBuilderExtensions.WithCache&lt;TImplementation&gt; method
 
-Uses a custom cache implementation for conversation handling.
+Defines a custom cache implementation for conversation handling.
 
 ```csharp
-public static IChatGptBuilder WithCache<TImplementation>(this IChatGptBuilder builder)
+public static IChatGptBuilder WithCache<TImplementation>(this IChatGptBuilder builder, 
+    ServiceLifetime lifetime = ServiceLifetime.Singleton)
     where TImplementation : class, IChatGptCache
 ```
 
@@ -11,14 +12,11 @@ public static IChatGptBuilder WithCache<TImplementation>(this IChatGptBuilder bu
 | --- | --- |
 | TImplementation | The implementation of [`IChatGptCache`](../IChatGptCache.md) to use. |
 | builder | The [`IChatGptBuilder`](../IChatGptBuilder.md) object to configure. |
+| lifetime | The ServiceLifetime of the service. |
 
 ## Return Value
 
 The [`IChatGptBuilder`](../IChatGptBuilder.md) to further customize ChatGPT.
-
-## Remarks
-
-*TImplementation* is registered as singleton.
 
 ## See Also
 

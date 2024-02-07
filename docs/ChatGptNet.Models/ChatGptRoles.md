@@ -3,17 +3,17 @@
 Contains constants for all the possible roles.
 
 ```csharp
-public class ChatGptRoles
+public static class ChatGptRoles
 ```
 
 ## Public Members
 
 | name | description |
 | --- | --- |
-| [ChatGptRoles](ChatGptRoles/ChatGptRoles.md)() | The default constructor. |
 | const [Assistant](ChatGptRoles/Assistant.md) | The assistant role. |
 | const [Function](ChatGptRoles/Function.md) | The function role. |
 | const [System](ChatGptRoles/System.md) | The system role. |
+| const [Tool](ChatGptRoles/Tool.md) | The tool role. |
 | const [User](ChatGptRoles/User.md) | The user role. |
 
 ## See Also

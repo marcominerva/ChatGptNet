@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 env:
-  NET_VERSION: '7.x'
+  NET_VERSION: '8.x'
   PROJECT_NAME: src/ChatGptNet
   PROJECT_FILE: ChatGptNet.csproj
   RELEASE_NAME: ChatGptNet
@@ -16,7 +16,8 @@ jobs:
   publish:
     name: Publish on NuGet
     runs-on: ubuntu-latest
-
+    if: ${{ github.repository_owner == vars.REPOSITORY_OWNER }}
+    
     steps:
     - name: Checkout
       uses: actions/checkout@v3

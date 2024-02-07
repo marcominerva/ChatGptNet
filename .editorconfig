@@ -98,7 +98,7 @@ csharp_style_var_elsewhere = true:suggestion
 csharp_style_var_for_built_in_types = true:suggestion
 csharp_style_var_when_type_is_apparent = true:suggestion
 
-# Expression-bodied members
+# Expression-bodied members preferences
 csharp_style_expression_bodied_accessors = true:silent
 csharp_style_expression_bodied_constructors = false:silent
 csharp_style_expression_bodied_indexers = true:silent
@@ -126,6 +126,7 @@ csharp_preferred_modifier_order = public,private,protected,internal,static,exter
 
 # Code-block preferences
 csharp_style_prefer_top_level_statements = true:suggestion
+csharp_style_prefer_primary_constructors = true:suggestion
 csharp_prefer_braces = true:silent
 csharp_prefer_simple_using_statement = true:suggestion
 csharp_style_namespace_declarations = file_scoped:suggestion
@@ -147,6 +148,7 @@ csharp_using_directive_placement = outside_namespace:suggestion
 
 # Struct preferences
 csharp_style_prefer_readonly_struct = true:suggestion
+csharp_style_prefer_readonly_struct_member = true:suggestion
 
 #### C# Formatting Rules ####
 
@@ -161,6 +163,8 @@ csharp_new_line_between_query_expression_clauses = true
 csharp_style_allow_embedded_statements_on_same_line_experimental = false:error
 csharp_style_allow_blank_lines_between_consecutive_braces_experimental = false:error
 csharp_style_allow_blank_line_after_colon_in_constructor_initializer_experimental = true:silent
+csharp_style_allow_blank_line_after_token_in_conditional_expression_experimental = true:silent
+csharp_style_allow_blank_line_after_token_in_arrow_expression_clause_experimental = true:silent
 
 # Indentation preferences
 csharp_indent_block_contents = true

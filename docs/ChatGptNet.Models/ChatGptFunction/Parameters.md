@@ -3,12 +3,18 @@
 Gets or sets a JsonDocument containing the parameters the function accepts.
 
 ```csharp
-public JsonDocument? Parameters { get; set; }
+public JsonDocument Parameters { get; set; }
 ```
 
 ## Remarks
 
-See the [guide](https://platform.openai.com/docs/guides/gpt/function-calling) for examples, and the [JSON Schema references](https://json-schema.org/understanding-json-schema/) for documentation about the format.
+See the [guide](https://platform.openai.com/docs/guides/gpt/function-calling) for examples, and the [JSON Schema references](https://json-schema.org/understanding-json-schema/) for documentation about the format. To describe a function that accepts no parameters, provide the value
+
+```csharp
+{ "type": "object", "properties": {} }
+```
+
+or use the [`EmptyParameters`](./EmptyParameters.md) property.
 
 ## See Also
 

@@ -3,7 +3,7 @@
 Returns an IAsyncEnumerable that allows to enumerate all the partial message deltas.
 
 ```csharp
-public static IAsyncEnumerable<string> AsDeltas(this IAsyncEnumerable<ChatGptResponse> responses)
+public static IAsyncEnumerable<string?> AsDeltas(this IAsyncEnumerable<ChatGptResponse> responses)
 ```
 
 | parameter | description |

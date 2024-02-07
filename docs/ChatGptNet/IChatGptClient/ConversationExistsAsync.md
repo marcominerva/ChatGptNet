@@ -1,6 +1,6 @@
 # IChatGptClient.ConversationExistsAsync method
 
-Determines if a chat conversation exists.
+Checks if a chat conversation exists.
 
 ```csharp
 public Task<bool> ConversationExistsAsync(Guid conversationId, 

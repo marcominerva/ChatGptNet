@@ -3,7 +3,7 @@
 Represents a chat completion response.
 
 ```csharp
-public class ChatGptResponse
+public class ChatGptResponse : Response
 ```
 
 ## Public Members
@@ -14,17 +14,15 @@ public class ChatGptResponse
 | [Choices](ChatGptResponse/Choices.md) { get; set; } | Gets or sets the list of choices that has been provided by chat completion. |
 | [ConversationId](ChatGptResponse/ConversationId.md) { get; set; } | Gets or sets the Conversation Id, that is used to group messages of the same conversation. |
 | [CreatedAt](ChatGptResponse/CreatedAt.md) { get; set; } | Gets or sets the UTC date and time at which the response has been generated. |
-| [Error](ChatGptResponse/Error.md) { get; set; } | Gets or sets the error occurred during the chat completion execution, if any. |
 | [Id](ChatGptResponse/Id.md) { get; set; } | Gets or sets the Id of the response. |
-| [IsFunctionCall](ChatGptResponse/IsFunctionCall.md) { get; } | Gets a value indicating whether the first choice, if available, contains a function call. |
-| [IsSuccessful](ChatGptResponse/IsSuccessful.md) { get; } | Gets a value that determines if the response was successful. |
-| [Object](ChatGptResponse/Object.md) { get; set; } | Gets or sets the source object for this response. |
-| [Usage](ChatGptResponse/Usage.md) { get; set; } | Gets or sets information about token usage. |
-| [GetFunctionCall](ChatGptResponse/GetFunctionCall.md)() | Gets or sets the function call for the message of the first choice, if available. |
-| [GetMessage](ChatGptResponse/GetMessage.md)() | Gets the content of the first choice, if available. |
+| [IsContentFiltered](ChatGptResponse/IsContentFiltered.md) { get; } | Gets a value indicating whether the first choice, if available, has been filtered by the content filtering system. |
+| [IsPromptFiltered](ChatGptResponse/IsPromptFiltered.md) { get; } | Gets or sets a value indicating whether any prompt has been filtered by the content filtering system. |
+| [PromptFilterResults](ChatGptResponse/PromptFilterResults.md) { get; set; } | Gets or sets the list of prompt filter results determined by the content filtering system. |
+| [SystemFingerprint](ChatGptResponse/SystemFingerprint.md) { get; set; } | This fingerprint represents the backend configuration that the model runs with. Can be used in conjunction with the [`Seed`](./ChatGptParameters/Seed.md) request parameter to understand when backend changes have been made that might impact determinism. |
 
 ## See Also
 
+* class [Response](../ChatGptNet.Models.Common/Response.md)
 * namespace [ChatGptNet.Models](../ChatGptNet.md)
 * [ChatGptResponse.cs](https://github.com/marcominerva/ChatGptNet/tree/master/src/ChatGptNet/Models/ChatGptResponse.cs)
 

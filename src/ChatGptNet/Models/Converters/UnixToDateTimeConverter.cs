@@ -18,7 +18,7 @@ internal class UnixToDateTimeConverter : JsonConverter<DateTime>
                 var span = reader.HasValueSequence ? reader.ValueSequence.ToArray() : reader.ValueSpan;
                 if (Utf8Parser.TryParse(span, out long number, out var bytesConsumed) && span.Length == bytesConsumed)
                 {
-                    var date = UnixTimeStampToDateTime(number);
+                    var date = DateTimeOffset.FromUnixTimeSeconds(number).UtcDateTime;
                     return date;
                 }
             }
@@ -36,15 +36,6 @@ internal class UnixToDateTimeConverter : JsonConverter<DateTime>
         }
 
         return DateTime.MinValue;
-
-        static DateTime UnixTimeStampToDateTime(double unixTimeStamp)
-        {
-            // Unix timestamp is seconds past epoch
-            var dateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
-            dateTime = dateTime.AddSeconds(unixTimeStamp).ToUniversalTime();
-
-            return dateTime;
-        }
     }
 
     public override void Write(Utf8JsonWriter writer, DateTime value, JsonSerializerOptions options)

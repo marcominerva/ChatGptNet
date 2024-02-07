@@ -1,5 +1,6 @@
 ﻿using ChatGptNet.Exceptions;
 using ChatGptNet.Models;
+using ChatGptNet.Models.Embeddings;
 using ChatGptNet.ServiceConfigurations;
 
 namespace ChatGptNet;
@@ -35,17 +36,30 @@ public record ChatGptOptions
     public bool ThrowExceptionOnError { get; set; } = true;
 
     /// <summary>
-    /// Gets or sets the default model for chat completion. (default: <see cref="OpenAIChatGptModels.Gpt35Turbo"/> when the provider is <see cref="OpenAIChatGptServiceConfiguration"> OpenAI</see>).
+    /// Gets or sets the default model for chat completion. (default: <see cref="OpenAIChatGptModels.Gpt35Turbo"/> when the provider is <see cref="OpenAIChatGptServiceConfiguration">OpenAI</see>).
     /// </summary>
     /// <seealso cref="OpenAIChatGptModels"/>
     /// <seealso cref="OpenAIChatGptServiceConfiguration"/>
     public string? DefaultModel { get; set; }
 
     /// <summary>
+    /// Gets or sets the default model for embedding. (default: <see cref="OpenAIEmbeddingModels.TextEmbeddingAda002"/> when the provider is <see cref="OpenAIChatGptServiceConfiguration">OpenAI</see>).
+    /// </summary>
+    /// <seealso cref="OpenAIEmbeddingModels"/>
+    /// <seealso cref="OpenAIChatGptServiceConfiguration"/>
+    public string? DefaultEmbeddingModel { get; set; }
+
+    /// <summary>
     ///  Gets or sets the default parameters for chat completion.
     /// </summary>
     /// <see cref="ChatGptParameters"/>
     public ChatGptParameters DefaultParameters { get; internal set; } = new();
+
+    /// <summary>
+    ///  Gets or sets the default parameters for embeddings.
+    /// </summary>
+    /// <see cref="EmbeddingParameters"/>
+    public EmbeddingParameters DefaultEmbeddingParameters { get; internal set; } = new();
 
     /// <summary>
     /// Gets or sets the user identification for chat completion, which can help OpenAI to monitor and detect abuse.

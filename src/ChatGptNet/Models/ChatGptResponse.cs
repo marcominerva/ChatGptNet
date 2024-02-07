@@ -1,4 +1,6 @@
-﻿using System.Text.Json.Serialization;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Text.Json.Serialization;
+using ChatGptNet.Models.Common;
 using ChatGptNet.Models.Converters;
 
 namespace ChatGptNet.Models;
@@ -6,17 +8,12 @@ namespace ChatGptNet.Models;
 /// <summary>
 /// Represents a chat completion response.
 /// </summary>
-public class ChatGptResponse
+public class ChatGptResponse : Response
 {
     /// <summary>
     /// Gets or sets the Id of the response.
     /// </summary>
     public string Id { get; set; } = string.Empty;
-
-    /// <summary>
-    /// Gets or sets the source object for this response.
-    /// </summary>
-    public string Object { get; set; } = string.Empty;
 
     /// <summary>
     /// Gets or sets the Conversation Id, that is used to group messages of the same conversation.
@@ -31,40 +28,35 @@ public class ChatGptResponse
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
     /// <summary>
-    /// Gets or sets information about token usage.
-    /// </summary>
-    public ChatGptUsage Usage { get; set; } = new();
-
-    /// <summary>
-    /// Gets or sets the error occurred during the chat completion execution, if any.
-    /// </summary>
-    public ChatGptError? Error { get; set; }
-
-    /// <summary>
     /// Gets or sets the list of choices that has been provided by chat completion.
     /// </summary>
     public IEnumerable<ChatGptChoice> Choices { get; set; } = Enumerable.Empty<ChatGptChoice>();
 
     /// <summary>
-    /// Gets a value that determines if the response was successful.
+    /// This fingerprint represents the backend configuration that the model runs with.
+    /// Can be used in conjunction with the <see cref="ChatGptParameters.Seed"/> request parameter to understand when backend changes have been made that might impact determinism.
     /// </summary>
-    public bool IsSuccessful => Error is null;
+    [JsonPropertyName("system_fingerprint")]
+    public string? SystemFingerprint { get; set; }
 
     /// <summary>
-    /// Gets the content of the first choice, if available.
+    /// Gets or sets the list of prompt filter results determined by the content filtering system.
     /// </summary>
-    /// <returns>The content of the first choice, if available.</returns>
-    /// <remarks>When using streaming responses, the <see cref="GetMessage"/> property returns a partial message delta.</remarks>
-    /// <seealso cref="ChatGptRequest.Stream"/>
-    public string? GetMessage() => Choices.FirstOrDefault()?.Delta?.Content ?? Choices.FirstOrDefault()?.Message.Content?.Trim();
+    [JsonPropertyName("prompt_filter_results")]
+    public IEnumerable<ChatGptPromptFilterResults>? PromptFilterResults { get; set; }
 
     /// <summary>
-    /// Gets a value indicating whether the first choice, if available, contains a function call. 
+    /// Gets or sets a value indicating whether any prompt has been filtered by the content filtering system.
     /// </summary>
-    public bool IsFunctionCall => Choices.FirstOrDefault()?.IsFunctionCall ?? false;
+    [MemberNotNullWhen(true, nameof(PromptFilterResults))]
+    public bool IsPromptFiltered => PromptFilterResults?.Any(
+        p => p.ContentFilterResults.Hate.Filtered || p.ContentFilterResults.SelfHarm.Filtered || p.ContentFilterResults.Violence.Filtered
+            || p.ContentFilterResults.Sexual.Filtered) ?? false;
 
     /// <summary>
-    /// Gets or sets the function call for the message of the first choice, if available.
+    /// Gets a value indicating whether the first choice, if available, has been filtered by the content filtering system.
     /// </summary>
-    public ChatGptFunctionCall? GetFunctionCall() => Choices.FirstOrDefault()?.Message.FunctionCall;
+    /// <seealso cref="ChatGptChoice"/>
+    /// <seealso cref="ChatGptChoice.IsFiltered"/>
+    public bool IsContentFiltered => Choices.FirstOrDefault()?.IsFiltered ?? false;
 }

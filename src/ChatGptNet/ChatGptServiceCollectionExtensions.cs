@@ -1,4 +1,5 @@
 ﻿using ChatGptNet.Models;
+using ChatGptNet.Models.Embeddings;
 using ChatGptNet.ServiceConfigurations;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
@@ -16,14 +17,16 @@ public static class ChatGptServiceCollectionExtensions
     /// </summary>
     /// <param name="services">The <see cref="IServiceCollection"/> to add services to.</param>
     /// <param name="builder">The <see cref="ChatGptOptionsBuilder"/> to configure options.</param>
+    /// <param name="httpClientBuilder">The <see cref="IHttpClientBuilder"/> to configure the HTTP client used to make HTTP requests.</param>
     /// <returns>A <see cref="IChatGptBuilder"/> that can be used to further customize ChatGPT.</returns>
     /// <remarks>This method automatically adds a <see cref="MemoryCache"/> that is used to save conversation history for chat completion.
-    /// It is possibile to use <see cref="IChatGptBuilderExtensions.WithCache{TImplementation}(IChatGptBuilder)"/> to specify another cache implementation.
+    /// It is possibile to use <see cref="IChatGptBuilderExtensions.WithCache{TImplementation}(IChatGptBuilder, ServiceLifetime)"/> to specify another cache implementation.
     /// </remarks>
     /// <seealso cref="ChatGptOptionsBuilder"/>
     /// <seealso cref="MemoryCacheServiceCollectionExtensions.AddMemoryCache(IServiceCollection)"/>
     /// <seealso cref="IChatGptBuilder"/>
-    public static IChatGptBuilder AddChatGpt(this IServiceCollection services, Action<ChatGptOptionsBuilder> builder)
+    /// <seealso cref="IHttpClientBuilder"/>
+    public static IChatGptBuilder AddChatGpt(this IServiceCollection services, Action<ChatGptOptionsBuilder> builder, Action<IHttpClientBuilder>? httpClientBuilder = null)
     {
         ArgumentNullException.ThrowIfNull(services);
         ArgumentNullException.ThrowIfNull(builder);
@@ -36,7 +39,10 @@ public static class ChatGptServiceCollectionExtensions
         SetMissingDefaults(options);
         services.AddSingleton(options.Build());
 
-        return AddChatGptCore(services);
+        var chatGptBuilder = AddChatGptCore(services);
+        httpClientBuilder?.Invoke(chatGptBuilder.HttpClientBuilder);
+
+        return chatGptBuilder;
     }
 
     /// <summary>
@@ -44,16 +50,50 @@ public static class ChatGptServiceCollectionExtensions
     /// </summary>
     /// <param name="services">The <see cref="IServiceCollection"/> to add services to.</param>
     /// <param name="configuration">The <see cref="IConfiguration"/> being bound.</param>
-    /// <param name="sectionName">The name of the configuration section that holds ChatGPT settings (default: ChatGPT).</param>
-    /// <returns>A <see cref="IChatGptBuilder"/> that can be used to further customize ChatGPT.</returns>
+    /// <param name="sectionName">The name of the configuration section that holds ChatGPT settings.</param>
     /// <remarks>This method automatically adds a <see cref="MemoryCache"/> that is used to save conversation history for chat completion.
-    /// It is possibile to use <see cref="IChatGptBuilderExtensions.WithCache{TImplementation}(IChatGptBuilder)"/> to specify another cache implementation.
+    /// It is possibile to use <see cref="IChatGptBuilderExtensions.WithCache{TImplementation}(IChatGptBuilder, ServiceLifetime)"/> to specify another cache implementation.
     /// </remarks>
     /// <seealso cref="ChatGptOptions"/>
     /// <seealso cref="IConfiguration"/>
     /// <seealso cref="MemoryCacheServiceCollectionExtensions.AddMemoryCache(IServiceCollection)"/>
     /// <seealso cref="IChatGptBuilder"/>
-    public static IChatGptBuilder AddChatGpt(this IServiceCollection services, IConfiguration configuration, string sectionName = "ChatGPT")
+    public static IChatGptBuilder AddChatGpt(this IServiceCollection services, IConfiguration configuration, string sectionName)
+        => services.AddChatGpt(configuration, sectionName, null);
+
+    /// <summary>
+    /// Registers a <see cref="ChatGptClient"/> instance reading configuration from the specified <see cref="IConfiguration"/> source, searching for the <em>ChatGPT</em> section.
+    /// </summary>
+    /// <param name="services">The <see cref="IServiceCollection"/> to add services to.</param>
+    /// <param name="configuration">The <see cref="IConfiguration"/> being bound.</param>
+    /// <param name="httpClientBuilder">The <see cref="IHttpClientBuilder"/> to configure the HTTP client used to make HTTP requests.</param>
+    /// <remarks>This method automatically adds a <see cref="MemoryCache"/> that is used to save conversation history for chat completion.
+    /// It is possibile to use <see cref="IChatGptBuilderExtensions.WithCache{TImplementation}(IChatGptBuilder, ServiceLifetime)"/> to specify another cache implementation.
+    /// </remarks>
+    /// <seealso cref="ChatGptOptions"/>
+    /// <seealso cref="IConfiguration"/>
+    /// <seealso cref="MemoryCacheServiceCollectionExtensions.AddMemoryCache(IServiceCollection)"/>
+    /// <seealso cref="IChatGptBuilder"/>
+    /// <seealso cref="IHttpClientBuilder"/>
+    public static IChatGptBuilder AddChatGpt(this IServiceCollection services, IConfiguration configuration, Action<IHttpClientBuilder>? httpClientBuilder = null)
+        => services.AddChatGpt(configuration, "ChatGPT", httpClientBuilder);
+
+    /// <summary>
+    /// Registers a <see cref="ChatGptClient"/> instance reading configuration from the specified <see cref="IConfiguration"/> source.
+    /// </summary>
+    /// <param name="services">The <see cref="IServiceCollection"/> to add services to.</param>
+    /// <param name="configuration">The <see cref="IConfiguration"/> being bound.</param>
+    /// <param name="sectionName">The name of the configuration section that holds ChatGPT settings.</param>
+    /// <param name="httpClientBuilder">The <see cref="IHttpClientBuilder"/> to configure the HTTP client used to make HTTP requests.</param>/// <returns>A <see cref="IChatGptBuilder"/> that can be used to further customize ChatGPT.</returns>
+    /// <remarks>This method automatically adds a <see cref="MemoryCache"/> that is used to save conversation history for chat completion.
+    /// It is possibile to use <see cref="IChatGptBuilderExtensions.WithCache{TImplementation}(IChatGptBuilder, ServiceLifetime)"/> to specify another cache implementation.
+    /// </remarks>
+    /// <seealso cref="ChatGptOptions"/>
+    /// <seealso cref="IConfiguration"/>
+    /// <seealso cref="MemoryCacheServiceCollectionExtensions.AddMemoryCache(IServiceCollection)"/>
+    /// <seealso cref="IChatGptBuilder"/>
+    /// <seealso cref="IHttpClientBuilder"/>
+    public static IChatGptBuilder AddChatGpt(this IServiceCollection services, IConfiguration configuration, string sectionName, Action<IHttpClientBuilder>? httpClientBuilder = null)
     {
         ArgumentNullException.ThrowIfNull(services);
         ArgumentNullException.ThrowIfNull(configuration);
@@ -64,7 +104,10 @@ public static class ChatGptServiceCollectionExtensions
         SetMissingDefaults(options);
         services.AddSingleton(options.Build());
 
-        return AddChatGptCore(services);
+        var chatGptBuilder = AddChatGptCore(services);
+        httpClientBuilder?.Invoke(chatGptBuilder.HttpClientBuilder);
+
+        return chatGptBuilder;
     }
 
     /// <summary>
@@ -72,16 +115,18 @@ public static class ChatGptServiceCollectionExtensions
     /// </summary>
     /// <param name="services">The <see cref="IServiceCollection"/> to add services to.</param>
     /// <param name="builder">The <see cref="ChatGptOptionsBuilder"/> to configure options.</param>
+    /// <param name="httpClientBuilder">The <see cref="IHttpClientBuilder"/> to configure the HTTP client used to make HTTP requests.</param>
     /// <returns>A <see cref="IChatGptBuilder"/> that can be used to further customize ChatGPT.</returns>
     /// <remarks>Use this this method if it is necessary to dynamically set options (for example, using other services via dependency injection).
     /// This method automatically adds a <see cref="MemoryCache"/> that is used to save conversation history for chat completion.
-    /// It is possibile to use <see cref="IChatGptBuilderExtensions.WithCache{TImplementation}(IChatGptBuilder)"/> to specify another cache implementation.
+    /// It is possibile to use <see cref="IChatGptBuilderExtensions.WithCache{TImplementation}(IChatGptBuilder, ServiceLifetime)"/> to specify another cache implementation.
     /// </remarks>
     /// <seealso cref="ChatGptOptions"/>
     /// <seealso cref="IServiceProvider"/>
     /// <seealso cref="MemoryCacheServiceCollectionExtensions.AddMemoryCache(IServiceCollection)"/>
     /// <seealso cref="IChatGptBuilder"/>
-    public static IChatGptBuilder AddChatGpt(this IServiceCollection services, Action<IServiceProvider, ChatGptOptionsBuilder> builder)
+    /// <seealso cref="IHttpClientBuilder"/>
+    public static IChatGptBuilder AddChatGpt(this IServiceCollection services, Action<IServiceProvider, ChatGptOptionsBuilder> builder, Action<IHttpClientBuilder>? httpClientBuilder = null)
     {
         ArgumentNullException.ThrowIfNull(services);
         ArgumentNullException.ThrowIfNull(builder);
@@ -97,10 +142,13 @@ public static class ChatGptServiceCollectionExtensions
             return options.Build();
         });
 
-        return AddChatGptCore(services);
+        var chatGptBuilder = AddChatGptCore(services);
+        httpClientBuilder?.Invoke(chatGptBuilder.HttpClientBuilder);
+
+        return chatGptBuilder;
     }
 
-    private static IChatGptBuilder AddChatGptCore(IServiceCollection services)
+    private static ChatGptBuilder AddChatGptCore(IServiceCollection services)
     {
         // Uses MemoryCache by default.
         services.AddMemoryCache();
@@ -112,10 +160,18 @@ public static class ChatGptServiceCollectionExtensions
 
     private static void SetMissingDefaults(ChatGptOptionsBuilder options)
     {
-        // If the provider is OpenAI and no default model has been specified, uses gpt-3.5-turbo by default.
-        if (options.ServiceConfiguration is OpenAIChatGptServiceConfiguration && string.IsNullOrWhiteSpace(options.DefaultModel))
+        if (options.ServiceConfiguration is OpenAIChatGptServiceConfiguration)
         {
-            options.DefaultModel = OpenAIChatGptModels.Gpt35Turbo;
+            // If the provider is OpenAI and some default models are not specified, use the default ones.
+            if (string.IsNullOrWhiteSpace(options.DefaultModel))
+            {
+                options.DefaultModel = OpenAIChatGptModels.Gpt35Turbo;
+            }
+
+            if (string.IsNullOrWhiteSpace(options.DefaultEmbeddingModel))
+            {
+                options.DefaultEmbeddingModel = OpenAIEmbeddingModels.TextEmbeddingAda002;
+            }
         }
     }
 }

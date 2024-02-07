@@ -10,7 +10,7 @@ internal class AzureChatGptServiceConfiguration : ChatGptServiceConfiguration
     /// <summary>
     /// The default API version for Azure OpenAI service.
     /// </summary>
-    public const string DefaultApiVersion = "2023-07-01-preview";
+    public const string DefaultApiVersion = "2023-12-01-preview";
 
     /// <summary>
     /// Gets or sets the name of the Azure OpenAI Resource.
@@ -18,7 +18,7 @@ internal class AzureChatGptServiceConfiguration : ChatGptServiceConfiguration
     public string? ResourceName { get; set; }
 
     /// <summary>
-    /// Gets or sets the API version of the Azure OpenAI service (Default: 2023-07-01-preview).
+    /// Gets or sets the API version of the Azure OpenAI service (Default: 2023-12-01-preview).
     /// </summary>
     /// <remarks>
     /// Currently supported versions are:
@@ -37,7 +37,19 @@ internal class AzureChatGptServiceConfiguration : ChatGptServiceConfiguration
     ///   </item>
     ///   <item>
     ///     <term>2023-07-01-preview</term>
-    ///     <description><see href="https://github.com/Azure/azure-rest-api-specs/blob/main/specification/cognitiveservices/data-plane/AzureOpenAI/inference/preview/2023-07-01-preview/generated.json">Swagger spec</see></description>
+    ///     <description><see href="https://github.com/Azure/azure-rest-api-specs/blob/main/specification/cognitiveservices/data-plane/AzureOpenAI/inference/preview/2023-07-01-preview/inference.json">Swagger spec</see></description>
+    ///   </item>
+    ///   <item>
+    ///     <term>2023-08-01-preview</term>
+    ///     <description><see href="https://github.com/Azure/azure-rest-api-specs/blob/main/specification/cognitiveservices/data-plane/AzureOpenAI/inference/preview/2023-08-01-preview/inference.json">Swagger spec</see></description>
+    ///   </item>
+    ///   <item>
+    ///     <term>2023-09-01-preview</term>
+    ///     <description><see href="https://github.com/Azure/azure-rest-api-specs/blob/main/specification/cognitiveservices/data-plane/AzureOpenAI/inference/preview/2023-09-01-preview/inference.json">Swagger spec</see></description>
+    ///   </item>
+    ///   <item>
+    ///     <term>2023-12-01-preview</term>
+    ///     <description><see href="https://github.com/Azure/azure-rest-api-specs/blob/main/specification/cognitiveservices/data-plane/AzureOpenAI/inference/preview/2023-12-01-preview/inference.json">Swagger spec</see></description>
     ///   </item>
     /// </list>
     /// </remarks>
@@ -60,7 +72,7 @@ internal class AzureChatGptServiceConfiguration : ChatGptServiceConfiguration
         ArgumentNullException.ThrowIfNull(configuration);
 
         ResourceName = configuration.GetValue<string>("ResourceName");
-        ArgumentNullException.ThrowIfNull(nameof(ResourceName));
+        ArgumentNullException.ThrowIfNull(ResourceName);
 
         ApiVersion = configuration.GetValue<string>("ApiVersion") ?? DefaultApiVersion;
 
@@ -72,11 +84,20 @@ internal class AzureChatGptServiceConfiguration : ChatGptServiceConfiguration
     }
 
     /// <inheritdoc />
-    public override Uri GetServiceEndpoint(string? modelName)
+    public override Uri GetChatCompletionEndpoint(string? modelName)
+    {
+        ArgumentNullException.ThrowIfNull(modelName);
+
+        var endpoint = new Uri($"https://{ResourceName}.openai.azure.com/openai/deployments/{modelName}/chat/completions?api-version={ApiVersion}");
+        return endpoint;
+    }
+
+    /// <inheritdoc />
+    public override Uri GetEmbeddingEndpoint(string? modelName = null)
     {
         ArgumentNullException.ThrowIfNull(nameof(modelName));
 
-        var endpoint = new Uri($"https://{ResourceName}.openai.azure.com/openai/deployments/{modelName}/chat/completions?api-version={ApiVersion}");
+        var endpoint = new Uri($"https://{ResourceName}.openai.azure.com/openai/deployments/{modelName}/embeddings?api-version={ApiVersion}");
         return endpoint;
     }
 

@@ -1,16 +1,11 @@
 ﻿using ChatGptNet;
+using ChatGptNet.Extensions;
+using ChatGptNet.Models;
 
 namespace ChatGptConsole;
 
-internal class Application
+internal class Application(IChatGptClient chatGptClient)
 {
-    private readonly IChatGptClient chatGptClient;
-
-    public Application(IChatGptClient chatGptClient)
-    {
-        this.chatGptClient = chatGptClient;
-    }
-
     public async Task ExecuteAsync()
     {
         string? message = null;
@@ -38,9 +33,13 @@ internal class Application
                 {
                     Console.WriteLine("I'm thinking...");
 
-                    var response = await chatGptClient.AskAsync(conversationId, message);
+                    var response = await chatGptClient.AskAsync(conversationId, message, new ChatGptParameters
+                    {
+                        MaxTokens = 150,
+                        Temperature = 0.7
+                    });
 
-                    Console.WriteLine(response.GetMessage());
+                    Console.WriteLine(response.GetContent());
                     Console.WriteLine();
                 }
             }
