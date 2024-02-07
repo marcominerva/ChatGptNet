@@ -12,7 +12,7 @@ builder.Services.ConfigureHttpJsonOptions(options =>
     options.SerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
 });
 
-// Adds ChatGPT service with hard-coded settings.
+// Adds ChatGPT service and configure options via code.
 //builder.Services.AddChatGpt(options =>
 //{
 //    // OpenAI.

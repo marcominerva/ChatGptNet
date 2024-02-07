@@ -3,16 +3,45 @@
 namespace ChatGptNet.ServiceConfigurations;
 
 /// <summary>
-/// Contains configuration settings for Azure OpenAI services.
+/// Contains configuration settings for Azure OpenAI service.
 /// </summary>
 internal class AzureChatGptServiceConfiguration : ChatGptServiceConfiguration
 {
-    private const string ApiVersion = "2023-03-15-preview";
+    /// <summary>
+    /// The default API version for Azure OpenAI service.
+    /// </summary>
+    public const string DefaultApiVersion = "2023-07-01-preview";
 
     /// <summary>
     /// Gets or sets the name of the Azure OpenAI Resource.
     /// </summary>
     public string? ResourceName { get; set; }
+
+    /// <summary>
+    /// Gets or sets the API version of the Azure OpenAI service (Default: 2023-07-01-preview).
+    /// </summary>
+    /// <remarks>
+    /// Currently supported versions are:
+    /// <list type = "bullet" >
+    ///   <item>
+    ///     <term>2023-03-15-preview</term>
+    ///     <description><see href="https://github.com/Azure/azure-rest-api-specs/blob/main/specification/cognitiveservices/data-plane/AzureOpenAI/inference/preview/2023-03-15-preview/inference.json">Swagger spec</see></description>
+    ///   </item>
+    ///   <item>
+    ///     <term>2023-05-15</term>
+    ///     <description><see href="https://github.com/Azure/azure-rest-api-specs/blob/main/specification/cognitiveservices/data-plane/AzureOpenAI/inference/stable/2023-05-15/inference.json">Swagger spec</see></description>
+    ///   </item>
+    ///   <item>
+    ///     <term>2023-06-01-preview</term>
+    ///     <description><see href="https://github.com/Azure/azure-rest-api-specs/blob/main/specification/cognitiveservices/data-plane/AzureOpenAI/inference/preview/2023-06-01-preview/inference.json">Swagger spec</see></description>
+    ///   </item>
+    ///   <item>
+    ///     <term>2023-07-01-preview</term>
+    ///     <description><see href="https://github.com/Azure/azure-rest-api-specs/blob/main/specification/cognitiveservices/data-plane/AzureOpenAI/inference/preview/2023-07-01-preview/generated.json">Swagger spec</see></description>
+    ///   </item>
+    /// </list>
+    /// </remarks>
+    public string ApiVersion { get; set; } = DefaultApiVersion;
 
     /// <summary>
     /// Gets or sets the authentication type for Azure OpenAI service.
@@ -32,6 +61,8 @@ internal class AzureChatGptServiceConfiguration : ChatGptServiceConfiguration
 
         ResourceName = configuration.GetValue<string>("ResourceName");
         ArgumentNullException.ThrowIfNull(nameof(ResourceName));
+
+        ApiVersion = configuration.GetValue<string>("ApiVersion") ?? DefaultApiVersion;
 
         AuthenticationType = configuration.GetValue<string>("AuthenticationType")?.ToLowerInvariant() switch
         {

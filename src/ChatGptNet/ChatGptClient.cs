@@ -6,14 +6,13 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using ChatGptNet.Exceptions;
 using ChatGptNet.Models;
-using Microsoft.Extensions.Caching.Memory;
 
 namespace ChatGptNet;
 
 internal class ChatGptClient : IChatGptClient
 {
     private readonly HttpClient httpClient;
-    private readonly IMemoryCache cache;
+    private readonly IChatGptCache cache;
     private readonly ChatGptOptions options;
 
     private static readonly JsonSerializerOptions jsonSerializerOptions = new(JsonSerializerDefaults.Web)
@@ -21,7 +20,7 @@ internal class ChatGptClient : IChatGptClient
         DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
     };
 
-    public ChatGptClient(HttpClient httpClient, IMemoryCache cache, ChatGptOptions options)
+    public ChatGptClient(HttpClient httpClient, IChatGptCache cache, ChatGptOptions options)
     {
         this.httpClient = httpClient;
 
@@ -34,7 +33,7 @@ internal class ChatGptClient : IChatGptClient
         this.options = options;
     }
 
-    public Task<Guid> SetupAsync(Guid conversationId, string message)
+    public async Task<Guid> SetupAsync(Guid conversationId, string message, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(message);
 
@@ -53,12 +52,11 @@ internal class ChatGptClient : IChatGptClient
             }
         };
 
-        cache.Set(conversationId, messages, options.MessageExpiration);
-
-        return Task.FromResult(conversationId);
+        await cache.SetAsync(conversationId, messages, options.MessageExpiration, cancellationToken);
+        return conversationId;
     }
 
-    public async Task<ChatGptResponse> AskAsync(Guid conversationId, string message, ChatGptParameters? parameters = null, string? model = null, CancellationToken cancellationToken = default)
+    public async Task<ChatGptResponse> AskAsync(Guid conversationId, string message, ChatGptFunctionParameters? functionParameters = null, ChatGptParameters? parameters = null, string? model = null, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(message);
 
@@ -68,20 +66,19 @@ internal class ChatGptClient : IChatGptClient
             conversationId = Guid.NewGuid();
         }
 
-        var messages = CreateMessageList(conversationId, message);
-        var request = CreateRequest(messages, false, parameters, model);
+        var messages = await CreateMessageListAsync(conversationId, message, cancellationToken);
+        var request = CreateRequest(messages, functionParameters, false, parameters, model);
 
         var requestUri = options.ServiceConfiguration.GetServiceEndpoint(model ?? options.DefaultModel);
         using var httpResponse = await httpClient.PostAsJsonAsync(requestUri, request, jsonSerializerOptions, cancellationToken);
 
         var response = await httpResponse.Content.ReadFromJsonAsync<ChatGptResponse>(jsonSerializerOptions, cancellationToken: cancellationToken);
-        EnsureErrorIsSet(response!, httpResponse);
-        response!.ConversationId = conversationId;
+        NormalizeResponse(httpResponse, response!, conversationId);
 
-        if (response.IsSuccessful)
+        if (response!.IsSuccessful)
         {
             // Adds the response message to the conversation cache.
-            UpdateHistory(conversationId, messages, response.Choices[0].Message);
+            await AddAssistantResponseAsync(conversationId, messages, response.Choices.First().Message, cancellationToken);
         }
         else if (options.ThrowExceptionOnError)
         {
@@ -101,8 +98,8 @@ internal class ChatGptClient : IChatGptClient
             conversationId = Guid.NewGuid();
         }
 
-        var messages = CreateMessageList(conversationId, message);
-        var request = CreateRequest(messages, true, parameters, model);
+        var messages = await CreateMessageListAsync(conversationId, message, cancellationToken);
+        var request = CreateRequest(messages, null, true, parameters, model);
 
         var requestUri = options.ServiceConfiguration.GetServiceEndpoint(model ?? options.DefaultModel);
         using var requestMessage = new HttpRequestMessage(HttpMethod.Post, requestUri)
@@ -128,7 +125,7 @@ internal class ChatGptClient : IChatGptClient
                         var json = line["data: ".Length..];
                         var response = JsonSerializer.Deserialize<ChatGptResponse>(json, jsonSerializerOptions);
 
-                        var content = response!.Choices?[0].Delta?.Content;
+                        var content = response!.Choices?.FirstOrDefault()?.Delta?.Content;
 
                         if (!string.IsNullOrEmpty(content))
                         {
@@ -136,7 +133,7 @@ internal class ChatGptClient : IChatGptClient
                             {
                                 // If this is the first response, trims all the initial special characters.
                                 content = content.TrimStart('\n');
-                                response.Choices![0].Delta!.Content = content;
+                                response.Choices!.First().Delta!.Content = content;
                             }
 
                             // Yields the response only if there is an actual content.
@@ -157,51 +154,58 @@ internal class ChatGptClient : IChatGptClient
             }
 
             // Adds the response message to the conversation cache.
-            UpdateHistory(conversationId, messages, new()
+            await AddAssistantResponseAsync(conversationId, messages, new()
             {
                 Role = ChatGptRoles.Assistant,
                 Content = contentBuilder.ToString()
-            });
+            }, cancellationToken);
         }
         else
         {
             var response = await httpResponse.Content.ReadFromJsonAsync<ChatGptResponse>(cancellationToken: cancellationToken);
-            EnsureErrorIsSet(response!, httpResponse);
-            response!.ConversationId = conversationId;
+            NormalizeResponse(httpResponse, response!, conversationId);
 
             if (options.ThrowExceptionOnError)
             {
                 throw new ChatGptException(response!.Error, httpResponse.StatusCode);
             }
 
-            yield return response;
+            yield return response!;
         }
     }
 
-    public Task<IEnumerable<ChatGptMessage>> GetConversationAsync(Guid conversationId)
+    public async Task<IEnumerable<ChatGptMessage>> GetConversationAsync(Guid conversationId, CancellationToken cancellationToken = default)
     {
-        var messages = cache.Get<IEnumerable<ChatGptMessage>>(conversationId) ?? Enumerable.Empty<ChatGptMessage>();
-        return Task.FromResult(messages);
+        var messages = await cache.GetAsync(conversationId, cancellationToken) ?? Enumerable.Empty<ChatGptMessage>();
+        return messages;
     }
 
-    public Task DeleteConversationAsync(Guid conversationId, bool preserveSetup = false)
+    public async Task<bool> ConversationExistsAsync(Guid conversationId, CancellationToken cancellationToken = default)
+    {
+        var exists = await cache.ExistsAsync(conversationId, cancellationToken);
+        return exists;
+    }
+
+    public async Task DeleteConversationAsync(Guid conversationId, bool preserveSetup = false, CancellationToken cancellationToken = default)
     {
         if (!preserveSetup)
         {
             // We don't want to preserve setup message, so just deletes all the cache history.
-            cache.Remove(conversationId);
+            await cache.RemoveAsync(conversationId, cancellationToken);
         }
-        else if (cache.TryGetValue<List<ChatGptMessage>>(conversationId, out var messages))
+        else
         {
-            // Removes all the messages, except system ones.
-            messages!.RemoveAll(m => m.Role != ChatGptRoles.System);
-            cache.Set(conversationId, messages, options.MessageExpiration);
+            var messages = await cache.GetAsync(conversationId, cancellationToken);
+            if (messages is not null)
+            {
+                // Removes all the messages, except system ones.
+                messages.RemoveAll(m => m.Role != ChatGptRoles.System);
+                await cache.SetAsync(conversationId, messages, options.MessageExpiration, cancellationToken);
+            }
         }
-
-        return Task.CompletedTask;
     }
 
-    public Task<Guid> LoadConversationAsync(Guid conversationId, IEnumerable<ChatGptMessage> messages, bool replaceHistory = true)
+    public async Task<Guid> LoadConversationAsync(Guid conversationId, IEnumerable<ChatGptMessage> messages, bool replaceHistory = true, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(messages);
 
@@ -215,25 +219,46 @@ internal class ChatGptClient : IChatGptClient
         {
             // If messages must replace history, just use the current list, discarding all the previously cached content.
             // If messages.Count() > ChatGptOptions.MessageLimit, the UpdateCache take care of taking only the last messages.
-            UpdateCache(conversationId, messages);
+            await UpdateCacheAsync(conversationId, messages, cancellationToken);
         }
         else
         {
             // Retrieves the current history and adds new messages.
-            var conversationHistory = cache.Get<List<ChatGptMessage>>(conversationId) ?? new List<ChatGptMessage>();
+            var conversationHistory = await cache.GetAsync(conversationId, cancellationToken) ?? new List<ChatGptMessage>();
             conversationHistory.AddRange(messages);
 
             // If messages total length > ChatGptOptions.MessageLimit, the UpdateCache take care of taking only the last messages.
-            UpdateCache(conversationId, conversationHistory);
+            await UpdateCacheAsync(conversationId, conversationHistory, cancellationToken);
         }
 
-        return Task.FromResult(conversationId);
+        return conversationId;
     }
 
-    private IList<ChatGptMessage> CreateMessageList(Guid conversationId, string message)
+    public async Task AddFunctionResponseAsync(Guid conversationId, string functionName, string content, CancellationToken cancellationToken = default)
+    {
+        var conversationHistory = await cache.GetAsync(conversationId, cancellationToken);
+        if (!conversationHistory?.Any() ?? true)
+        {
+            throw new InvalidOperationException("Cannot add a function response message if the conversation history is empty");
+        }
+
+        var messages = new List<ChatGptMessage>(conversationHistory!)
+        {
+            new()
+            {
+                Role = ChatGptRoles.Function,
+                Name = functionName,
+                Content = content
+            }
+        };
+
+        await UpdateCacheAsync(conversationId, messages, cancellationToken);
+    }
+
+    private async Task<List<ChatGptMessage>> CreateMessageListAsync(Guid conversationId, string message, CancellationToken cancellationToken = default)
     {
         // Checks whether a list of messages for the given conversationId already exists.
-        var conversationHistory = cache.Get<IList<ChatGptMessage>>(conversationId);
+        var conversationHistory = await cache.GetAsync(conversationId, cancellationToken);
         List<ChatGptMessage> messages = conversationHistory is not null ? new(conversationHistory) : new();
 
         messages.Add(new()
@@ -245,11 +270,18 @@ internal class ChatGptClient : IChatGptClient
         return messages;
     }
 
-    private ChatGptRequest CreateRequest(IList<ChatGptMessage> messages, bool stream, ChatGptParameters? parameters = null, string? model = null)
+    private ChatGptRequest CreateRequest(IEnumerable<ChatGptMessage> messages, ChatGptFunctionParameters? functionParameters, bool stream, ChatGptParameters? parameters = null, string? model = null)
         => new()
         {
             Model = model ?? options.DefaultModel,
-            Messages = messages.ToArray(),
+            Messages = messages,
+            Functions = functionParameters?.Functions,
+            FunctionCall = functionParameters?.FunctionCall switch
+            {
+                ChatGptFunctionCalls.None or ChatGptFunctionCalls.Auto => functionParameters.FunctionCall,
+                { } => JsonDocument.Parse($$"""{ "name": "{{functionParameters.FunctionCall}}" }"""),
+                _ => null
+            },
             Stream = stream,
             Temperature = parameters?.Temperature ?? options.DefaultParameters.Temperature,
             TopP = parameters?.TopP ?? options.DefaultParameters.TopP,
@@ -259,13 +291,18 @@ internal class ChatGptClient : IChatGptClient
             User = options.User,
         };
 
-    private void UpdateHistory(Guid conversationId, IList<ChatGptMessage> messages, ChatGptMessage message)
+    private async Task AddAssistantResponseAsync(Guid conversationId, IList<ChatGptMessage> messages, ChatGptMessage message, CancellationToken cancellationToken = default)
     {
-        messages.Add(message);
-        UpdateCache(conversationId, messages);
+        if (!string.IsNullOrWhiteSpace(message.Content?.Trim()))
+        {
+            // Adds the message to the cache only if it has a content.
+            messages.Add(message);
+        }
+
+        await UpdateCacheAsync(conversationId, messages, cancellationToken);
     }
 
-    private void UpdateCache(Guid conversationId, IEnumerable<ChatGptMessage> messages)
+    private async Task UpdateCacheAsync(Guid conversationId, IEnumerable<ChatGptMessage> messages, CancellationToken cancellationToken = default)
     {
         // If the maximum number of messages has been reached, deletes the oldest ones.
         // Note: system message does not count for message limit.
@@ -285,11 +322,13 @@ internal class ChatGptClient : IChatGptClient
             messages = conversation.ToList();
         }
 
-        cache.Set(conversationId, messages, options.MessageExpiration);
+        await cache.SetAsync(conversationId, messages, options.MessageExpiration, cancellationToken);
     }
 
-    private static void EnsureErrorIsSet(ChatGptResponse response, HttpResponseMessage httpResponse)
+    private static void NormalizeResponse(HttpResponseMessage httpResponse, ChatGptResponse response, Guid conversationId)
     {
+        response.ConversationId = conversationId;
+
         if (!httpResponse.IsSuccessStatusCode && response.Error is null)
         {
             response.Error = new ChatGptError

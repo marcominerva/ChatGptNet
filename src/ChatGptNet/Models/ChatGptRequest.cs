@@ -8,7 +8,7 @@ namespace ChatGptNet.Models;
 /// <remarks>
 /// See <see href="https://platform.openai.com/docs/api-reference/chat/create">Create chat completion (OpenAI)</see> or <see href="https://learn.microsoft.com/azure/cognitive-services/openai/reference#chat-completions">Chat Completions (Azure)</see> for more information.
 /// </remarks>
-public class ChatGptRequest
+internal class ChatGptRequest
 {
     /// <summary>
     /// Gets or sets the ID of the model to use.
@@ -19,7 +19,24 @@ public class ChatGptRequest
     /// Gets or sets the messages to generate chat completions for.
     /// </summary>
     /// <seealso cref="ChatGptMessage"/>
-    public ChatGptMessage[] Messages { get; set; } = Array.Empty<ChatGptMessage>();
+    public IEnumerable<ChatGptMessage> Messages { get; set; } = Enumerable.Empty<ChatGptMessage>();
+
+    /// <summary>
+    /// Gets or sets a list of functions the model may generate JSON inputs for.
+    /// </summary>
+    /// <seealso cref="ChatGptFunction"/>
+    /// <seealso cref="FunctionCall"/>
+    public IEnumerable<ChatGptFunction>? Functions { get; set; }
+
+    /// <summary>
+    /// Controls how the model responds to function calls. <em>none</em> means the model does not call a function, and responds to the end-user. <em>auto</em> means the model can pick between an end-user or calling a function. Specifying a particular function name forces the model to call that function.
+    /// </summary>
+    /// <remarks>
+    /// <em>none</em> is the default when no functions are present. <em>auto</em> is the default if functions are present.
+    /// </remarks>
+    /// <seealso cref="ChatGptFunction"/>
+    [JsonPropertyName("function_call")]
+    public object? FunctionCall { get; set; }
 
     /// <summary>
     /// Gets or sets a value that specify if response will be sent in streaming as partial message deltas.
@@ -44,12 +61,6 @@ public class ChatGptRequest
     /// <seealso cref="Temperature"/>
     [JsonPropertyName("top_p")]
     public double? TopP { get; set; }
-
-    /// <summary>
-    /// Gets or sets how many chat completion choices to generate for each input message (default: 1).
-    /// </summary>
-    [JsonPropertyName("n")]
-    public int? Choices { get; set; }
 
     /// <summary>
     /// Gets or sets the maximum number of tokens to generate in the chat completion. The total length of input tokens and generated tokens is limited by the model's context length.

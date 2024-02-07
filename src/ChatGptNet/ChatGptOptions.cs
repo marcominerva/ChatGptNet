@@ -45,7 +45,7 @@ public record ChatGptOptions
     ///  Gets or sets the default parameters for chat completion.
     /// </summary>
     /// <see cref="ChatGptParameters"/>
-    public ChatGptParameters DefaultParameters { get; } = new();
+    public ChatGptParameters DefaultParameters { get; internal set; } = new();
 
     /// <summary>
     /// Gets or sets the user identification for chat completion, which can help OpenAI to monitor and detect abuse.
