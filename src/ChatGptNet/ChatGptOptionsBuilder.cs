@@ -115,7 +115,7 @@ public class ChatGptOptionsBuilder
                 ApiVersion = azure.ApiVersion,
                 AuthenticationType = azure.AuthenticationType
             },
-            _ => throw new ArgumentException("Invalid service configuration type.")
+            _ => null!
         };
 
         User = source.User;

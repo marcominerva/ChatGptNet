@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 
 namespace ChatGptNet;
+
 /// <summary>
 /// Provides extension methods for adding ChatGPT Client Factory support in NET applications.
 /// </summary>
@@ -27,7 +28,7 @@ public static class ChatGptFactoryServiceCollectionExtensions
         services.AddMemoryCache();
         services.AddSingleton<IChatGptCache, ChatGptMemoryCache>();
 
-        var httpClientBuilder = services.AddHttpClient<IChatGptClientFactory, ChatGptClientFactory>();
+        services.AddHttpClient();
         services.AddSingleton<IChatGptClientFactory, ChatGptClientFactory>(
             serviceProvider => new ChatGptClientFactory(serviceProvider, serviceProvider.GetRequiredService<IChatGptCache>(), deafultOptions)
         );
