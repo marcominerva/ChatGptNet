@@ -1,38 +1,32 @@
-﻿using Microsoft.Extensions.Caching.Memory;
+﻿using Microsoft.Extensions.DependencyInjection;
 
 namespace ChatGptNet;
 
-internal class ChatGptClientFactory : IChatGptClientFactory
+internal class ChatGptClientFactory(IServiceProvider serviceProvider, IChatGptCache chatGptCache, ChatGptOptionsBuilder defaultOptions) : IChatGptClientFactory
 {
-    private readonly IServiceProvider services;
-    private readonly IChatGptCache chatGptCache;
-    private readonly ChatGptOptionsBuilder defaultOptions;
-
-    public ChatGptClientFactory(IServiceProvider services, IChatGptCache chatGptCache, ChatGptOptionsBuilder defaultOptions)
-    {
-        this.services = services;
-        this.chatGptCache = chatGptCache;
-        this.defaultOptions = defaultOptions;
-    }
-
     public IChatGptClient CreateClient(Action<IServiceProvider, ChatGptOptionsBuilder>? setupAction)
     {
-        var options = defaultOptions with { };
+        var options = new ChatGptOptionsBuilder(defaultOptions);
 
         if (setupAction is not null)
-            setupAction(services, options);
+        {
+            setupAction(serviceProvider, options);
+        }
 
-        return new ChatGptClient(new HttpClient(), chatGptCache, options.Build());
+        var httpClient = serviceProvider.GetRequiredService<IHttpClientFactory>().CreateClient();
+        return new ChatGptClient(httpClient, chatGptCache, options.Build());
     }
+
     public IChatGptClient CreateClient(Action<ChatGptOptionsBuilder>? setupAction)
     {
         if (setupAction is null)
+        {
             return CreateClient();
+        }
 
-        return CreateClient((s, o) => setupAction(o));
+        return CreateClient((_, options) => setupAction(options));
     }
+
     public IChatGptClient CreateClient()
-    {
-        return CreateClient((Action<IServiceProvider, ChatGptOptionsBuilder>?)null);
-    }
+        => CreateClient((Action<IServiceProvider, ChatGptOptionsBuilder>?)null);
 }

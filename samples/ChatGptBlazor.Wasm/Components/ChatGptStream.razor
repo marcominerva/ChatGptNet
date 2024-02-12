@@ -81,9 +81,9 @@
     private string? message;
     private bool isAsking;
 
-    private string azureResource;
-    private string apiKey;
-    private string model;
+    private string? azureResource;
+    private string? apiKey;
+    private string? model;
 
     private IChatGptClient? chatGptClient = null;
 
@@ -102,7 +102,7 @@
     {
         chatGptClient = chatGptClientFactory.CreateClient(options =>
         {
-            options.UseAzure(azureResource, apiKey, authenticationType: AzureAuthenticationType.ApiKey);
+            options.UseAzure(azureResource!, apiKey!, authenticationType: AzureAuthenticationType.ApiKey);
             options.DefaultModel = model;
             options.MessageLimit = 16;  // Default: 10
             options.MessageExpiration = TimeSpan.FromMinutes(5);    // Default: 1 hour
@@ -118,7 +118,7 @@
             messages.Add(new ChatEntry { Sender = ChatGptRoles.User, Content = message! });
             var responseMessage = new ChatEntry { Sender = ChatGptRoles.Assistant, Content = string.Empty };
 
-            var responseStream = chatGptClient.AskStreamAsync(conversationId, message!);
+            var responseStream = chatGptClient!.AskStreamAsync(conversationId, message!);
 
             message = string.Empty;
 
