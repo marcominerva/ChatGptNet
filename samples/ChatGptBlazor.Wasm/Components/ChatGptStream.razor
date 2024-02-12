@@ -1,14 +1,33 @@
 ﻿@using ChatGptNet.Extensions;
 @using ChatGptNet.Models;
 @using ChatGptNet;
+@using ChatGptNet.ServiceConfigurations
 @using Markdig;
 
-@inject IChatGptClient chatGptClient
+@inject IChatGptClientFactory chatGptClientFactory
 @inject IJSRuntime jsRuntime
 
 <div class="h-100" style="position: relative;">
     <div class="w-100 h-100" style="position: absolute;">
         <div class="h-100 d-flex flex-column" style="max-height: 100%">
+
+            <div class="row mt-4">
+                <div class="col">
+                    <input type="text" class="form-control" @bind="azureResource" placeholder="Azure OpenAI Resource" />
+                </div>
+                <div class="col">
+                    <input type="password" class="form-control" @bind="apiKey" placeholder="Api Key" />
+                </div>
+                <div class="col">
+                    <input type="text" class="form-control" @bind="model" placeholder="Model Name" />
+                </div>
+                <div class="col">
+                    <button type="button" class="btn btn-primary" @onclick="Connect">
+                        Connect
+                    </button>
+                </div>
+            </div>
+
             <div class="my-4" style="height:100%; max-height: 100%; overflow-y: auto;">
 
                 @foreach (var message in messages)
@@ -62,6 +81,12 @@
     private string? message;
     private bool isAsking;
 
+    private string azureResource;
+    private string apiKey;
+    private string model;
+
+    private IChatGptClient? chatGptClient = null;
+
     private bool CanSendMessage()
         => !string.IsNullOrWhiteSpace(message) && !isAsking;
 
@@ -71,6 +96,17 @@
         {
             await AskAsync();
         }
+    }
+
+    private void Connect()
+    {
+        chatGptClient = chatGptClientFactory.CreateClient(options =>
+        {
+            options.UseAzure(azureResource, apiKey, authenticationType: AzureAuthenticationType.ApiKey);
+            options.DefaultModel = model;
+            options.MessageLimit = 16;  // Default: 10
+            options.MessageExpiration = TimeSpan.FromMinutes(5);    // Default: 1 hour
+        });
     }
 
     private async Task AskAsync()

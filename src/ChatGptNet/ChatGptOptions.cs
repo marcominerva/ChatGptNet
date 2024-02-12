@@ -8,7 +8,7 @@ namespace ChatGptNet;
 /// <summary>
 /// Options class that provides settings for configuring ChatGPT.
 /// </summary>
-public class ChatGptOptions
+public record ChatGptOptions
 {
     /// <summary>
     /// Gets or sets the configuration settings for accessing the service.
