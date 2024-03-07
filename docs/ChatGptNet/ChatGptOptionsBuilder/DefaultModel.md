@@ -1,6 +1,6 @@
 # ChatGptOptionsBuilder.DefaultModel property
 
-Gets or sets the default model for chat completion. (default: [`Gpt35Turbo`](../../ChatGptNet.Models/OpenAIChatGptModels/Gpt35Turbo.md) when the provider is  OpenAI).
+Gets or sets the default model for chat completion. (default: [`Gpt35_Turbo`](../../ChatGptNet.Models/OpenAIChatGptModels/Gpt35_Turbo.md) when the provider is  OpenAI).
 
 ```csharp
 public string? DefaultModel { get; set; }

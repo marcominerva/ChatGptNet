@@ -13,7 +13,7 @@ public class ChatGptOptions
 | [ChatGptOptions](ChatGptOptions/ChatGptOptions.md)() | The default constructor. |
 | [DefaultEmbeddingModel](ChatGptOptions/DefaultEmbeddingModel.md) { get; set; } | Gets or sets the default model for embedding. (default: [`TextEmbeddingAda002`](../ChatGptNet.Models.Embeddings/OpenAIEmbeddingModels/TextEmbeddingAda002.md) when the provider is OpenAI). |
 | [DefaultEmbeddingParameters](ChatGptOptions/DefaultEmbeddingParameters.md) { get; } | Gets or sets the default parameters for embeddings. |
-| [DefaultModel](ChatGptOptions/DefaultModel.md) { get; set; } | Gets or sets the default model for chat completion. (default: [`Gpt35Turbo`](../ChatGptNet.Models/OpenAIChatGptModels/Gpt35Turbo.md) when the provider is OpenAI). |
+| [DefaultModel](ChatGptOptions/DefaultModel.md) { get; set; } | Gets or sets the default model for chat completion. (default: [`Gpt35_Turbo`](../ChatGptNet.Models/OpenAIChatGptModels/Gpt35_Turbo.md) when the provider is OpenAI). |
 | [DefaultParameters](ChatGptOptions/DefaultParameters.md) { get; } | Gets or sets the default parameters for chat completion. |
 | [MessageExpiration](ChatGptOptions/MessageExpiration.md) { get; set; } | Gets or sets the expiration for cached conversation messages (default: 1 hour). |
 | [MessageLimit](ChatGptOptions/MessageLimit.md) { get; set; } | Gets or sets the maximum number of messages to use for chat completion (default: 10). |

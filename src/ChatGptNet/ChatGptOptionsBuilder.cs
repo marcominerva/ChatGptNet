@@ -36,7 +36,7 @@ public class ChatGptOptionsBuilder
     public bool ThrowExceptionOnError { get; set; } = true;
 
     /// <summary>
-    /// Gets or sets the default model for chat completion. (default: <see cref="OpenAIChatGptModels.Gpt35Turbo"/> when the provider is <see cref="OpenAIChatGptServiceConfiguration"> OpenAI</see>).
+    /// Gets or sets the default model for chat completion. (default: <see cref="OpenAIChatGptModels.Gpt35_Turbo"/> when the provider is <see cref="OpenAIChatGptServiceConfiguration"> OpenAI</see>).
     /// </summary>
     /// <seealso cref="OpenAIChatGptModels"/>
     /// <seealso cref="OpenAIChatGptServiceConfiguration"/>
@@ -68,6 +68,58 @@ public class ChatGptOptionsBuilder
     /// See <see href="https://platform.openai.com/docs/guides/safety-best-practices/end-user-ids">Safety best practices</see> for more information.
     /// </remarks>
     public string? User { get; set; }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ChatGptOptionsBuilder"/> class.
+    /// </summary>
+    public ChatGptOptionsBuilder()
+    {
+    }
+
+    internal ChatGptOptionsBuilder(ChatGptOptionsBuilder source)
+    {
+        MessageLimit = source.MessageLimit;
+        DefaultModel = source.DefaultModel;
+        DefaultEmbeddingModel = source.DefaultEmbeddingModel;
+
+        DefaultParameters = new()
+        {
+            FrequencyPenalty = source.DefaultParameters?.FrequencyPenalty,
+            MaxTokens = source.DefaultParameters?.MaxTokens,
+            PresencePenalty = source.DefaultParameters?.PresencePenalty,
+            ResponseFormat = source.DefaultParameters?.ResponseFormat,
+            TopP = source.DefaultParameters?.TopP,
+            Temperature = source.DefaultParameters?.Temperature,
+            Seed = source.DefaultParameters?.Seed
+        };
+
+        DefaultEmbeddingParameters = new()
+        {
+            Dimensions = source.DefaultEmbeddingParameters.Dimensions
+        };
+
+        MessageExpiration = source.MessageExpiration;
+        ThrowExceptionOnError = source.ThrowExceptionOnError;
+
+        ServiceConfiguration = source.ServiceConfiguration switch
+        {
+            OpenAIChatGptServiceConfiguration openAI => new OpenAIChatGptServiceConfiguration
+            {
+                ApiKey = openAI.ApiKey,
+                Organization = openAI.Organization
+            },
+            AzureChatGptServiceConfiguration azure => new AzureChatGptServiceConfiguration
+            {
+                ResourceName = azure.ResourceName,
+                ApiKey = azure.ApiKey,
+                ApiVersion = azure.ApiVersion,
+                AuthenticationType = azure.AuthenticationType
+            },
+            _ => null!
+        };
+
+        User = source.User;
+    }
 
     internal ChatGptOptions Build()
         => new()

@@ -1,7 +1,7 @@
-using System.Diagnostics;
 using System.Text.Json.Serialization;
 using ChatGptNet;
 using ChatGptNet.Extensions;
+using TinyHelpers.AspNetCore.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -40,13 +40,8 @@ builder.Services.AddChatGpt(builder.Configuration,
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddProblemDetails(options =>
-{
-    options.CustomizeProblemDetails = context =>
-    {
-        context.ProblemDetails.Extensions["traceId"] = Activity.Current?.Id ?? context.HttpContext.TraceIdentifier;
-    };
-});
+builder.Services.AddDefaultProblemDetails();
+builder.Services.AddDefaultExceptionHandler();
 
 var app = builder.Build();
 
