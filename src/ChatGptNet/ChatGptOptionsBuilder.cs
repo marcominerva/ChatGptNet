@@ -36,7 +36,7 @@ public class ChatGptOptionsBuilder
     public bool ThrowExceptionOnError { get; set; } = true;
 
     /// <summary>
-    /// Gets or sets the default model for chat completion. (default: <see cref="OpenAIChatGptModels.Gpt35Turbo"/> when the provider is <see cref="OpenAIChatGptServiceConfiguration"> OpenAI</see>).
+    /// Gets or sets the default model for chat completion. (default: <see cref="OpenAIChatGptModels.Gpt35_Turbo"/> when the provider is <see cref="OpenAIChatGptServiceConfiguration"> OpenAI</see>).
     /// </summary>
     /// <seealso cref="OpenAIChatGptModels"/>
     /// <seealso cref="OpenAIChatGptServiceConfiguration"/>

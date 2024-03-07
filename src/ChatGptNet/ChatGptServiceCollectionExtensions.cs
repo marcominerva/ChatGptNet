@@ -165,7 +165,7 @@ public static class ChatGptServiceCollectionExtensions
             // If the provider is OpenAI and some default models are not specified, use the default ones.
             if (string.IsNullOrWhiteSpace(options.DefaultModel))
             {
-                options.DefaultModel = OpenAIChatGptModels.Gpt35Turbo;
+                options.DefaultModel = OpenAIChatGptModels.Gpt35_Turbo;
             }
 
             if (string.IsNullOrWhiteSpace(options.DefaultEmbeddingModel))
