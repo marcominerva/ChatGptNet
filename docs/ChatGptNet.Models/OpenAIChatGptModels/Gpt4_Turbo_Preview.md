@@ -1,14 +1,14 @@
-# OpenAIChatGptModels.Gpt4_1106_Preview field
+# OpenAIChatGptModels.Gpt4_Turbo_Preview field
 
 The latest GPT-4 model with improved instruction following, JSON mode, reproducible outputs, parallel function calling, and more.
 
 ```csharp
-public const string Gpt4_1106_Preview;
+public const string Gpt4_Turbo_Preview;
 ```
 
 ## Remarks
 
-This model supports 128.000 tokens and returns a maximum if 4.096 outpout tokens. This preview model is not yet suited for production traffic. See [GPT-4](https://platform.openai.com/docs/models/gpt-4-and-gpt-4-turbo) for more information.
+This model supports 128.000 tokens and returns a maximum of 4.096 outpout tokens. This preview model is not yet suited for production traffic. See [GPT-4](https://platform.openai.com/docs/models/gpt-4-and-gpt-4-turbo) for more information.
 
 ## See Also
 

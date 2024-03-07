@@ -3,7 +3,7 @@
 Gets or sets the default parameters for embeddings.
 
 ```csharp
-public EmbeddingParameters DefaultEmbeddingParameters { get; }
+public EmbeddingParameters DefaultEmbeddingParameters { get; set; }
 ```
 
 ## See Also

@@ -1,9 +1,9 @@
-# OpenAIChatGptModels.Gpt35Turbo field
+# OpenAIChatGptModels.Gpt35_Turbo field
 
 GPT-3.5 model can understand and generate natural language or code and it is optimized for chat.
 
 ```csharp
-public const string Gpt35Turbo;
+public const string Gpt35_Turbo;
 ```
 
 ## Remarks
@@ -12,7 +12,7 @@ This model supports 4.096 tokens. See [GPT-3.5](https://platform.openai.com/docs
 
 ## See Also
 
-* field [Gpt35Turbo_16k](./Gpt35Turbo_16k.md)
+* field [Gpt35_Turbo_16k](./Gpt35_Turbo_16k.md)
 * class [OpenAIChatGptModels](../OpenAIChatGptModels.md)
 * namespace [ChatGptNet.Models](../../ChatGptNet.md)
 

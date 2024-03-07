@@ -1,6 +1,6 @@
 # ChatGptOptionsBuilder constructor
 
-The default constructor.
+Initializes a new instance of the [`ChatGptOptionsBuilder`](../ChatGptOptionsBuilder.md) class.
 
 ```csharp
 public ChatGptOptionsBuilder()

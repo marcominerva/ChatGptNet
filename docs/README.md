@@ -5,6 +5,7 @@
 | public type | description |
 | --- | --- |
 | class [ChatGptBuilder](./ChatGptNet/ChatGptBuilder.md) | Represents the default builder for configuring ChatGPT. |
+| static class [ChatGptFactoryServiceCollectionExtensions](./ChatGptNet/ChatGptFactoryServiceCollectionExtensions.md) | Provides extension methods for adding ChatGPT Client Factory support in NET applications. |
 | class [ChatGptOptions](./ChatGptNet/ChatGptOptions.md) | Options class that provides settings for configuring ChatGPT. |
 | class [ChatGptOptionsBuilder](./ChatGptNet/ChatGptOptionsBuilder.md) | Builder class to define settings for configuring ChatGPT. |
 | static class [ChatGptOptionsBuilderExtensions](./ChatGptNet/ChatGptOptionsBuilderExtensions.md) | Provides extensions to configure settings for accessing ChatGPT service. |
@@ -13,6 +14,7 @@
 | static class [IChatGptBuilderExtensions](./ChatGptNet/IChatGptBuilderExtensions.md) | Provides extension methods for configuring ChatGPT after service creation. |
 | interface [IChatGptCache](./ChatGptNet/IChatGptCache.md) | Represents the interface used to define the caching behavior for ChatGPT messages. |
 | interface [IChatGptClient](./ChatGptNet/IChatGptClient.md) | Provides methods to interact with ChatGPT. |
+| interface [IChatGptClientFactory](./ChatGptNet/IChatGptClientFactory.md) | Provides methods to create new instances of [`IChatGptClient`](./ChatGptNet/IChatGptClient.md) at runtime |
 
 ## ChatGptNet.Exceptions namespace
 
