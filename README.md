@@ -53,9 +53,12 @@ builder.Services.AddChatGpt(options =>
 - _ResourceName_: the name of your Azure OpenAI Resource (required).
 - _ApiKey_: Azure OpenAI provides two methods for authentication. You can use either API Keys or Azure Active Directory (required).
 - _ApiVersion_: the version of the API to use (optional). Allowed values:
+  - 2022-12-01
   - 2023-05-15
   - 2023-06-01-preview
-  - 2024-02-15-preview (default)
+  - 2024-02-15-preview
+  - 2024-03-01-preview (default)
+  - 2024-02-01
 - _AuthenticationType_: it specifies if the key is an actual API Key or an [Azure Active Directory token](https://learn.microsoft.com/azure/cognitive-services/openai/how-to/managed-identity) (optional, default: "ApiKey").
 
 ### DefaultModel and DefaultEmbeddingModel
