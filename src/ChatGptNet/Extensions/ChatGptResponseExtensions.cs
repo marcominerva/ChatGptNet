@@ -17,7 +17,14 @@ public static class ChatGptResponseExtensions
     /// <seealso cref="ChatGptRequest.Stream"/>
     public static string? GetContent(this ChatGptResponse response)
         => response.Choices.FirstOrDefault()?.Delta?.Content ?? response.Choices.FirstOrDefault()?.Message?.Content?.Trim();
-
+    /// <summary>
+    /// Gets the content of the called function arguments, if available.
+    /// </summary>
+    /// <returns>The content of the first choice, if available.</returns>
+    /// <remarks>When using streaming responses, this method returns a partial message delta.</remarks>
+    /// <seealso cref="ChatGptRequest.Stream"/>
+    public static string? GetArgument(this ChatGptResponse response)
+    => response.Choices.FirstOrDefault()?.Delta?.FunctionCall?.Arguments;
     /// <summary>
     /// Gets a value indicating whether the first choice, if available, contains a tool call. 
     /// </summary>
