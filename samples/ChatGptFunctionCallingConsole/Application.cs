@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using System.Text;
+using System.Text.Json;
 using ChatGptNet;
 using ChatGptNet.Extensions;
 using ChatGptNet.Models;
@@ -91,21 +92,38 @@ internal class Application(IChatGptClient chatGptClient)
                 {
                     Console.WriteLine("I'm thinking...");
 
-                    var response = await chatGptClient.AskAsync(conversationId, message, toolParameters);
-
-                    if (response.ContainsFunctionCalls())
+                    //var response = await chatGptClient.AskAsync(conversationId, message, toolParameters);
+                    ChatGptResponse chatResponse = null;
+                    StringBuilder argument = new StringBuilder();
+                    var r = chatGptClient.AskStreamAsync(conversationId, message, null, toolParameters);
+                    await foreach (var response in r)
                     {
+                        /*Keep response*/
+                        chatResponse = response;
+                        if (response.ContainsFunctionCalls())
+                        {
+                            Console.Write(response.GetArgument());
+                            argument.Append(response.GetArgument());
+                        }
+                        else
+                        {
+                            Console.Write(response.GetContent());
+                        }
+                    }
+
+                    if (chatResponse!.ContainsFunctionCalls())
+                    {
+
                         Console.WriteLine("I have identified a function to call:");
 
-                        var functionCall = response.GetFunctionCall()!;
-
+                        var functionCall = chatResponse!.GetFunctionCall()!;
                         Console.ForegroundColor = ConsoleColor.Green;
                         Console.WriteLine(functionCall.Name);
-                        Console.WriteLine(functionCall.Arguments);
+                        Console.WriteLine(argument.ToString());
                         Console.ResetColor();
 
                         // Simulates the call to the function.
-                        var functionResponse = await GetWeatherAsync(functionCall.GetArgumentsAsJson());
+                        var functionResponse = await GetWeatherAsync(JsonDocument.Parse(argument.ToString()));
 
                         // After the function has been called, it is necessary to add the response to the conversation.
 
@@ -125,13 +143,11 @@ internal class Application(IChatGptClient chatGptClient)
                         Console.ResetColor();
 
                         // Finally, it sends the original message back to the model, to obtain a response that takes into account the function call.
-                        response = await chatGptClient.AskAsync(conversationId, message, toolParameters);
-
-                        Console.WriteLine(response.GetContent());
-                    }
-                    else
-                    {
-                        Console.WriteLine(response.GetContent());
+                        var rsp = chatGptClient.AskStreamAsync(conversationId, message, null, toolParameters);
+                        await foreach (var response in r)
+                        {
+                            Console.Write(response.GetContent());
+                        }
                     }
 
                     Console.WriteLine();
