@@ -156,7 +156,7 @@ internal class ChatGptRequest
     public bool? LogProbabilities { get; set; }
 
     /// <summary>
-    /// Gets or sets a value between 0 and 20 specifying the number of most likely tokens to return at each token position, each with an associated log probability.
+    /// Gets or sets a value between 0 and 5 specifying the number of most likely tokens to return at each token position, each with an associated log probability.
     /// </summary>
     /// <remarks>
     /// <see cref="LogProbabilities"/>must be set to <see langword="true"/> if this parameter is used.
