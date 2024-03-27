@@ -68,6 +68,9 @@ internal class ChatGptClient : IChatGptClient
         var requestUri = options.ServiceConfiguration.GetChatCompletionEndpoint(model ?? options.DefaultModel);
         using var httpResponse = await httpClient.PostAsJsonAsync(requestUri, request, jsonSerializerOptions, cancellationToken);
 
+        var json = await httpResponse.Content.ReadAsStringAsync(cancellationToken);
+        Console.WriteLine(json);
+
         var response = await httpResponse.Content.ReadFromJsonAsync<ChatGptResponse>(jsonSerializerOptions, cancellationToken: cancellationToken);
         NormalizeResponse(httpResponse, response!, conversationId, model ?? options.DefaultModel);
 
@@ -356,8 +359,10 @@ internal class ChatGptClient : IChatGptClient
             MaxTokens = parameters?.MaxTokens ?? options.DefaultParameters.MaxTokens,
             PresencePenalty = parameters?.PresencePenalty ?? options.DefaultParameters.PresencePenalty,
             FrequencyPenalty = parameters?.FrequencyPenalty ?? options.DefaultParameters.FrequencyPenalty,
-            User = options.User,
-            ResponseFormat = parameters?.ResponseFormat ?? options.DefaultParameters.ResponseFormat
+            ResponseFormat = parameters?.ResponseFormat ?? options.DefaultParameters.ResponseFormat,
+            LogProbabilities = parameters?.LogProbabilities ?? options.DefaultParameters.LogProbabilities,
+            TopLogProbabilities = parameters?.TopLogProbabilities ?? options.DefaultParameters.TopLogProbabilities,
+            User = options.User
         };
 
     private EmbeddingRequest CreateEmbeddingRequest(IEnumerable<string> messages, EmbeddingParameters? parameters, string? model)

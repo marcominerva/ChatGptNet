@@ -11,7 +11,7 @@ namespace ChatGptNet.Models;
 public class ChatGptParameters
 {
     /// <summary>
-    /// If specified, the system will make a best effort to sample deterministically, such that repeated requests with the same seed and parameters should return the same result.
+    /// Gets or sets a value such that, if specified, the system will make a best effort to sample deterministically, such that repeated requests with the same seed and parameters should return the same result.
     /// </summary>
     /// <remarks>
     /// Determinism is not guaranteed, and you should refer to the <see cref="ChatGptResponse.SystemFingerprint"/> response parameter to monitor changes in the backend.
@@ -64,4 +64,21 @@ public class ChatGptParameters
     /// <seealso cref="ChatGptResponseFormat"/>
     [JsonPropertyName("response_format")]
     public ChatGptResponseFormat? ResponseFormat { get; set; }
+
+    /// <summary>
+    /// Gets or set a value that determines whether to return log probabilities of the output tokens or not. If <see langword="true"/>, returns the log probabilities of each output token returned in the content of message (default: <see langword="false"/>).
+    /// </summary>
+    /// <seealso cref="TopLogProbabilities"/>
+    [JsonPropertyName("logprobs")]
+    public bool? LogProbabilities { get; set; }
+
+    /// <summary>
+    /// Gets or sets a value between 0 and 20 specifying the number of most likely tokens to return at each token position, each with an associated log probability.
+    /// </summary>
+    /// <remarks>
+    /// <see cref="LogProbabilities"/>must be set to <see langword="true"/> if this parameter is used.
+    /// </remarks>
+    /// <seealso cref="LogProbabilities"/>
+    [JsonPropertyName("top_logprobs")]
+    public int? TopLogProbabilities { get; set; }
 }
