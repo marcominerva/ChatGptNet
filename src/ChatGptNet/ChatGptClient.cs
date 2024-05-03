@@ -68,9 +68,6 @@ internal class ChatGptClient : IChatGptClient
         var requestUri = options.ServiceConfiguration.GetChatCompletionEndpoint(model ?? options.DefaultModel);
         using var httpResponse = await httpClient.PostAsJsonAsync(requestUri, request, jsonSerializerOptions, cancellationToken);
 
-        var json = await httpResponse.Content.ReadAsStringAsync(cancellationToken);
-        Console.WriteLine(json);
-
         var response = await httpResponse.Content.ReadFromJsonAsync<ChatGptResponse>(jsonSerializerOptions, cancellationToken: cancellationToken);
         NormalizeResponse(httpResponse, response!, conversationId, model ?? options.DefaultModel);
 
@@ -237,7 +234,7 @@ internal class ChatGptClient : IChatGptClient
         if (!replaceHistory)
         {
             // Otherwise, retrieves the current history and adds the messages.
-            var conversationHistory = await cache.GetAsync(conversationId, cancellationToken) ?? Enumerable.Empty<ChatGptMessage>();
+            var conversationHistory = await cache.GetAsync(conversationId, cancellationToken) ?? [];
             messages = conversationHistory.Union(messages);
         }
 
@@ -253,7 +250,7 @@ internal class ChatGptClient : IChatGptClient
         ArgumentNullException.ThrowIfNull(question);
         ArgumentNullException.ThrowIfNull(answer);
 
-        var messages = await cache.GetAsync(conversationId, cancellationToken) ?? Enumerable.Empty<ChatGptMessage>();
+        var messages = await cache.GetAsync(conversationId, cancellationToken) ?? [];
         messages = messages.Union([
             new()
             {
