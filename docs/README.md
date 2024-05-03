@@ -47,6 +47,8 @@
 | class [ChatGptFunction](./ChatGptNet.Models/ChatGptFunction.md) | Represents the description of a function available for ChatGPT. |
 | class [ChatGptFunctionCall](./ChatGptNet.Models/ChatGptFunctionCall.md) | Represents a response function call. |
 | class [ChatGptInnerError](./ChatGptNet.Models/ChatGptInnerError.md) | Contains further details about the error. |
+| class [ChatGptLogProbability](./ChatGptNet.Models/ChatGptLogProbability.md) | Represents the log probability information of a [`completion choice`](./ChatGptNet.Models/ChatGptChoice.md). |
+| class [ChatGptLogProbabilityContent](./ChatGptNet.Models/ChatGptLogProbabilityContent.md) | Represents a message content token with log probability information. |
 | class [ChatGptMessage](./ChatGptNet.Models/ChatGptMessage.md) | Represents a single chat message. |
 | class [ChatGptParameters](./ChatGptNet.Models/ChatGptParameters.md) | Represents chat completion parameters. |
 | class [ChatGptPromptFilterResults](./ChatGptNet.Models/ChatGptPromptFilterResults.md) | Contains information about content filtering for input prompts. |

@@ -1,6 +1,6 @@
 # ChatGptParameters.Seed property
 
-If specified, the system will make a best effort to sample deterministically, such that repeated requests with the same seed and parameters should return the same result.
+Gets or sets a value such that, if specified, the system will make a best effort to sample deterministically, such that repeated requests with the same seed and parameters should return the same result.
 
 ```csharp
 public int? Seed { get; set; }

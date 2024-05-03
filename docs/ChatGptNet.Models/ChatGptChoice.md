@@ -16,6 +16,7 @@ public class ChatGptChoice
 | [FinishReason](ChatGptChoice/FinishReason.md) { get; set; } | Gets or sets a value specifying why the choice has been returned. |
 | [Index](ChatGptChoice/Index.md) { get; set; } | Gets or sets the index of the choice in the list. |
 | [IsFiltered](ChatGptChoice/IsFiltered.md) { get; } | Gets or sets a value indicating whether the this [`ChatGptChoice`](./ChatGptChoice.md) has been filtered by the content filtering system. |
+| [LogProbabilities](ChatGptChoice/LogProbabilities.md) { get; set; } | Gets or sets the log probabilities associated with this [`ChatGptChoice`](./ChatGptChoice.md). |
 | [Message](ChatGptChoice/Message.md) { get; set; } | Gets or sets the message associated with this [`ChatGptChoice`](./ChatGptChoice.md), if any. |
 
 ## See Also

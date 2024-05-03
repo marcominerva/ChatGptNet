@@ -56,4 +56,12 @@ public class ChatGptChoice
     /// </remarks>
     [JsonPropertyName("finish_reason")]
     public string FinishReason { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Gets or sets the log probabilities associated with this <see cref="ChatGptChoice"/>.
+    /// </summary>
+    /// <seealso cref="ChatGptLogProbability"/>
+    /// <seealso cref="ChatGptLogProbabilityContent"/>
+    [JsonPropertyName("logprobs")]
+    public ChatGptLogProbability? LogProbabilities { get; set; }
 }

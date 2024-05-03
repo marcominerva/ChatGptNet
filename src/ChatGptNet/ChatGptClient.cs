@@ -234,7 +234,7 @@ internal class ChatGptClient : IChatGptClient
         if (!replaceHistory)
         {
             // Otherwise, retrieves the current history and adds the messages.
-            var conversationHistory = await cache.GetAsync(conversationId, cancellationToken) ?? Enumerable.Empty<ChatGptMessage>();
+            var conversationHistory = await cache.GetAsync(conversationId, cancellationToken) ?? [];
             messages = conversationHistory.Union(messages);
         }
 
@@ -250,7 +250,7 @@ internal class ChatGptClient : IChatGptClient
         ArgumentNullException.ThrowIfNull(question);
         ArgumentNullException.ThrowIfNull(answer);
 
-        var messages = await cache.GetAsync(conversationId, cancellationToken) ?? Enumerable.Empty<ChatGptMessage>();
+        var messages = await cache.GetAsync(conversationId, cancellationToken) ?? [];
         messages = messages.Union([
             new()
             {
@@ -356,8 +356,10 @@ internal class ChatGptClient : IChatGptClient
             MaxTokens = parameters?.MaxTokens ?? options.DefaultParameters.MaxTokens,
             PresencePenalty = parameters?.PresencePenalty ?? options.DefaultParameters.PresencePenalty,
             FrequencyPenalty = parameters?.FrequencyPenalty ?? options.DefaultParameters.FrequencyPenalty,
-            User = options.User,
-            ResponseFormat = parameters?.ResponseFormat ?? options.DefaultParameters.ResponseFormat
+            ResponseFormat = parameters?.ResponseFormat ?? options.DefaultParameters.ResponseFormat,
+            LogProbabilities = parameters?.LogProbabilities ?? options.DefaultParameters.LogProbabilities,
+            TopLogProbabilities = parameters?.TopLogProbabilities ?? options.DefaultParameters.TopLogProbabilities,
+            User = options.User
         };
 
     private EmbeddingRequest CreateEmbeddingRequest(IEnumerable<string> messages, EmbeddingParameters? parameters, string? model)
