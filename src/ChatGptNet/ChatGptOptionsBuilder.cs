@@ -90,7 +90,9 @@ public class ChatGptOptionsBuilder
             ResponseFormat = source.DefaultParameters?.ResponseFormat,
             TopP = source.DefaultParameters?.TopP,
             Temperature = source.DefaultParameters?.Temperature,
-            Seed = source.DefaultParameters?.Seed
+            Seed = source.DefaultParameters?.Seed,
+            LogProbabilities = source.DefaultParameters?.LogProbabilities,
+            TopLogProbabilities = source.DefaultParameters?.TopLogProbabilities
         };
 
         DefaultEmbeddingParameters = new()
