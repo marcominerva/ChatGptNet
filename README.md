@@ -53,11 +53,12 @@ builder.Services.AddChatGpt(options =>
 - _ResourceName_: the name of your Azure OpenAI Resource (required).
 - _ApiKey_: Azure OpenAI provides two methods for authentication. You can use either API Keys or Azure Active Directory (required).
 - _ApiVersion_: the version of the API to use (optional). Allowed values:
-  - 2022-12-01
   - 2023-05-15
   - 2023-06-01-preview
+  - 2023-10-01-preview
   - 2024-02-15-preview
-  - 2024-03-01-preview (default)
+  - 2024-03-01-preview
+  - 2024-04-01-preview (default)
   - 2024-02-01
 - _AuthenticationType_: it specifies if the key is an actual API Key or an [Azure Active Directory token](https://learn.microsoft.com/azure/cognitive-services/openai/how-to/managed-identity) (optional, default: "ApiKey").
 
@@ -74,8 +75,8 @@ Currently available models are:
 - gpt-3.5-turbo-16k,
 - gpt-4,
 - gpt-4-32k
-- gpt-4-turbo-preview
-- gpt-4-vision-preview
+- gpt-4-turbo
+- gpt-4o
 
 They have fixed names, available in the [OpenAIChatGptModels.cs file](https://github.com/marcominerva/ChatGptNet/blob/master/src/ChatGptNet/Models/OpenAIChatGptModels.cs).
 
@@ -510,7 +511,7 @@ var functionResponse = await GetWeatherAsync(functionCall.Arguments);
 await chatGptClient.AddToolResponseAsync(conversationId, functionCall, functionResponse);
 ```
 
-Newer models like _gpt-4-1106-preview_ support a more general approach to functions, the **Tool calling**. When you send a request, you can specify a list of tools the model may call. Currently, only functions are supported, but in future release other types of tools will be available.
+Newer models like _gpt-4-turbo_ support a more general approach to functions, the **Tool calling**. When you send a request, you can specify a list of tools the model may call. Currently, only functions are supported, but in future release other types of tools will be available.
 
 To use Tool calling instead of direct Function calling, you need to set the _ToolChoice_ and _Tools_ properties in the **ChatGptToolParameters** object (instead of _FunctionCall_ and _Function_, as in previous example):
 
