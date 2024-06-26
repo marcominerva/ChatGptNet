@@ -18,7 +18,7 @@ internal class AzureChatGptServiceConfiguration : ChatGptServiceConfiguration
     public string? ResourceName { get; set; }
 
     /// <summary>
-    /// Gets or sets the API version of the Azure OpenAI service (Default: 2024-04-01-preview).
+    /// Gets or sets the API version of the Azure OpenAI service (Default: 2024-05-01-preview).
     /// </summary>
     /// <remarks>
     /// Currently supported versions are:
