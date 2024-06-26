@@ -4,7 +4,7 @@ Configures Azure OpenAI Service settings.
 
 ```csharp
 public static ChatGptOptionsBuilder UseAzure(this ChatGptOptionsBuilder builder, 
-    string resourceName, string apiKey, string apiVersion = "2024-04-01-preview", 
+    string resourceName, string apiKey, string apiVersion = "2024-05-01-preview", 
     AzureAuthenticationType authenticationType = AzureAuthenticationType.ApiKey)
 ```
 
