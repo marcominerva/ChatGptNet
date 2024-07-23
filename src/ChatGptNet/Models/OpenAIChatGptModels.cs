@@ -17,7 +17,6 @@ public static class OpenAIChatGptModels
     /// <remarks>
     /// This model supports 4.096 tokens. See <see href="https://platform.openai.com/docs/models/gpt-3-5">GPT-3.5</see> for more information.
     /// </remarks>
-    /// <seealso cref="Gpt35_Turbo_16k"/>
     public const string Gpt35_Turbo = "gpt-3.5-turbo";
 
     /// <summary>
@@ -26,7 +25,6 @@ public static class OpenAIChatGptModels
     /// <remarks>
     /// This model supports 16.384 tokens. See <see href="https://platform.openai.com/docs/models/gpt-3-5">GPT-3.5</see> for more information.
     /// </remarks>
-    /// <seealso cref="Gpt35_Turbo"/>
     public const string Gpt35_Turbo_16k = "gpt-3.5-turbo-16k";
 
     /// <summary>
@@ -35,7 +33,6 @@ public static class OpenAIChatGptModels
     /// <remarks>
     /// This model supports 8.192 tokens. See <see href="https://platform.openai.com/docs/models/gpt-4-turbo-and-gpt-4">GPT-4</see> for more information.
     /// </remarks>
-    /// <seealso cref="Gpt4_32k"/>
     public const string Gpt4 = "gpt-4";
 
     /// <summary>
@@ -44,7 +41,6 @@ public static class OpenAIChatGptModels
     /// <remarks>
     /// This model supports 32.768 tokens. See <see href="https://platform.openai.com/docs/models/gpt-4-turbo-and-gpt-4">GPT-4</see> for more information.
     /// </remarks>
-    /// <seealso cref="Gpt4"/>
     public const string Gpt4_32k = "gpt-4-32k";
 
     /// <summary>
@@ -54,16 +50,23 @@ public static class OpenAIChatGptModels
     /// This model supports 128.000 tokens and returns a maximum of 4.096 outpout tokens.
     /// See <see href="https://platform.openai.com/docs/models/gpt-4-turbo-and-gpt-4">GPT-4</see> for more information.
     /// </remarks>
-    /// <seealso cref="Gpt4"/>
     public const string Gpt4_Turbo = "gpt-4-turbo";
 
     /// <summary>
-    /// The most advanced, multimodal flagship model that’s cheaper and faster than <see cref="Gpt4_Turbo"/>.
+    /// The most advanced, multimodal flagship model that is cheaper and faster than <see cref="Gpt4_Turbo"/>.
     /// </summary>
     /// <remarks>
     /// This model supports 128.000 tokens and returns a maximum of 4.096 outpout tokens.
     /// See <see href="https://platform.openai.com/docs/models/gpt-4o">GPT-4</see> for more information.
     /// </remarks>
-    /// <seealso cref="Gpt4_Turbo"/>
     public const string Gpt4_o = "gpt-4o";
+
+    /// <summary>
+    /// An affordable and intelligent small model for fast, lightweight tasks. GPT-4o mini is cheaper and more capable than <see cref="Gpt35_Turbo"/>.
+    /// </summary>
+    /// <remarks>
+    /// This model supports 128.000 tokens and returns a maximum of 4.096 outpout tokens.
+    /// See <see href="https://platform.openai.com/docs/models/gpt-4o-mini">GPT-4</see> for more information.
+    /// </remarks>
+    public const string Gpt4_o_mini = "gpt-4o-mini";
 }

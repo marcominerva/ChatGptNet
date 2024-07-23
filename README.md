@@ -59,8 +59,9 @@ builder.Services.AddChatGpt(options =>
   - 2024-02-15-preview
   - 2024-03-01-preview
   - 2024-04-01-preview
-  - 2024-05-01-preview (default)
+  - 2024-05-01-preview
   - 2024-02-01
+  - 2024-06-01 (default)
 - _AuthenticationType_: it specifies if the key is an actual API Key or an [Azure Active Directory token](https://learn.microsoft.com/azure/cognitive-services/openai/how-to/managed-identity) (optional, default: "ApiKey").
 
 ### DefaultModel and DefaultEmbeddingModel
@@ -78,6 +79,7 @@ Currently available models are:
 - gpt-4-32k
 - gpt-4-turbo
 - gpt-4o
+- gpt-4o-mini
 
 They have fixed names, available in the [OpenAIChatGptModels.cs file](https://github.com/marcominerva/ChatGptNet/blob/master/src/ChatGptNet/Models/OpenAIChatGptModels.cs).
 
@@ -143,7 +145,7 @@ The configuration can be automatically read from [IConfiguration](https://learn.
     "ApiKey": "",                       // Required
     //"Organization": "",               // Optional, used only by OpenAI
     "ResourceName": "",                 // Required when using Azure OpenAI Service
-    "ApiVersion": "2023-08-01-preview", // Optional, used only by Azure OpenAI Service (default: 2023-08-01-preview)
+    "ApiVersion": "2024-06-01", // Optional, used only by Azure OpenAI Service (default: 2024-06-01)
     "AuthenticationType": "ApiKey",     // Optional, used only by Azure OpenAI Service. Allowed values: ApiKey (default) or ActiveDirectory
 
     "DefaultModel": "my-model",
