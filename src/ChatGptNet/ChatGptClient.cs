@@ -158,6 +158,12 @@ internal class ChatGptClient : IChatGptClient
                                 }
                             }
                         }
+                        else if (response.Usage is not null)
+                        {
+                            // The usage field on this chunk shows the token usage statistics for the entire request, and the choices field will always be an empty array.
+                            // All other chunks will also include a usage field, but with a null value.
+                            yield return response;
+                        }
                     }
                     else if (line.StartsWith("data: [DONE]"))
                     {
@@ -350,6 +356,8 @@ internal class ChatGptClient : IChatGptClient
             },
 
             Stream = stream,
+            StreamOptions = stream ? new() { IncludeUsage = true } : null,
+
             Seed = parameters?.Seed ?? options.DefaultParameters.Seed,
             Temperature = parameters?.Temperature ?? options.DefaultParameters.Temperature,
             TopP = parameters?.TopP ?? options.DefaultParameters.TopP,
