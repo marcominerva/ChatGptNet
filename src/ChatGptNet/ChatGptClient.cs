@@ -392,14 +392,14 @@ internal class ChatGptClient : IChatGptClient
     private async Task UpdateCacheAsync(Guid conversationId, IEnumerable<ChatGptMessage> messages, CancellationToken cancellationToken = default)
     {
         // If the maximum number of messages has been reached, deletes the oldest ones.
-        // Note: system message does not count for message limit.
+        // Note: the system message does not count for message limit.
         var conversation = messages.Where(m => m.Role != ChatGptRoles.System);
 
         if (conversation.Count() > options.MessageLimit)
         {
             conversation = conversation.TakeLast(options.MessageLimit);
 
-            // If the first message was of role system, adds it back in.
+            // If the first message had the system role, adds it back in.
             var firstMessage = messages.First();
             if (firstMessage.Role == ChatGptRoles.System)
             {
