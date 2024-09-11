@@ -56,13 +56,14 @@ builder.Services.AddChatGpt(options =>
   - 2023-05-15
   - 2023-06-01-preview
   - 2023-10-01-preview
+  - 2024-02-01
   - 2024-02-15-preview
   - 2024-03-01-preview
   - 2024-04-01-preview
-  - 2024-05-01-preview
-  - 2024-02-01
+  - 2024-05-01-preview  
   - 2024-06-01
-  - 2024-07-01-preview (default)
+  - 2024-07-01-preview
+  - 2024-08-01-preview (default)
 - _AuthenticationType_: it specifies if the key is an actual API Key or an [Azure Active Directory token](https://learn.microsoft.com/azure/cognitive-services/openai/how-to/managed-identity) (optional, default: "ApiKey").
 
 ### DefaultModel and DefaultEmbeddingModel
