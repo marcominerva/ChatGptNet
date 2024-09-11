@@ -10,7 +10,7 @@ internal class AzureChatGptServiceConfiguration : ChatGptServiceConfiguration
     /// <summary>
     /// The default API version for Azure OpenAI service.
     /// </summary>
-    public const string DefaultApiVersion = "2024-07-01-preview";
+    public const string DefaultApiVersion = "2024-08-01-preview";
 
     /// <summary>
     /// Gets or sets the name of the Azure OpenAI Resource.
@@ -18,7 +18,7 @@ internal class AzureChatGptServiceConfiguration : ChatGptServiceConfiguration
     public string? ResourceName { get; set; }
 
     /// <summary>
-    /// Gets or sets the API version of the Azure OpenAI service (Default: 2024-07-01-preview).
+    /// Gets or sets the API version of the Azure OpenAI service (Default: 2024-08-01-preview).
     /// </summary>
     /// <remarks>
     /// Currently supported versions are:
@@ -34,6 +34,10 @@ internal class AzureChatGptServiceConfiguration : ChatGptServiceConfiguration
     ///  <item>
     ///     <term>2023-10-01-preview</term>
     ///     <description><see href="https://github.com/Azure/azure-rest-api-specs/blob/main/specification/cognitiveservices/data-plane/AzureOpenAI/inference/preview/2023-10-01-preview/inference.json">Swagger spec</see></description>
+    ///   </item>
+    ///   <item>
+    ///     <term>2024-02-01</term>
+    ///     <description><see href="https://github.com/Azure/azure-rest-api-specs/blob/main/specification/cognitiveservices/data-plane/AzureOpenAI/inference/stable/2024-02-01/inference.json">Swagger spec</see></description>
     ///   </item>
     ///   <item>
     ///     <term>2024-02-15-preview</term>
@@ -52,17 +56,18 @@ internal class AzureChatGptServiceConfiguration : ChatGptServiceConfiguration
     ///     <description><see href="https://github.com/Azure/azure-rest-api-specs/blob/main/specification/cognitiveservices/data-plane/AzureOpenAI/inference/preview/2024-05-01-preview/inference.json">Swagger spec</see></description>
     ///   </item>
     ///   <item>
-    ///     <term>2023-02-01</term>
-    ///     <description><see href="https://github.com/Azure/azure-rest-api-specs/blob/main/specification/cognitiveservices/data-plane/AzureOpenAI/inference/stable/2024-02-01/inference.json">Swagger spec</see></description>
-    ///   </item>
-    ///   <item>
     ///     <term>2024-06-01</term>
     ///     <description><see href="https://github.com/Azure/azure-rest-api-specs/blob/main/specification/cognitiveservices/data-plane/AzureOpenAI/inference/stable/2024-06-01/inference.json">Swagger spec</see></description>
     ///   </item>
     ///   <item>
     ///     <term>2024-07-01-preview</term>
     ///     <description><see href="https://github.com/Azure/azure-rest-api-specs/blob/main/specification/cognitiveservices/data-plane/AzureOpenAI/inference/preview/2024-07-01-preview/inference.json">Swagger spec</see></description>
-    ///   </item>/// </list>
+    ///   </item>
+    ///   <item>
+    ///     <term>2024-08-01-preview</term>
+    ///     <description><see href="https://github.com/Azure/azure-rest-api-specs/blob/main/specification/cognitiveservices/data-plane/AzureOpenAI/inference/preview/2024-08-01-preview/inference.json">Swagger spec</see></description>
+    ///   </item>
+    /// </list>
     /// </remarks>
     public string ApiVersion { get; set; } = DefaultApiVersion;
 
