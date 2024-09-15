@@ -87,7 +87,7 @@ internal class ChatGptClient : IChatGptClient
         return response;
     }
 
-    public async IAsyncEnumerable<ChatGptResponse> AskStreamAsync(Guid conversationId, string message, ChatGptParameters? parameters = null, string? model = null, bool addToConversationHistory = true, [EnumeratorCancellation] CancellationToken cancellationToken = default)
+    public async IAsyncEnumerable<ChatGptResponse> AskStreamAsync(Guid conversationId, string message, ChatGptParameters? parameters = null, ChatGptToolParameters? toolParameters = null, string? model = null, bool addToConversationHistory = true, [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(message);
 
@@ -95,7 +95,7 @@ internal class ChatGptClient : IChatGptClient
         conversationId = (conversationId == Guid.Empty) ? Guid.NewGuid() : conversationId;
 
         var messages = await CreateMessageListAsync(conversationId, message, cancellationToken);
-        var request = CreateChatGptRequest(messages, null, true, parameters, model);
+        var request = CreateChatGptRequest(messages, toolParameters, true, parameters, model);
 
         var requestUri = options.ServiceConfiguration.GetChatCompletionEndpoint(model ?? options.DefaultModel);
         using var requestMessage = new HttpRequestMessage(HttpMethod.Post, requestUri)
@@ -114,6 +114,7 @@ internal class ChatGptClient : IChatGptClient
                 using var reader = new StreamReader(responseStream);
 
                 IEnumerable<ChatGptPromptFilterResults>? promptFilterResults = null;
+                ChatGptFunctionCall functionCall = new ChatGptFunctionCall();
 
                 while (!reader.EndOfStream)
                 {
@@ -133,28 +134,46 @@ internal class ChatGptClient : IChatGptClient
                         if (choice?.Delta is not null)
                         {
                             choice.Delta.Role = ChatGptRoles.Assistant;
-                            var content = choice.Delta.Content;
-
-                            if (choice.FinishReason == ChatGptFinishReasons.ContentFilter)
+                            if (choice.Delta.FunctionCall != null)
                             {
-                                // The response has been filtered by the content filtering system. Returns the response as is.
-                                yield return response;
-                            }
-                            else if (!string.IsNullOrEmpty(content))
-                            {
-                                // It is a normal assistant response.
-                                if (contentBuilder.Length == 0)
-                                {
-                                    // If this is the first response, trims all the initial special characters.
-                                    content = content.TrimStart('\n');
-                                    choice.Delta.Content = content;
-                                }
+                                /* First response is always function name so we need to store this data */
+                                if (!String.IsNullOrWhiteSpace(choice.Delta.FunctionCall.Name))
+                                    functionCall.Name = choice.Delta.FunctionCall.Name;
+                                functionCall.Arguments = choice.Delta.FunctionCall.Arguments;
 
-                                // Yields the response only if there is an actual content.
-                                if (content != string.Empty)
+                                /* We set delta's function call full name and streaming argument */
+                                choice.Delta.FunctionCall = functionCall;
+
+                                if (choice.Delta != null)
                                 {
-                                    contentBuilder.Append(content);
                                     yield return response;
+                                }
+                            }
+                            else
+                            {
+                                /* Normal message streaming */
+                                var content = choice.Delta.Content;
+                                if (choice.FinishReason == ChatGptFinishReasons.ContentFilter)
+                                {
+                                    // The response has been filtered by the content filtering system. Returns the response as is.
+                                    yield return response;
+                                }
+                                else if (!string.IsNullOrEmpty(content))
+                                {
+                                    // It is a normal assistant response.
+                                    if (contentBuilder.Length == 0)
+                                    {
+                                        // If this is the first response, trims all the initial special characters.
+                                        content = content.TrimStart('\n');
+                                        choice.Delta.Content = content;
+                                    }
+
+                                    // Yields the response only if there is an actual content.
+                                    if (content != string.Empty)
+                                    {
+                                        contentBuilder.Append(content);
+                                        yield return response;
+                                    }
                                 }
                             }
                         }

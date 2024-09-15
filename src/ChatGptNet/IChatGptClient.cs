@@ -120,6 +120,7 @@ public interface IChatGptClient
     /// </summary>
     /// <param name="message">The message.</param>
     /// <param name="parameters">A <see cref="ChatGptParameters"/> object used to override the default completion parameters in the <see cref="ChatGptOptions.DefaultParameters"/> property.</param>
+    /// <param name="toolParameters">A <see cref="ChatGptToolParameters"/> object that contains the list of available functions for calling.</param>
     /// <param name="model">The chat completion model to use. If <paramref name="model"/> is <see langword="null"/>, then the one specified in the <see cref="ChatGptOptions.DefaultModel"/> property will be used.</param>
     /// <param name="addToConversationHistory">Set to <see langword="true"/> to add the current chat interaction to the conversation history.</param>
     /// <param name="cancellationToken">The token to monitor for cancellation requests.</param>
@@ -133,8 +134,8 @@ public interface IChatGptClient
     /// <seealso cref="ChatGptRequest"/>
     /// <seealso cref="ChatGptResponse"/>
     /// <seealso cref="ChatGptParameters"/>
-    IAsyncEnumerable<ChatGptResponse> AskStreamAsync(string message, ChatGptParameters? parameters = null, string? model = null, bool addToConversationHistory = true, CancellationToken cancellationToken = default) =>
-        AskStreamAsync(Guid.NewGuid(), message, parameters, model, addToConversationHistory, cancellationToken);
+    IAsyncEnumerable<ChatGptResponse> AskStreamAsync(string message, ChatGptParameters? parameters = null, ChatGptToolParameters? toolParameters = null, string? model = null, bool addToConversationHistory = true, CancellationToken cancellationToken = default) =>
+        AskStreamAsync(Guid.NewGuid(), message, parameters, toolParameters, model, addToConversationHistory, cancellationToken);
 
     /// <summary>
     /// Requests a chat interaction with streaming response, like in ChatGPT.
@@ -142,6 +143,7 @@ public interface IChatGptClient
     /// <param name="conversationId">The unique identifier of the conversation, used to automatically retrieve previous messages in the chat history.</param>
     /// <param name="message">The message.</param>
     /// <param name="parameters">A <see cref="ChatGptParameters"/> object used to override the default completion parameters in the <see cref="ChatGptOptions.DefaultParameters"/> property.</param>
+    /// <param name="toolParameters">A <see cref="ChatGptToolParameters"/> object that contains the list of available functions for calling.</param>
     /// <param name="model">The chat completion model to use. If <paramref name="model"/> is <see langword="null"/>, then the one specified in the <see cref="ChatGptOptions.DefaultModel"/> property will be used.</param>
     /// <param name="addToConversationHistory">Set to <see langword="true"/> to add the current chat interaction to the conversation history.</param>
     /// <param name="cancellationToken">The token to monitor for cancellation requests.</param>
@@ -152,7 +154,7 @@ public interface IChatGptClient
     /// <seealso cref="ChatGptRequest"/>
     /// <seealso cref="ChatGptResponse"/>
     /// <seealso cref="ChatGptParameters"/>
-    IAsyncEnumerable<ChatGptResponse> AskStreamAsync(Guid conversationId, string message, ChatGptParameters? parameters = null, string? model = null, bool addToConversationHistory = true, CancellationToken cancellationToken = default);
+    IAsyncEnumerable<ChatGptResponse> AskStreamAsync(Guid conversationId, string message, ChatGptParameters? parameters = null, ChatGptToolParameters? toolParameters = null, string? model = null, bool addToConversationHistory = true, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Explicitly adds a new interaction (a question and the corresponding answer) to an existing conversation history.
@@ -188,7 +190,7 @@ public interface IChatGptClient
     /// </remarks>
     /// <seealso cref="ChatGptOptions.MessageLimit"/>
     /// <seealso cref="AskAsync(Guid, string, ChatGptParameters?, string?, bool, CancellationToken)"/>
-    /// <seealso cref="AskStreamAsync(Guid, string, ChatGptParameters?, string?, bool, CancellationToken)"/>
+    /// <seealso cref="AskStreamAsync(Guid, string, ChatGptParameters?, ChatGptToolParameters?, string?, bool, CancellationToken)"/>
     Task<Guid> LoadConversationAsync(IEnumerable<ChatGptMessage> messages, CancellationToken cancellationToken = default)
         => LoadConversationAsync(Guid.NewGuid(), messages, true, cancellationToken);
 
@@ -235,7 +237,7 @@ public interface IChatGptClient
     /// <exception cref="ArgumentNullException"><see cref="ChatGptFunction.Name"/> or <paramref name="content"/> are <see langword="null"/>.</exception>
     /// <exception cref="InvalidOperationException">The conversation history is empty.</exception>
     /// <seealso  cref="AskAsync(Guid, string, ChatGptParameters?, string?, bool, CancellationToken)"/>
-    /// <seealso cref="AskStreamAsync(Guid, string, ChatGptParameters?, string?, bool, CancellationToken)"/>
+    /// <seealso cref="AskStreamAsync(Guid, string, ChatGptParameters?,ChatGptToolParameters?, string?, bool, CancellationToken)"/>
     /// <seealso cref="ChatGptFunctionCall"/>
     Task AddToolResponseAsync(Guid conversationId, ChatGptFunctionCall function, string content, CancellationToken cancellationToken = default)
         => AddToolResponseAsync(conversationId, null, function.Name, content, cancellationToken);
@@ -251,7 +253,7 @@ public interface IChatGptClient
     /// <exception cref="ArgumentNullException"><paramref name="functionName"/> or <paramref name="content"/> are <see langword="null"/>.</exception>
     /// <exception cref="InvalidOperationException">The conversation history is empty.</exception>
     /// <seealso  cref="AskAsync(Guid, string, ChatGptParameters?, string?, bool, CancellationToken)"/>
-    /// <seealso cref="AskStreamAsync(Guid, string, ChatGptParameters?, string?, bool, CancellationToken)"/>
+    /// <seealso cref="AskStreamAsync(Guid, string, ChatGptParameters?, ChatGptToolParameters?,string?, bool, CancellationToken)"/>
     /// <seealso cref="ChatGptFunctionCall"/>
     Task AddToolResponseAsync(Guid conversationId, string functionName, string content, CancellationToken cancellationToken = default)
         => AddToolResponseAsync(conversationId, null, functionName, content, cancellationToken);
@@ -267,7 +269,7 @@ public interface IChatGptClient
     /// <exception cref="ArgumentNullException"><see cref="ChatGptToolCall.Function"/> or <paramref name="content"/> are <see langword="null"/>.</exception>
     /// <exception cref="InvalidOperationException">The conversation history is empty.</exception>
     /// <seealso  cref="AskAsync(Guid, string, ChatGptParameters?, string?, bool, CancellationToken)"/>
-    /// <seealso cref="AskStreamAsync(Guid, string, ChatGptParameters?, string?, bool, CancellationToken)"/>
+    /// <seealso cref="AskStreamAsync(Guid, string, ChatGptParameters?, ChatGptToolParameters?,string?, bool, CancellationToken)"/>
     /// <seealso cref="ChatGptToolCall"/>
     Task AddToolResponseAsync(Guid conversationId, ChatGptToolCall tool, string content, CancellationToken cancellationToken = default)
         => AddToolResponseAsync(conversationId, tool.Id, tool.Function!.Name, content, cancellationToken);
@@ -284,7 +286,7 @@ public interface IChatGptClient
     /// <exception cref="ArgumentNullException"><paramref name="name"/> or <paramref name="content"/> are <see langword="null"/>.</exception>
     /// <exception cref="InvalidOperationException">The conversation history is empty.</exception>
     /// <seealso  cref="AskAsync(Guid, string, ChatGptParameters?, string?, bool, CancellationToken)"/>
-    /// <seealso cref="AskStreamAsync(Guid, string, ChatGptParameters?, string?, bool, CancellationToken)"/>
+    /// <seealso cref="AskStreamAsync(Guid, string, ChatGptParameters?, ChatGptToolParameters?,string?, bool, CancellationToken)"/>
     /// <seealso cref="ChatGptToolCall"/>
     Task AddToolResponseAsync(Guid conversationId, string? toolId, string name, string content, CancellationToken cancellationToken = default);
 
