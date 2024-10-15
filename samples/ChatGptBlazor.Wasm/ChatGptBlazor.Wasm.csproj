@@ -9,9 +9,9 @@
 
     <ItemGroup>
         <PackageReference Include="Markdig" Version="0.37.0" />
-        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.8" />
-        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="8.0.8" PrivateAssets="all" />
-        <PackageReference Include="Microsoft.Extensions.Http.Resilience" Version="8.9.0" />
+        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.10" />
+        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="8.0.10" PrivateAssets="all" />
+        <PackageReference Include="Microsoft.Extensions.Http.Resilience" Version="8.10.0" />
     </ItemGroup>
 
     <ItemGroup>
