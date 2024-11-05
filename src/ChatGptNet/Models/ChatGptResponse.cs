@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Text.Json.Serialization;
+using ChatGptNet.Extensions;
 using ChatGptNet.Models.Common;
 using ChatGptNet.Models.Converters;
 
@@ -59,4 +60,11 @@ public class ChatGptResponse : Response
     /// <seealso cref="ChatGptChoice"/>
     /// <seealso cref="ChatGptChoice.IsFiltered"/>
     public bool IsContentFiltered => Choices.FirstOrDefault()?.IsFiltered ?? false;
+
+    /// <summary>
+    /// Gets the content of the response.
+    /// </summary>
+    /// <returns>The content of the response.</returns>
+    public override string? ToString()
+        => this.GetContent();
 }

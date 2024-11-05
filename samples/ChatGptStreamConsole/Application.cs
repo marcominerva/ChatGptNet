@@ -1,5 +1,4 @@
 ﻿using ChatGptNet;
-using ChatGptNet.Extensions;
 
 namespace ChatGptStreamConsole;
 
@@ -44,7 +43,7 @@ internal class Application
 
                     await foreach (var response in responseStream)
                     {
-                        Console.Write(response.GetContent());
+                        Console.Write(response);
                         await Task.Delay(80);
                     }
 
