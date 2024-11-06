@@ -332,7 +332,8 @@ internal class ChatGptClient : IChatGptClient
     }
 
     private ChatGptRequest CreateChatGptRequest(IEnumerable<ChatGptMessage> messages, ChatGptToolParameters? toolParameters, bool stream, ChatGptParameters? parameters, string? model)
-        => new()
+    {
+        var request = new ChatGptRequest()
         {
             Model = model ?? options.DefaultModel,
             Messages = messages,
@@ -362,6 +363,7 @@ internal class ChatGptClient : IChatGptClient
             Temperature = parameters?.Temperature ?? options.DefaultParameters.Temperature,
             TopP = parameters?.TopP ?? options.DefaultParameters.TopP,
             MaxTokens = parameters?.MaxTokens ?? options.DefaultParameters.MaxTokens,
+            MaxCompletionTokens = parameters?.MaxCompletionTokens ?? options.DefaultParameters.MaxCompletionTokens,
             PresencePenalty = parameters?.PresencePenalty ?? options.DefaultParameters.PresencePenalty,
             FrequencyPenalty = parameters?.FrequencyPenalty ?? options.DefaultParameters.FrequencyPenalty,
             ResponseFormat = parameters?.ResponseFormat ?? options.DefaultParameters.ResponseFormat,
@@ -369,6 +371,19 @@ internal class ChatGptClient : IChatGptClient
             TopLogProbabilities = parameters?.TopLogProbabilities ?? options.DefaultParameters.TopLogProbabilities,
             User = options.User
         };
+
+        /*
+         * As of 2024-09-01-preview, Azure OpenAI conditionally supports the use of the new max_completion_tokens property:
+         *   - The o1-mini and o1-preview models accept max_completion_tokens and reject max_tokens
+         *   - All other models reject max_completion_tokens and accept max_tokens
+         */
+        if (request.MaxCompletionTokens is not null)
+        {
+            request.MaxTokens = null;
+        }
+
+        return request;
+    }
 
     private EmbeddingRequest CreateEmbeddingRequest(IEnumerable<string> messages, EmbeddingParameters? parameters, string? model)
         => new()

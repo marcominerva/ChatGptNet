@@ -36,6 +36,7 @@ builder.Services.AddChatGpt(options =>
     options.DefaultParameters = new ChatGptParameters
     {
         MaxTokens = 800,
+        //MaxCompletionTokens = 800,  // o1 series models support this property instead of MaxTokens
         Temperature = 0.7
     };
 });
@@ -85,6 +86,8 @@ Currently available models are:
 - gpt-4-turbo
 - gpt-4o
 - gpt-4o-mini
+- o1-preview
+- o1-mini
 
 They have fixed names, available in the [OpenAIChatGptModels.cs file](https://github.com/marcominerva/ChatGptNet/blob/master/src/ChatGptNet/Models/OpenAIChatGptModels.cs).
 
@@ -163,6 +166,7 @@ The configuration can be automatically read from [IConfiguration](https://learn.
     //    "Temperature": 0.8,
     //    "TopP": 1,
     //    "MaxTokens": 500,
+    //    "MaxCompletionTokens": null,  // o1 series models support this property instead of MaxTokens
     //    "PresencePenalty": 0,
     //    "FrequencyPenalty": 0,
     //    "ResponseFormat": { "Type": "text" }, // Allowed values for Type: text (default) or json_object

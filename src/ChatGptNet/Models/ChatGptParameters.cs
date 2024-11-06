@@ -40,7 +40,20 @@ public class ChatGptParameters
     /// <summary>
     /// Gets or sets the maximum number of tokens to generate in the chat completion. The total length of input tokens and generated tokens is limited by the model's context length.
     /// </summary>
+    /// <remarks>
+    /// This value is now deprecated in favor of <see cref="MaxCompletionTokens"/>, and is not compatible with <see href="https://platform.openai.com/docs/guides/reasoning">o1 series models</see>.
+    /// </remarks>
+    /// <seealso cref="MaxCompletionTokens"/>
+    [JsonPropertyName("max_tokens")]
     public int? MaxTokens { get; set; }
+
+    /// <summary>
+    /// An upper bound for the number of tokens that can be generated for a completion, including visible output tokens and <see href="https://platform.openai.com/docs/guides/reasoning">reasoning tokens</see>.
+    /// </summary>
+    /// <remarks>o1 series models must use this property instead of <see cref="MaxTokens"/>.</remarks>
+    /// <seealso cref="MaxTokens"/>
+    [JsonPropertyName("max_completion_tokens")]
+    public int? MaxCompletionTokens { get; set; }
 
     /// <summary>
     /// Gets or sets the presence penalties for chat completion. Number between -2.0 and 2.0. Positive values penalize new tokens based on whether they appear in the text so far, increasing the model's likelihood to talk about new topics (default: 0).

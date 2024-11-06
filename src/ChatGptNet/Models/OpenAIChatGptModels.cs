@@ -69,4 +69,22 @@ public static class OpenAIChatGptModels
     /// See <see href="https://platform.openai.com/docs/models/gpt-4o-mini">GPT-4</see> for more information.
     /// </remarks>
     public const string Gpt4_o_mini = "gpt-4o-mini";
+
+    /// <summary>
+    /// Reasoning model designed to solve hard problems across domains.
+    /// </summary>
+    /// <remarks>
+    /// This model supports 128.000 tokens and returns a maximum of 32.768 outpout tokens.
+    /// See <see href="https://platform.openai.com/docs/models#o1">o1-preview and o1-mini</see> for more information.
+    /// </remarks>
+    public const string O1_preview = "o1-preview";
+
+    /// <summary>
+    /// Faster and cheaper reasoning model particularly good at coding, math, and science.
+    /// </summary>
+    /// <remarks>
+    /// This model supports 128.000 tokens and returns a maximum of 32.768 outpout tokens.
+    /// See <see href="https://platform.openai.com/docs/models#o1">o1-preview and o1-mini</see> for more information.
+    /// </remarks>
+    public const string O1_mini = "o1-mini";
 }
